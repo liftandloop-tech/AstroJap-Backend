@@ -1,0 +1,417 @@
+const supabase = require('../config/supabase');
+const axios    = require('axios');
+
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
+function missingField(res, field) {
+  return res.status(400).json({ error: `${field} is required` });
+}
+
+// ─── POST /api/astrologers/signup ─────────────────────────────────────────────
+
+exports.signup = async (req, res) => {
+  const { email, password, name, mobile } = req.body;
+  if (!email)    return missingField(res, 'email');
+  if (!password) return missingField(res, 'password');
+  if (!name)     return missingField(res, 'name');
+  if (!mobile)   return missingField(res, 'mobile');
+
+  try {
+    // 1. Create Supabase Auth user
+    const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+    if (authError) throw authError;
+
+    // 2. Insert into astrologers table with pending status
+    const { data, error: insertError } = await supabase
+      .from('astrologers')
+      .insert([{
+        id:              authData.user.id,
+        email,
+        name,
+        mobile,
+        approval_status: 'pending'
+      }])
+      .select()
+      .single();
+
+    if (insertError) throw insertError;
+
+    // 3. Create a Shopify customer record so the Admin can see them
+    //    and tag them 'astrologer_pending' for easy filtering.
+    await createShopifyCustomer({ id: data.id, name, email, mobile });
+
+    res.status(201).json({
+      message: 'Signup successful. Please complete your profile. Your account will be reviewed.',
+      user: { id: data.id, name, email, approval_status: 'pending' }
+    });
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// ─── POST /api/astrologers/login ──────────────────────────────────────────────
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email)    return missingField(res, 'email');
+  if (!password) return missingField(res, 'password');
+
+  try {
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    if (authError) throw authError;
+
+    const { data: profile, error: profileError } = await supabase
+      .from('astrologers')
+      .select('id, name, approval_status, rejection_reason, is_accepting_bookings, price_20_min, price_60_min')
+      .eq('id', authData.user.id)
+      .single();
+
+    if (profileError) throw profileError;
+
+    // Gate by approval status — only 'approved' can access the dashboard
+    if (profile.approval_status !== 'approved') {
+      return res.status(403).json({
+        error:            'Your account is not yet approved.',
+        status:           profile.approval_status,
+        rejection_reason: profile.rejection_reason || null,
+        userId:           authData.user.id
+      });
+    }
+
+    res.status(200).json({
+      message: 'Login successful',
+      token:   authData.session.access_token,
+      user:    profile
+    });
+  } catch (error) {
+    res.status(401).json({ error: error.message });
+  }
+};
+
+// ─── PUT /api/astrologers/update-onboarding ───────────────────────────────────
+
+exports.updateOnboarding = async (req, res) => {
+  const { id, ...details } = req.body;
+  if (!id) return missingField(res, 'id');
+
+  // Prevent overwriting protected fields via this endpoint
+  delete details.approval_status;
+  delete details.shopify_customer_id;
+
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .update(details)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(200).json({ message: 'Onboarding step saved', data });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// ─── GET /api/astrologers ─────────────────────────────────────────────────────
+// Returns approved astrologers who are currently accepting bookings.
+
+exports.getAllAstrologers = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .select('id, name, profile_image, bio, specialization, languages, experience_years, price_20_min, price_60_min, rating, total_sessions, is_accepting_bookings, cometchat_uid')
+      .eq('approval_status', 'approved');
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── GET /api/astrologers/profile/:id ────────────────────────────────────────
+
+exports.getProfile = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .select('id, name, profile_image, bio, specialization, languages, experience_years, price_20_min, price_60_min, rating, total_sessions, is_accepting_bookings, cometchat_uid')
+      .eq('id', id)
+      .eq('approval_status', 'approved')
+      .single();
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(404).json({ error: 'Astrologer not found' });
+  }
+};
+
+// ─── GET /api/astrologers/:id/pricing ────────────────────────────────────────
+// Public: Fetches live pricing for a specific astrologer (used by booking picker).
+
+exports.getPricing = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .select('price_20_min, price_60_min, is_accepting_bookings, name')
+      .eq('id', id)
+      .eq('approval_status', 'approved')
+      .single();
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(404).json({ error: 'Astrologer not found' });
+  }
+};
+
+// ─── PATCH /api/astrologers/update-pricing ────────────────────────────────────
+// Authenticated: Astrologer sets their own session prices.
+
+exports.updatePricing = async (req, res) => {
+  const { astrologer_id, price_20_min, price_60_min } = req.body;
+  if (!astrologer_id) return missingField(res, 'astrologer_id');
+  if (price_20_min === undefined) return missingField(res, 'price_20_min');
+  if (price_60_min === undefined) return missingField(res, 'price_60_min');
+
+  // Basic validation
+  if (price_20_min < 100 || price_60_min < 100) {
+    return res.status(400).json({ error: 'Minimum price is ₹100' });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .update({ price_20_min, price_60_min })
+      .eq('id', astrologer_id)
+      .select('price_20_min, price_60_min')
+      .single();
+
+    if (error) throw error;
+    res.status(200).json({ message: 'Pricing updated', data });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── PATCH /api/astrologers/toggle-availability ───────────────────────────────
+// Authenticated: Astrologer toggles whether they accept new bookings.
+
+exports.toggleAvailability = async (req, res) => {
+  const { astrologer_id } = req.body;
+  if (!astrologer_id) return missingField(res, 'astrologer_id');
+
+  try {
+    // Fetch current state first
+    const { data: current, error: fetchError } = await supabase
+      .from('astrologers')
+      .select('is_accepting_bookings')
+      .eq('id', astrologer_id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    const newState = !current.is_accepting_bookings;
+
+    const { data, error } = await supabase
+      .from('astrologers')
+      .update({ is_accepting_bookings: newState })
+      .eq('id', astrologer_id)
+      .select('is_accepting_bookings')
+      .single();
+
+    if (error) throw error;
+
+    res.status(200).json({
+      message: `Availability set to ${newState ? 'ON' : 'OFF'}`,
+      is_accepting_bookings: data.is_accepting_bookings
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── GET /api/astrologers/dashboard-stats ─────────────────────────────────────
+// Authenticated: Real earnings and session stats for the dashboard.
+
+exports.getDashboardStats = async (req, res) => {
+  const { id } = req.params;
+  if (!id) return missingField(res, 'id');
+
+  try {
+    // 1. Wallet balance + total_earned (from astrologer_wallets — these columns exist in production)
+    const { data: wallet } = await supabase
+      .from('astrologer_wallets')
+      .select('balance, total_earned')
+      .eq('astrologer_id', id)
+      .maybeSingle();
+
+    // 2. Total completed sessions
+    const { count: totalSessions } = await supabase
+      .from('sessions')
+      .select('*', { count: 'exact', head: true })
+      .eq('astrologer_id', id)
+      .eq('status', 'completed');
+
+    // 3. Upcoming scheduled sessions — must match the same filter as getUpcomingSessions
+    const { count: upcomingCount } = await supabase
+      .from('sessions')
+      .select('*', { count: 'exact', head: true })
+      .eq('astrologer_id', id)
+      .in('status', ['active', 'scheduled'])
+      .gt('scheduled_at', new Date().toISOString());
+
+
+    // 4. Today's earnings — from astrologer_transactions.
+    //    IMPORTANT: this table has NO 'type' column — all rows are credit entries.
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const { data: todayTx } = await supabase
+      .from('astrologer_transactions')
+      .select('amount')
+      .eq('astrologer_id', id)
+      .gte('created_at', todayStart.toISOString());
+
+    const todayEarnings = (todayTx || []).reduce((sum, t) => sum + Number(t.amount), 0);
+
+    // 5. This week's earnings
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Start of current week
+    weekStart.setHours(0, 0, 0, 0);
+
+    const { data: weekTx } = await supabase
+      .from('astrologer_transactions')
+      .select('amount')
+      .eq('astrologer_id', id)
+      .gte('created_at', weekStart.toISOString());
+
+    const weekEarnings = (weekTx || []).reduce((sum, t) => sum + Number(t.amount), 0);
+
+    // 6. Profile data
+    const { data: profile } = await supabase
+      .from('astrologers')
+      .select('rating, name, is_accepting_bookings, price_20_min, price_60_min')
+      .eq('id', id)
+      .single();
+
+    res.status(200).json({
+      wallet_balance:        wallet?.balance ?? 0,
+      total_earned:          wallet?.total_earned ?? 0,  // lifetime earnings
+      today_earnings:        todayEarnings,
+      week_earnings:         weekEarnings,
+      total_sessions:        totalSessions ?? 0,
+      upcoming_sessions:     upcomingCount ?? 0,
+      rating:                profile?.rating ?? 5.0,
+      name:                  profile?.name,
+      is_accepting_bookings: profile?.is_accepting_bookings,
+      price_20_min:          profile?.price_20_min,
+      price_60_min:          profile?.price_60_min
+    });
+  } catch (error) {
+    console.error('getDashboardStats error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── GET /api/astrologers/upcoming-sessions/:id ───────────────────────────────
+
+exports.getUpcomingSessions = async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Fetch all future sessions for this astrologer regardless of type.
+    // book_slot_atomic creates sessions — they have status 'active' until the session starts.
+    // We also accept 'scheduled' if set explicitly in future.
+    const { data, error } = await supabase
+      .from('sessions')
+      .select('id, scheduled_at, duration_minutes, status, user_id, type')
+      .eq('astrologer_id', id)
+      .in('status', ['active', 'scheduled'])
+      .gt('scheduled_at', new Date().toISOString())
+      .order('scheduled_at', { ascending: true });
+
+    if (error) throw error;
+    res.status(200).json(data || []);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── GET /api/astrologers/session-history/:id ─────────────────────────────────
+
+exports.getSessionHistory = async (req, res) => {
+  const { id } = req.params;
+  const page   = parseInt(req.query.page || '1', 10);
+  const limit  = parseInt(req.query.limit || '20', 10);
+  const offset = (page - 1) * limit;
+
+  try {
+    const { data, error, count } = await supabase
+      .from('sessions')
+      .select('id, scheduled_at, start_time, end_time, duration_minutes, status, user_id', { count: 'exact' })
+      .eq('astrologer_id', id)
+      .eq('status', 'completed')
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    res.status(200).json({ sessions: data || [], total: count, page, limit });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── Private: Create Shopify Customer for Admin Visibility ────────────────────
+
+async function createShopifyCustomer({ id, name, email, mobile }) {
+  const shopName = process.env.SHOPIFY_STORE_DOMAIN;  // e.g. 'your-store.myshopify.com'
+  const adminKey = process.env.SHOPIFY_ADMIN_API_KEY;
+
+  if (!shopName || !adminKey) {
+    console.warn('[Shopify] SHOPIFY_STORE_DOMAIN or SHOPIFY_ADMIN_API_KEY not set — skipping customer creation.');
+    return;
+  }
+
+  try {
+    const res = await axios.post(
+      `https://${shopName}/admin/api/2024-04/customers.json`,
+      {
+        customer: {
+          first_name: name.split(' ')[0],
+          last_name:  name.split(' ').slice(1).join(' ') || '',
+          email,
+          phone:      mobile,
+          tags:       'astrologer_pending',
+          note:       `Astrologer application. Supabase ID: ${id}. Review profile at: https://astrojap-backend.vercel.app`,
+          verified_email: false
+        }
+      },
+      {
+        headers: {
+          'X-Shopify-Access-Token': adminKey,
+          'Content-Type':           'application/json'
+        }
+      }
+    );
+
+    const shopifyCustomerId = res.data?.customer?.id?.toString();
+
+    if (shopifyCustomerId) {
+      // Save the Shopify Customer ID back to Supabase for webhook matching
+      await supabase
+        .from('astrologers')
+        .update({ shopify_customer_id: shopifyCustomerId })
+        .eq('id', id);
+
+      console.log(`Shopify customer created: ${shopifyCustomerId} for astrologer ${id}`);
+    }
+  } catch (err) {
+    // Non-fatal — log but don't block signup
+    console.error('Shopify customer creation failed:', err.response?.data || err.message);
+  }
+}
