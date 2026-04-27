@@ -43,7 +43,7 @@
 
 <script>
 const customerId = "{{ customer.id }}";
-const masterVariantId = "{{ section.settings.master_variant_id }}";
+const masterVariantId = "{{ section.settings.master_variant_id | default: '8515920494692' }}";
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!customerId) {
@@ -78,27 +78,43 @@ function rechargeCustom() {
     addToCart(parseInt(amount));
 }
 
-async function addToCart(amount) {
+async function addToCart(quantity) {
+    if (!masterVariantId || masterVariantId === "") {
+        alert("Setup Required: Please go to Theme Editor -> 'Wallet Recharge' section and paste your ₹1 Product Variant ID.");
+        return;
+    }
+
     const btn = event.target.closest('button') || event.target;
     const originalText = btn.innerText;
-    btn.innerText = "Adding...";
+    btn.innerText = "Processing...";
     btn.disabled = true;
 
+    const formData = {
+        'items': [{
+            'id': parseInt(masterVariantId),
+            'quantity': quantity
+        }]
+    };
+
     try {
-        // Use the Manual Recharge API for instant testing
-        const res = await AstroAPI.manualRecharge(customerId, amount);
-        
-        if (res.success) {
-            alert(`₹${amount} added to your wallet!`);
-            location.reload(); // Refresh to show new balance
+        const response = await fetch(window.Shopify.routes.root + 'cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            // Success! Send them to the checkout immediately
+            window.location.href = '/checkout';
         } else {
-            alert(`Recharge failed: ${res.error}`);
+            const data = await response.json();
+            alert(`Error: ${data.description}`);
             btn.innerText = originalText;
             btn.disabled = false;
         }
     } catch (error) {
         console.error('Recharge failed:', error);
-        alert('Recharge failed. Please check backend connection.');
+        alert('Could not connect to payment gateway.');
         btn.innerText = originalText;
         btn.disabled = false;
     }
