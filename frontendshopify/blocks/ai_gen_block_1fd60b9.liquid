@@ -1,0 +1,836 @@
+{% doc %}
+  @prompt
+    Create a responsive **Shopify Best Seller Products Slider Section** using Liquid, HTML, CSS and minimal JavaScript.
+    
+    Section Name: **astrojap-best-sellers**
+    
+    SECTION HEADER
+    
+    Display a centered section heading.
+    
+    Title:
+    **Best Sellers**
+    
+    Allow the title to be editable from Shopify theme settings.
+    
+    PRODUCT SOURCE
+    
+    Products should be pulled dynamically from a **selected Shopify collection**.
+    
+    Add a **collection picker** in section settings so the admin can select a collection such as:
+    
+    Best Sellers
+    Trending Products
+    Featured Products
+    
+    Allow the admin to control **maximum products displayed (4–10)**.
+    
+    PRODUCT SLIDER LAYOUT
+    
+    Create a **horizontal product slider**.
+    
+    Desktop:
+    Show 4 product cards.
+    
+    Tablet:
+    Show 2–3 product cards.
+    
+    Mobile:
+    Show 1–2 product cards.
+    
+    Include:
+    
+    • Left and right navigation arrows
+    • Slider dots below the products
+    • Swipe support for mobile
+    
+    PRODUCT CARD DESIGN
+    
+    Each product card must contain:
+    
+    Product Image
+    Large image with rounded corners.
+    
+    Badge (Optional)
+    Show a corner badge on the top left.
+    
+    Examples:
+    
+    100% Cashback
+    Trending
+    New
+    
+    Product Title
+    Display product title below image.
+    
+    Ratings
+    Display star rating icons with review count.
+    
+    Example:
+    ⭐⭐⭐⭐⭐ 786 reviews
+    
+    Pricing
+    
+    Display:
+    
+    Current price (bold)
+    Compare-at price (strikethrough)
+    
+    Example:
+    
+    ₹999  ~~₹2,900~~
+    
+    Add Button
+    
+    Display a black rounded button in the bottom right.
+    
+    Button text:
+    **Add**
+    
+    Use Shopify **AJAX Add to Cart functionality**.
+    
+    CARD STYLE
+    
+    • White card background
+    • Rounded corners (16px)
+    • Soft shadow
+    • Image zoom hover effect
+    • Clean modern ecommerce design
+    
+    SECTION SETTINGS
+    
+    Allow editing in Shopify theme customizer:
+    
+    Section title
+    Collection selector
+    Number of products to display
+    Show/hide badges
+    Enable/disable Add to Cart button
+    Enable/disable product ratings
+    
+    PRODUCT BADGE SETTINGS
+    
+    Allow optional badge text inside product card such as:
+    
+    Trending
+    Best Seller
+    100% Cashback
+    
+    RESPONSIVE DESIGN
+    
+    Cards should adjust automatically for desktop, tablet and mobile screens.
+    
+    OUTPUT
+    
+    Generate complete Shopify Liquid section code ready to paste into:
+    
+    sections/astrojap-best-sellers.liquid
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .astrojap-best-sellers-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .astrojap-best-sellers__container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .astrojap-best-sellers__header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .astrojap-best-sellers__title-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    color: {{ block.settings.title_color }};
+  }
+
+  .astrojap-best-sellers__slider-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .astrojap-best-sellers__slider-{{ ai_gen_id }} {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .astrojap-best-sellers__card-{{ ai_gen_id }} {
+    flex: 0 0 calc(25% - 15px);
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .astrojap-best-sellers__card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .astrojap-best-sellers__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .astrojap-best-sellers__image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .astrojap-best-sellers__card-{{ ai_gen_id }}:hover .astrojap-best-sellers__image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .astrojap-best-sellers__badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: {{ block.settings.badge_bg_color }};
+    color: {{ block.settings.badge_text_color }};
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2;
+  }
+
+  .astrojap-best-sellers__content-{{ ai_gen_id }} {
+    padding: 16px;
+  }
+
+  .astrojap-best-sellers__product-title-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: #121212;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .astrojap-best-sellers__rating-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .astrojap-best-sellers__stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+    color: #ffc107;
+  }
+
+  .astrojap-best-sellers__review-count-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .astrojap-best-sellers__price-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .astrojap-best-sellers__price-{{ ai_gen_id }} {
+    font-size: 20px;
+    font-weight: 700;
+    color: #121212;
+  }
+
+  .astrojap-best-sellers__compare-price-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: #999;
+    text-decoration: line-through;
+  }
+
+  .astrojap-best-sellers__add-button-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background-color: #121212;
+    color: #ffffff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .astrojap-best-sellers__add-button-{{ ai_gen_id }}:hover {
+    background-color: #000000;
+    transform: scale(1.05);
+  }
+
+  .astrojap-best-sellers__add-button-{{ ai_gen_id }}:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .astrojap-best-sellers__nav-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .astrojap-best-sellers__nav-{{ ai_gen_id }}:hover {
+    background-color: #f4f4f4;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .astrojap-best-sellers__nav-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .astrojap-best-sellers__nav--prev-{{ ai_gen_id }} {
+    left: -22px;
+  }
+
+  .astrojap-best-sellers__nav--next-{{ ai_gen_id }} {
+    right: -22px;
+  }
+
+  .astrojap-best-sellers__dots-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .astrojap-best-sellers__dot-{{ ai_gen_id }} {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .astrojap-best-sellers__dot-{{ ai_gen_id }}.active {
+    background-color: #121212;
+    transform: scale(1.2);
+  }
+
+  @media screen and (max-width: 989px) {
+    .astrojap-best-sellers__card-{{ ai_gen_id }} {
+      flex: 0 0 calc(33.333% - 14px);
+    }
+
+    .astrojap-best-sellers__title-{{ ai_gen_id }} {
+      font-size: 28px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .astrojap-best-sellers__card-{{ ai_gen_id }} {
+      flex: 0 0 calc(50% - 10px);
+    }
+
+    .astrojap-best-sellers__title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .astrojap-best-sellers__nav-{{ ai_gen_id }} {
+      width: 36px;
+      height: 36px;
+    }
+
+    .astrojap-best-sellers__nav--prev-{{ ai_gen_id }} {
+      left: -18px;
+    }
+
+    .astrojap-best-sellers__nav--next-{{ ai_gen_id }} {
+      right: -18px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .astrojap-best-sellers-{{ ai_gen_id }} {
+      padding: 30px 15px;
+    }
+
+    .astrojap-best-sellers__card-{{ ai_gen_id }} {
+      flex: 0 0 calc(100% - 0px);
+    }
+  }
+{% endstyle %}
+
+<astrojap-best-sellers-{{ ai_gen_id }} class="astrojap-best-sellers-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="astrojap-best-sellers__container-{{ ai_gen_id }}">
+    {% if block.settings.section_title != blank %}
+      <div class="astrojap-best-sellers__header-{{ ai_gen_id }}">
+        <h2 class="astrojap-best-sellers__title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+      </div>
+    {% endif %}
+
+    {% if block.settings.collection != blank %}
+      {% assign collection = block.settings.collection %}
+      {% assign max_products = block.settings.max_products %}
+      
+      <div class="astrojap-best-sellers__slider-wrapper-{{ ai_gen_id }}">
+        <button class="astrojap-best-sellers__nav-{{ ai_gen_id }} astrojap-best-sellers__nav--prev-{{ ai_gen_id }}" aria-label="Previous">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="astrojap-best-sellers__slider-{{ ai_gen_id }}">
+          {% for product in collection.products limit: max_products %}
+            <div class="astrojap-best-sellers__card-{{ ai_gen_id }}">
+              <div class="astrojap-best-sellers__image-wrapper-{{ ai_gen_id }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    class="astrojap-best-sellers__image-{{ ai_gen_id }}"
+                    loading="lazy"
+                    width="600"
+                    height="600"
+                  >
+                {% else %}
+                  <div class="astrojap-best-sellers__image-placeholder-{{ ai_gen_id }}">
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+
+                {% if block.settings.show_badge and block.settings.badge_text != blank %}
+                  <div class="astrojap-best-sellers__badge-{{ ai_gen_id }}">
+                    {{ block.settings.badge_text }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="astrojap-best-sellers__content-{{ ai_gen_id }}">
+                <h3 class="astrojap-best-sellers__product-title-{{ ai_gen_id }}">
+                  <a href="{{ product.url }}">{{ product.title }}</a>
+                </h3>
+
+                {% if block.settings.show_ratings %}
+                  <div class="astrojap-best-sellers__rating-{{ ai_gen_id }}">
+                    <div class="astrojap-best-sellers__stars-{{ ai_gen_id }}">
+                      {% for i in (1..5) %}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                      {% endfor %}
+                    </div>
+                    <span class="astrojap-best-sellers__review-count-{{ ai_gen_id }}">{{ block.settings.review_count }} reviews</span>
+                  </div>
+                {% endif %}
+
+                <div class="astrojap-best-sellers__price-wrapper-{{ ai_gen_id }}">
+                  <span class="astrojap-best-sellers__price-{{ ai_gen_id }}">
+                    {{ product.price | money }}
+                  </span>
+                  {% if product.compare_at_price > product.price %}
+                    <span class="astrojap-best-sellers__compare-price-{{ ai_gen_id }}">
+                      {{ product.compare_at_price | money }}
+                    </span>
+                  {% endif %}
+                </div>
+
+                {% if block.settings.show_add_button %}
+                  <button
+                    class="astrojap-best-sellers__add-button-{{ ai_gen_id }}"
+                    data-product-id="{{ product.selected_or_first_available_variant.id }}"
+                    {% unless product.available %}disabled{% endunless %}
+                  >
+                    {% if product.available %}
+                      {{ block.settings.button_text }}
+                    {% else %}
+                      Sold Out
+                    {% endif %}
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <button class="astrojap-best-sellers__nav-{{ ai_gen_id }} astrojap-best-sellers__nav--next-{{ ai_gen_id }}" aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="astrojap-best-sellers__dots-{{ ai_gen_id }}"></div>
+    {% else %}
+      <div style="text-align: center; padding: 60px 20px; background: #f4f4f4; border-radius: 16px;">
+        <p style="color: #666; font-size: 16px; margin: 0;">Please select a collection to display products</p>
+      </div>
+    {% endif %}
+  </div>
+</astrojap-best-sellers-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstrojapBestSellers{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.isDragging = false;
+        this.startPos = 0;
+        this.currentTranslate = 0;
+        this.prevTranslate = 0;
+        this.animationID = 0;
+      }
+
+      connectedCallback() {
+        this.slider = this.querySelector('.astrojap-best-sellers__slider-{{ ai_gen_id }}');
+        this.cards = this.querySelectorAll('.astrojap-best-sellers__card-{{ ai_gen_id }}');
+        this.prevBtn = this.querySelector('.astrojap-best-sellers__nav--prev-{{ ai_gen_id }}');
+        this.nextBtn = this.querySelector('.astrojap-best-sellers__nav--next-{{ ai_gen_id }}');
+        this.dotsContainer = this.querySelector('.astrojap-best-sellers__dots-{{ ai_gen_id }}');
+        this.addButtons = this.querySelectorAll('.astrojap-best-sellers__add-button-{{ ai_gen_id }}');
+
+        if (!this.slider || this.cards.length === 0) return;
+
+        this.setupSlider();
+        this.setupEventListeners();
+        this.setupAddToCart();
+      }
+
+      setupSlider() {
+        this.cardsPerView = this.getCardsPerView();
+        this.totalSlides = Math.ceil(this.cards.length / this.cardsPerView);
+        this.createDots();
+        this.updateButtons();
+      }
+
+      getCardsPerView() {
+        const width = window.innerWidth;
+        if (width <= 480) return 1;
+        if (width <= 749) return 2;
+        if (width <= 989) return 3;
+        return 4;
+      }
+
+      createDots() {
+        this.dotsContainer.innerHTML = '';
+        for (let i = 0; i < this.totalSlides; i++) {
+          const dot = document.createElement('button');
+          dot.classList.add('astrojap-best-sellers__dot-{{ ai_gen_id }}');
+          if (i === 0) dot.classList.add('active');
+          dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          dot.addEventListener('click', () => this.goToSlide(i));
+          this.dotsContainer.appendChild(dot);
+        }
+      }
+
+      setupEventListeners() {
+        this.prevBtn.addEventListener('click', () => this.prevSlide());
+        this.nextBtn.addEventListener('click', () => this.nextSlide());
+
+        this.slider.addEventListener('touchstart', (e) => this.touchStart(e));
+        this.slider.addEventListener('touchmove', (e) => this.touchMove(e));
+        this.slider.addEventListener('touchend', () => this.touchEnd());
+
+        this.slider.addEventListener('mousedown', (e) => this.touchStart(e));
+        this.slider.addEventListener('mousemove', (e) => this.touchMove(e));
+        this.slider.addEventListener('mouseup', () => this.touchEnd());
+        this.slider.addEventListener('mouseleave', () => this.touchEnd());
+
+        window.addEventListener('resize', () => {
+          this.setupSlider();
+          this.goToSlide(0);
+        });
+      }
+
+      setupAddToCart() {
+        this.addButtons.forEach(button => {
+          button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const variantId = button.getAttribute('data-product-id');
+            this.addToCart(variantId, button);
+          });
+        });
+      }
+
+      addToCart(variantId, button) {
+        const originalText = button.textContent;
+        button.textContent = 'Adding...';
+        button.disabled = true;
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: variantId,
+            quantity: 1
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          button.textContent = 'Added!';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 2000);
+
+          if (window.theme && window.theme.cart) {
+            window.theme.cart.refresh();
+          }
+          
+          document.dispatchEvent(new CustomEvent('cart:refresh'));
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          button.textContent = 'Error';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 2000);
+        });
+      }
+
+      touchStart(e) {
+        this.isDragging = true;
+        this.startPos = this.getPositionX(e);
+        this.animationID = requestAnimationFrame(() => this.animation());
+        this.slider.style.cursor = 'grabbing';
+      }
+
+      touchMove(e) {
+        if (this.isDragging) {
+          const currentPosition = this.getPositionX(e);
+          this.currentTranslate = this.prevTranslate + currentPosition - this.startPos;
+        }
+      }
+
+      touchEnd() {
+        this.isDragging = false;
+        cancelAnimationFrame(this.animationID);
+
+        const movedBy = this.currentTranslate - this.prevTranslate;
+
+        if (movedBy < -100 && this.currentIndex < this.totalSlides - 1) {
+          this.currentIndex += 1;
+        }
+
+        if (movedBy > 100 && this.currentIndex > 0) {
+          this.currentIndex -= 1;
+        }
+
+        this.setPositionByIndex();
+        this.slider.style.cursor = 'grab';
+      }
+
+      getPositionX(e) {
+        return e.type.includes('mouse') ? e.pageX : e.touches[0].clientPath;
+      }
+
+      animation() {
+        this.slider.style.transform = `translateX(${this.currentTranslate}px)`;
+        if (this.isDragging) requestAnimationFrame(() => this.animation());
+      }
+
+      setPositionByIndex() {
+        const cardWidth = this.cards[0].offsetWidth;
+        const gap = 20;
+        this.currentTranslate = this.currentIndex * -(cardWidth + gap) * this.cardsPerView;
+        this.prevTranslate = this.currentTranslate;
+        this.slider.style.transform = `translateX(${this.currentTranslate}px)`;
+        this.updateButtons();
+        this.updateDots();
+      }
+
+      goToSlide(index) {
+        this.currentIndex = index;
+        this.setPositionByIndex();
+      }
+
+      prevSlide() {
+        if (this.currentIndex > 0) {
+          this.currentIndex -= 1;
+          this.setPositionByIndex();
+        }
+      }
+
+      nextSlide() {
+        if (this.currentIndex < this.totalSlides - 1) {
+          this.currentIndex += 1;
+          this.setPositionByIndex();
+        }
+      }
+
+      updateButtons() {
+        this.prevBtn.disabled = this.currentIndex === 0;
+        this.nextBtn.disabled = this.currentIndex === this.totalSlides - 1;
+      }
+
+      updateDots() {
+        const dots = this.dotsContainer.querySelectorAll('.astrojap-best-sellers__dot-{{ ai_gen_id }}');
+        dots.forEach((dot, index) => {
+          if (index === this.currentIndex) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+    }
+
+    customElements.define('astrojap-best-sellers-{{ ai_gen_id }}', AstrojapBestSellers{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Best sellers slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section settings"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section title",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Product settings"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "min": 4,
+      "max": 10,
+      "step": 1,
+      "label": "Maximum products",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Badge settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Trending"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Badge background",
+      "default": "#334fb4"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Rating settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_ratings",
+      "label": "Show ratings",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "review_count",
+      "min": 0,
+      "max": 1000,
+      "step": 10,
+      "label": "Review count",
+      "default": 780
+    },
+    {
+      "type": "header",
+      "content": "Button settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_add_button",
+      "label": "Show add to cart button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Add"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Best sellers slider"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,936 @@
+{% doc %}
+  @prompt
+    Create a responsive Shopify section using Liquid, HTML, CSS, and a small JavaScript slider.
+    
+    Section Title:
+    "COMPLIMENTARY ASTROLOGY SERVICES"
+    
+    Layout Requirements:
+    
+    1. Section Header
+    - Center aligned heading
+    - Bold uppercase text
+    - Large font size
+    
+    2. Service Cards Slider
+    Create a horizontal slider containing service cards.
+    
+    Each card should include:
+    - White card background
+    - Rounded corners (border-radius: 14px)
+    - Soft shadow
+    - Padding inside
+    - Center aligned content
+    
+    3. Card Content Structure
+    
+    Top:
+    - Circular yellow icon background
+    - Icon centered inside the circle
+    
+    Below Icon:
+    - Service Title (bold)
+    
+    Below Title:
+    - Small description text (2–3 lines)
+    
+    4. Default Cards
+    
+    Card 1
+    Title: Today's Horoscope
+    Description: Unsure about how your day will unfold? Get free Aries horoscope online prediction from top astrologer. Read your Aries Zodiac Sign Horoscope today!
+    
+    Card 2
+    Title: Free Kundli
+    Description: Generate your free online kundli report. Our Kundli software can help you predict the future by reading the birth chart.
+    
+    Card 3
+    Title: Compatibility
+    Description: Confused by love? Remove the doubts and check the compatibility with your partner using our tool.
+    
+    Card 4
+    Title: Kundli Matching
+    Description: Check love compatibility and marriage prediction online with accurate kundli matching.
+    
+    5. Slider Behavior
+    - Desktop: show 4 cards
+    - Tablet: show 2 cards
+    - Mobile: show 1 card
+    - Add left and right arrow buttons outside the cards
+    
+    6. Bottom Statistics Bar
+    
+    Create a full width gradient yellow section below the slider with 3 columns:
+    
+    Column 1
+    Number: 47,277+
+    Text: Total Astrologers
+    
+    Column 2
+    Number: 1326 Million Minutes
+    Text: Total Chat/Call Minutes
+    
+    Column 3
+    Number: 115.4 Million
+    Text: Total Customers
+    
+    7. Shopify Customization Options (Schema)
+    
+    Allow admin to change:
+    - Section title
+    - Card icon
+    - Card title
+    - Card description
+    - Stats numbers
+    - Stats labels
+    
+    8. Hover Effect
+    Cards should slightly lift on hover.
+    
+    9. Mobile Responsive
+    Ensure perfect mobile spacing and card stacking.
+    
+    Name the section file:
+    complimentary-astrology-services.liquid
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astrology-services-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-astrology-services__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-astrology-services__heading-{{ ai_gen_id }} {
+    text-align: center;
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0 0 {{ block.settings.heading_margin_bottom }}px;
+    color: {{ block.settings.heading_color }};
+    letter-spacing: 1px;
+  }
+
+  .ai-astrology-services__slider-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    margin-bottom: {{ block.settings.slider_margin_bottom }}px;
+  }
+
+  .ai-astrology-services__slider-container-{{ ai_gen_id }} {
+    overflow: hidden;
+    padding: 0 60px;
+  }
+
+  .ai-astrology-services__slider-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.card_gap }}px;
+    transition: transform 0.4s ease;
+  }
+
+  .ai-astrology-services__card-{{ ai_gen_id }} {
+    flex: 0 0 calc((100% - ({{ block.settings.card_gap }}px * 3)) / 4);
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+
+  .ai-astrology-services__card-{{ ai_gen_id }}:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-astrology-services__icon-wrapper-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    background-color: {{ block.settings.icon_background }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto {{ block.settings.icon_margin_bottom }}px;
+  }
+
+  .ai-astrology-services__icon-wrapper-{{ ai_gen_id }} svg {
+    width: calc({{ block.settings.icon_size }}px * 0.5);
+    height: calc({{ block.settings.icon_size }}px * 0.5);
+    fill: {{ block.settings.icon_color }};
+  }
+
+  .ai-astrology-services__card-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_title_size }}px;
+    font-weight: 700;
+    margin: 0 0 {{ block.settings.card_title_margin }}px;
+    color: {{ block.settings.card_title_color }};
+  }
+
+  .ai-astrology-services__card-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_description_size }}px;
+    line-height: 1.5;
+    color: {{ block.settings.card_description_color }};
+    margin: 0;
+  }
+
+  .ai-astrology-services__arrow-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: {{ block.settings.arrow_size }}px;
+    height: {{ block.settings.arrow_size }}px;
+    background-color: {{ block.settings.arrow_background }};
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3; /* Fixed: Prevents overlap with sticky header */
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-astrology-services__arrow-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.arrow_hover_background }};
+  }
+
+  .ai-astrology-services__arrow-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    fill: {{ block.settings.arrow_color }};
+  }
+
+  .ai-astrology-services__arrow--left-{{ ai_gen_id }} {
+    left: 0;
+  }
+
+  .ai-astrology-services__arrow--right-{{ ai_gen_id }} {
+    right: 0;
+  }
+
+  .ai-astrology-services__stats-{{ ai_gen_id }} {
+    background: {{ block.settings.stats_background }};
+    padding: {{ block.settings.stats_padding }}px 20px;
+    border-radius: {{ block.settings.stats_border_radius }}px;
+  }
+
+  .ai-astrology-services__stats-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-astrology-services__stat-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-astrology-services__stat-number-{{ ai_gen_id }} {
+    font-size: {{ block.settings.stat_number_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.stat_number_color }};
+    margin: 0 0 8px;
+  }
+
+  .ai-astrology-services__stat-label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.stat_label_size }}px;
+    color: {{ block.settings.stat_label_color }};
+    margin: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-astrology-services__card-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - {{ block.settings.card_gap }}px) / 2);
+    }
+
+    .ai-astrology-services__stats-grid-{{ ai_gen_id }} {
+      gap: 20px;
+    }
+
+    .ai-astrology-services__stat-number-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.stat_number_size }}px * 0.8);
+    }
+
+    .ai-astrology-services__stat-label-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.stat_label_size }}px * 0.9);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-astrology-services__card-{{ ai_gen_id }} {
+      flex: 0 0 100%;
+    }
+
+    .ai-astrology-services__slider-container-{{ ai_gen_id }} {
+      padding: 0 50px;
+    }
+
+    .ai-astrology-services__stats-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .ai-astrology-services__heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.7);
+    }
+
+    .ai-astrology-services__arrow-{{ ai_gen_id }} {
+      width: calc({{ block.settings.arrow_size }}px * 0.8);
+      height: calc({{ block.settings.arrow_size }}px * 0.8);
+    }
+  }
+{% endstyle %}
+
+<astrology-services-{{ ai_gen_id }} class="ai-astrology-services-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-astrology-services__container-{{ ai_gen_id }}">
+    {% if block.settings.section_title != blank %}
+      <h2 class="ai-astrology-services__heading-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+    {% endif %}
+
+    <div class="ai-astrology-services__slider-wrapper-{{ ai_gen_id }}">
+      <button class="ai-astrology-services__arrow-{{ ai_gen_id }} ai-astrology-services__arrow--left-{{ ai_gen_id }}" aria-label="Previous slide">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+      </button>
+
+      <div class="ai-astrology-services__slider-container-{{ ai_gen_id }}">
+        <div class="ai-astrology-services__slider-{{ ai_gen_id }}">
+
+          {% if block.settings.card_1_title != blank %}
+            {% if block.settings.card_1_link != blank %}
+              <a href="{{ block.settings.card_1_link }}" class="ai-astrology-services__card-{{ ai_gen_id }}">
+            {% else %}
+              <div class="ai-astrology-services__card-{{ ai_gen_id }}">
+            {% endif %}
+              <div class="ai-astrology-services__icon-wrapper-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                </svg>
+              </div>
+              <h3 class="ai-astrology-services__card-title-{{ ai_gen_id }}">{{ block.settings.card_1_title }}</h3>
+              <p class="ai-astrology-services__card-description-{{ ai_gen_id }}">{{ block.settings.card_1_description }}</p>
+            {% if block.settings.card_1_link != blank %}
+              </a>
+            {% else %}
+              </div>
+            {% endif %}
+          {% endif %}
+
+          {% if block.settings.card_2_title != blank %}
+            {% if block.settings.card_2_link != blank %}
+              <a href="{{ block.settings.card_2_link }}" class="ai-astrology-services__card-{{ ai_gen_id }}">
+            {% else %}
+              <div class="ai-astrology-services__card-{{ ai_gen_id }}">
+            {% endif %}
+              <div class="ai-astrology-services__icon-wrapper-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2M18 20H6V4H13V9H18V20M12 19L8 15H10.5V12H13.5V15H16L12 19Z"/>
+                </svg>
+              </div>
+              <h3 class="ai-astrology-services__card-title-{{ ai_gen_id }}">{{ block.settings.card_2_title }}</h3>
+              <p class="ai-astrology-services__card-description-{{ ai_gen_id }}">{{ block.settings.card_2_description }}</p>
+            {% if block.settings.card_2_link != blank %}
+              </a>
+            {% else %}
+              </div>
+            {% endif %}
+          {% endif %}
+
+          {% if block.settings.card_3_title != blank %}
+            {% if block.settings.card_3_link != blank %}
+              <a href="{{ block.settings.card_3_link }}" class="ai-astrology-services__card-{{ ai_gen_id }}">
+            {% else %}
+              <div class="ai-astrology-services__card-{{ ai_gen_id }}">
+            {% endif %}
+              <div class="ai-astrology-services__icon-wrapper-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
+                </svg>
+              </div>
+              <h3 class="ai-astrology-services__card-title-{{ ai_gen_id }}">{{ block.settings.card_3_title }}</h3>
+              <p class="ai-astrology-services__card-description-{{ ai_gen_id }}">{{ block.settings.card_3_description }}</p>
+            {% if block.settings.card_3_link != blank %}
+              </a>
+            {% else %}
+              </div>
+            {% endif %}
+          {% endif %}
+
+          {% if block.settings.card_4_title != blank %}
+            {% if block.settings.card_4_link != blank %}
+              <a href="{{ block.settings.card_4_link }}" class="ai-astrology-services__card-{{ ai_gen_id }}">
+            {% else %}
+              <div class="ai-astrology-services__card-{{ ai_gen_id }}">
+            {% endif %}
+              <div class="ai-astrology-services__icon-wrapper-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2M12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20M16.59 7.58L10 14.17L7.41 11.59L6 13L10 17L18 9L16.59 7.58Z"/>
+                </svg>
+              </div>
+              <h3 class="ai-astrology-services__card-title-{{ ai_gen_id }}">{{ block.settings.card_4_title }}</h3>
+              <p class="ai-astrology-services__card-description-{{ ai_gen_id }}">{{ block.settings.card_4_description }}</p>
+            {% if block.settings.card_4_link != blank %}
+              </a>
+            {% else %}
+              </div>
+            {% endif %}
+          {% endif %}
+
+        </div>
+      </div>
+
+      <button class="ai-astrology-services__arrow-{{ ai_gen_id }} ai-astrology-services__arrow--right-{{ ai_gen_id }}" aria-label="Next slide">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="ai-astrology-services__stats-{{ ai_gen_id }}">
+      <div class="ai-astrology-services__stats-grid-{{ ai_gen_id }}">
+        <div class="ai-astrology-services__stat-{{ ai_gen_id }}">
+          <div class="ai-astrology-services__stat-number-{{ ai_gen_id }}">{{ block.settings.stat_1_number }}</div>
+          <div class="ai-astrology-services__stat-label-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+        </div>
+        <div class="ai-astrology-services__stat-{{ ai_gen_id }}">
+          <div class="ai-astrology-services__stat-number-{{ ai_gen_id }}">{{ block.settings.stat_2_number }}</div>
+          <div class="ai-astrology-services__stat-label-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
+        </div>
+        <div class="ai-astrology-services__stat-{{ ai_gen_id }}">
+          <div class="ai-astrology-services__stat-number-{{ ai_gen_id }}">{{ block.settings.stat_3_number }}</div>
+          <div class="ai-astrology-services__stat-label-{{ ai_gen_id }}">{{ block.settings.stat_3_label }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</astrology-services-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstrologyServices{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.slider = this.querySelector('.ai-astrology-services__slider-{{ ai_gen_id }}');
+        this.cards = this.querySelectorAll('.ai-astrology-services__card-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-astrology-services__arrow--left-{{ ai_gen_id }}');
+        this.nextButton = this.querySelector('.ai-astrology-services__arrow--right-{{ ai_gen_id }}');
+        this.totalCards = this.cards.length;
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+        this.updateSlider();
+      }
+
+      setupEventListeners() {
+        this.prevButton.addEventListener('click', () => this.prevSlide());
+        this.nextButton.addEventListener('click', () => this.nextSlide());
+      }
+
+      getCardsPerView() {
+        const width = window.innerWidth;
+        if (width <= 749) return 1;
+        if (width <= 989) return 2;
+        return 4;
+      }
+
+      prevSlide() {
+        const cardsPerView = this.getCardsPerView();
+        this.currentIndex = Math.max(0, this.currentIndex - 1);
+        this.updateSlider();
+      }
+
+      nextSlide() {
+        const cardsPerView = this.getCardsPerView();
+        const maxIndex = Math.max(0, this.totalCards - cardsPerView);
+        this.currentIndex = Math.min(maxIndex, this.currentIndex + 1);
+        this.updateSlider();
+      }
+
+      updateSlider() {
+        const cardsPerView = this.getCardsPerView();
+        const cardWidth = this.cards[0].offsetWidth;
+        const gap = {{ block.settings.card_gap }};
+        const offset = this.currentIndex * (cardWidth + gap);
+        this.slider.style.transform = `translateX(-${offset}px)`;
+
+        this.prevButton.disabled = this.currentIndex === 0;
+        this.nextButton.disabled = this.currentIndex >= this.totalCards - cardsPerView;
+
+        this.prevButton.style.opacity = this.prevButton.disabled ? '0.5' : '1';
+        this.nextButton.style.opacity = this.nextButton.disabled ? '0.5' : '1';
+        this.prevButton.style.cursor = this.prevButton.disabled ? 'not-allowed' : 'pointer';
+        this.nextButton.style.cursor = this.nextButton.disabled ? 'not-allowed' : 'pointer';
+      }
+    }
+
+    customElements.define('astrology-services-{{ ai_gen_id }}', AstrologyServices{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Astrology services",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section title",
+      "default": "COMPLIMENTARY ASTROLOGY SERVICES"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Heading bottom margin",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+    {
+      "type": "range",
+      "id": "slider_margin_bottom",
+      "label": "Slider bottom margin",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Card gap",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Card icon"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 70
+    },
+    {
+      "type": "color",
+      "id": "icon_background",
+      "label": "Icon background",
+      "default": "#FFD700"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "icon_margin_bottom",
+      "label": "Icon bottom margin",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Card text"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "card_title_margin",
+      "label": "Title bottom margin",
+      "min": 5,
+      "max": 25,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "card_description_size",
+      "label": "Description size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "card_description_color",
+      "label": "Description color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Today's Horoscope"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_description",
+      "label": "Description",
+      "default": "Unsure about how your day will unfold? Get free Aries horoscope online prediction from top astrologer. Read your Aries Zodiac Sign Horoscope today!"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Free Kundli"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_description",
+      "label": "Description",
+      "default": "Generate your free online kundli report. Our Kundli software can help you predict the future by reading the birth chart."
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Compatibility"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_description",
+      "label": "Description",
+      "default": "Confused by love? Remove the doubts and check the compatibility with your partner using our tool."
+    },
+    {
+      "type": "url",
+      "id": "card_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title",
+      "default": "Kundli Matching"
+    },
+    {
+      "type": "textarea",
+      "id": "card_4_description",
+      "label": "Description",
+      "default": "Check love compatibility and marriage prediction online with accurate kundli matching."
+    },
+    {
+      "type": "url",
+      "id": "card_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Arrow buttons"
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "label": "Arrow size",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 45
+    },
+    {
+      "type": "color",
+      "id": "arrow_background",
+      "label": "Arrow background",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_background",
+      "label": "Arrow hover background",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Statistics bar"
+    },
+    {
+      "type": "color",
+      "id": "stats_background",
+      "label": "Background",
+      "default": "#FFD700"
+    },
+    {
+      "type": "range",
+      "id": "stats_padding",
+      "label": "Padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "stats_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "stat_number_size",
+      "label": "Number size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "stat_number_color",
+      "label": "Number color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "stat_label_size",
+      "label": "Label size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "stat_label_color",
+      "label": "Label color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Statistic 1"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Number",
+      "default": "47,277+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Label",
+      "default": "Total Astrologers"
+    },
+    {
+      "type": "header",
+      "content": "Statistic 2"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Number",
+      "default": "1326 Million Minutes"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Label",
+      "default": "Total Chat/Call Minutes"
+    },
+    {
+      "type": "header",
+      "content": "Statistic 3"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Number",
+      "default": "115.4 Million"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Label",
+      "default": "Total Customers"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrology services"
+    }
+  ]
+}
+{% endschema %}

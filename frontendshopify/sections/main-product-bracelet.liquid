@@ -1,0 +1,729 @@
+{% comment %}
+  ULTIMATE PREMIUM ASTRO PRODUCT SECTION
+  Restored: Special Offer Box, Verified Review Cards.
+  Fixed: Bundle selection price sync, Offer toggles, and Timer.
+{% endcomment %}
+
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600;800&display=swap');
+
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+  }
+
+  /* UTILS */
+  .f-premium { font-family: 'Cinzel', serif !important; }
+  .t-yellow { color: #f3e05c; }
+  .bg-yellow { background: #f3e05c; }
+  .bg-green { background: #34a853; }
+  
+  /* LAYOUT: 2-column sticky */
+  .ai-product-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start; /* CRITICAL: allows sticky to work */
+  }
+  .ai-gallery-col {
+    position: sticky;
+    top: 90px; /* adjust to match your header height */
+    align-self: start;
+  }
+  .ai-info-col {
+    min-width: 0;
+  }
+
+  /* On mobile: single column, no sticky */
+  @media (max-width: 749px) {
+    .ai-product-layout {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .ai-gallery-col {
+      position: static;
+    }
+  }
+
+  /* GALLERY */
+  .ai-custom-gallery { display: flex; flex-direction: column; width: 100%; position: relative; }
+  .ai-main-image-wrap {
+    width: 100%; position: relative; border-radius: 10px; overflow: hidden;
+    background: #fff; aspect-ratio: 1 / 1; border: 1px solid #f0f0f0; margin-bottom: 12px; isolation: isolate; z-index: 1;
+  }
+  .ai-main-image-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  
+  .ai-thumb-row { display: flex; gap: 8px; overflow-x: auto; padding: 2px; scrollbar-width: none; -ms-overflow-style: none; }
+  .ai-thumb-row::-webkit-scrollbar { display: none; }
+  .ai-thumb-item { flex: 0 0 65px; width: 65px; height: 65px; border-radius: 6px; border: 1px solid #ddd; padding: 2px; background: #fff; cursor: pointer; overflow: hidden; opacity: 0.6; transition: all 0.2s; }
+  .ai-thumb-item.active { border-color: #000; border-width: 1.5px; opacity: 1; }
+  .ai-thumb-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+
+  /* BADGES */
+  .ai-cashback-badge {
+    position: absolute; top: 0; left: 15px; background: linear-gradient(180deg, #ffd700 0%, #ffcc00 100%);
+    width: 110px; z-index: 2; text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 88%, 0% 100%);
+    pointer-events: none;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 20px;
+  }
+  .ai-cashback-badge .sym { font-size: 14px; font-weight: 800; }
+  .ai-cashback-badge .val { font-weight: 900; font-size: 24px; color: #000; display: block; line-height: 1; margin: 2px 0; }
+  .ai-cashback-badge .txt { font-size: 10px; font-weight: 800; text-transform: uppercase; }
+
+  /* TAGS */
+  .ai-tag-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }
+  .ai-tag { background: #f3e05c; color: #000; font-size: 12px; font-weight: 700; padding: 6px 18px; border-radius: 25px; }
+  .ai-tag.lavender { background: #eaeaff; }
+
+  /* PRICE */
+  .ai-price-row { display: flex; align-items: baseline; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .ai-current-price-wrap { display: flex; align-items: baseline; gap: 5px; }
+  .ai-currency-symbol { font-size: 28px; font-weight: 900; color: #000; }
+  .ai-current-price { font-size: 34px; font-weight: 900; color: #000; letter-spacing: -0.5px; }
+  
+  .ai-old-price-wrap { display: flex; align-items: baseline; margin-left: 5px; }
+  .ai-old-price { font-size: 20px; color: #999; text-decoration: line-through; font-weight: 600; }
+  .ai-discount-text { font-size: 16px; color: #34A853; font-weight: 800; }
+
+  /* TIMER */
+  .ai-timer-box { color: #e40000; font-weight: 800; font-size: 16px; margin: 12px 0 20px 0; }
+
+  /* OFFER BOX */
+  .ai-offer-box { background: #fffdf5; border: 1.5px solid #ffed99; border-radius: 12px; padding: 18px; margin: 20px 0; }
+  .ai-offer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .ai-offer-title { font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+  .ai-offer-save { background: #34a853; color: #fff; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 20px; }
+  .ai-offer-toggle { width: 100%; background: #f3e05c; border: none; border-radius: 8px; padding: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
+
+  /* PINCODE */
+  .ai-pincode-wrap { border: 1.5px solid #ffed99; border-radius: 12px; padding: 20px; margin: 20px 0; background: #fff; }
+  .ai-pin-input-group { position: relative; display: flex; border: 1.2px solid #ddd; border-radius: 8px; overflow: hidden; margin-top: 15px; }
+  .ai-pin-input-group input { border: none; padding: 12px 40px; width: 100%; outline: none; font-size: 15px; }
+  .ai-pin-input-group .loc-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; }
+  .ai-pin-check-btn { background: #008a00; color: #fff; border: none; padding: 0 25px; font-weight: 800; cursor: pointer; }
+
+  /* REVIEWS */
+  .ai-reviews-section { background: #f9f9f9; border: 1px solid #e0eee0; border-radius: 12px; padding: 20px; margin: 25px 0; position: relative; overflow: hidden; }
+  .ai-review-slide { display: none; }
+  .ai-review-slide.active { display: block; animation: fadeIn 0.4s; }
+  .ai-verified-badge { background: #000; color: #fff; border-radius: 25px; padding: 3px 10px; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; margin-left: 5px; }
+
+  /* RASHI PRODUCT SLIDER */
+  .ai-rashi-section { margin: 20px 0; }
+  .ai-rashi-slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Hide scrollbar for cleaner look */
+    -ms-overflow-style: none; 
+  }
+  .ai-rashi-slider::-webkit-scrollbar { display: none; }
+
+  .ai-rashi-prod-card {
+    flex: 0 0 85%; /* Shows ~1.2 cards at a time (reveals the next) */
+    scroll-snap-align: start;
+    display: grid;
+    grid-template-columns: 60px 1fr 40px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    min-height: 80px;
+  }
+  @media (min-width: 750px) {
+    .ai-rashi-prod-card { flex: 0 0 65%; }
+  }
+
+  .ai-rashi-prod-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fafafa;
+  }
+  .ai-rashi-prod-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .ai-rashi-prod-info { min-width: 0; }
+  .ai-rashi-prod-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .ai-rashi-cart-btn {
+    width: 32px;
+    height: 32px;
+    background: #f3e05c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+  }
+  .ai-rashi-cart-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+  .ai-rashi-prod-img {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    background: #fafafa;
+  }
+  .ai-rashi-prod-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-rashi-prod-info { flex: 1; min-width: 0; }
+  .ai-rashi-prod-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .ai-rashi-prod-price { display: flex; align-items: center; gap: 6px; }
+  .ai-rashi-price-cur { font-size: 13px; font-weight: 800; color: #000; }
+  .ai-rashi-price-old { font-size: 11px; color: #999; text-decoration: line-through; }
+
+  /* WHY ASTRO PREMIUM CARDS */
+  .ai-why-premium { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 30px 0; }
+  .ai-why-p-card { border: 1.5px solid #e5d8a0; border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 12px; background: #fffdf5; }
+  .ai-why-p-icon { width: 45px; height: 45px; flex-shrink: 0; }
+  .ai-why-p-info h4 { margin: 0; font-size: 14px; font-weight: 800; line-height: 1.2; }
+
+  /* STICKY BAR */
+  .ai-sticky-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 15px;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.08); z-index: 1000; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .ai-sticky-bar.visible { transform: translateY(0); }
+  .ai-sticky-btns { display: flex; gap: 8px; flex: 1; }
+  .ai-btn-s { background: #000; color: #fff; flex: 1; border: none; padding: 14px; font-weight: 900; font-size: 13px; border-radius: 6px; cursor: pointer; }
+{%- endstyle -%}
+
+<section class="section-{{ section.id }}-padding page-width">
+  <div class="ai-product-layout">
+    
+    <!-- LEFT: GALLERY (sticky) -->
+    <div class="ai-gallery-col">
+      <div class="ai-custom-gallery">
+        <div class="ai-main-image-wrap">
+          <div class="ai-cashback-badge">
+            <span class="val">₹{{ section.settings.cashback_amount }}</span>
+            <span style="font-size:7px; font-weight:700;">CASHBACK</span>
+          </div>
+          <img id="FeaturedImage-{{ section.id }}" src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title | escape }}" width="800" height="800">
+          
+          <!-- ARROW BUTTONS -->
+           <div style="position:absolute; top:50%; left:10px; transform:translateY(-50%); background:rgba(255,255,255,0.7); width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="moveGal(-1)">❮</div>
+           <div style="position:absolute; top:50%; right:10px; transform:translateY(-50%); background:rgba(255,255,255,0.7); width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="moveGal(1)">❯</div>
+        </div>
+        <div class="ai-thumb-row" id="ThumbRow-{{ section.id }}">
+          {% for media in product.media %}
+            <div class="ai-thumb-item {% if forloop.first %}active{% endif %}" onclick="changeImg(this, '{{ media | image_url: width: 800 }}', {{ forloop.index0 }})">
+              <img src="{{ media | image_url: width: 150 }}" alt="thumbnail" width="65" height="65" loading="lazy">
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: INFO (scrolls) -->
+    <div class="ai-info-col">
+      <div class="product__info-container">
+        {%- assign product_form_id = 'product-form-' | append: section.id -%}
+        
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'title' -%}
+              <div class="product__title" {{ block.shopify_attributes }}>
+                <h1 style="margin:0; font-family: 'Inter', sans-serif !important; font-weight: 400; font-size: 32px; color: #111;">{{ product.title | escape }}</h1>
+                <div style="font-weight:700; color: #666; font-size:16px; margin: 10px 0 15px 0;">|| {{ block.settings.dates }} ||</div>
+                
+                <div class="ai-tag-row" style="margin-top: 20px;">
+                   <div class="ai-tag" style="background: {{ block.settings.tag_1_bg }}; font-size: 14px; padding: 10px 22px;">{{ block.settings.tag_1 }}</div>
+                   <div class="ai-tag" style="background: {{ block.settings.tag_2_bg }}; font-size: 14px; padding: 10px 22px;">{{ block.settings.tag_2 }}</div>
+                </div>
+              </div>
+
+            {%- when 'price' -%}
+              <div class="ai-price-row" {{ block.shopify_attributes }}>
+                <div class="ai-current-price-wrap">
+                   {% assign p_money = product.price | money %}
+                   {% assign cur_sym = p_money | slice: 0, 1 %}
+                   {% if cur_sym == '₹' or cur_sym == 'R' or p_money contains 'Rs.' %}
+                     <span class="ai-currency-symbol">Rs.</span>
+                     <span class="ai-current-price">{{ product.price | divided_by: 100.00 | round: 2 }}</span>
+                   {% else %}
+                     <span class="ai-current-price">{{ product.price | money }}</span>
+                   {% endif %}
+                </div>
+                
+                {% if product.compare_at_price > product.price %}
+                <div class="ai-old-price-wrap">
+                   <span class="ai-old-price">
+                   {% assign cp_money = product.compare_at_price | money %}
+                   {% if cur_sym == '₹' or cur_sym == 'R' or cp_money contains 'Rs.' %}
+                     Rs.{{ product.compare_at_price | divided_by: 100.00 | round: 2 }}
+                   {% else %}
+                     {{ product.compare_at_price | money }}
+                   {% endif %}
+                   </span>
+                </div>
+                
+                {% assign diff = product.compare_at_price | minus: product.price %}
+                {% assign percent = diff | times: 100.0 | divided_by: product.compare_at_price | round %}
+                <span class="ai-discount-text">{{ percent }}% {{ block.settings.extra_discount_text }}</span>
+                {% endif %}
+              </div>
+              <div class="ai-timer-box">
+                {{ block.settings.timer_prefix }} <span id="timer-display-{{ section.id }}">00 hr : 00 min : 00 sec</span>
+              </div>
+
+            {%- when 'special_offer' -%}
+              <div class="ai-offer-box" {{ block.shopify_attributes }}>
+                 <div class="ai-offer-header">
+                    <div class="ai-offer-title">
+                       <span style="background:#000; color:#fff; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px;">%</span>
+                       {{ block.settings.offer_title }}
+                    </div>
+                    <div class="ai-offer-save">{{ block.settings.save_badge }}</div>
+                 </div>
+                 <button class="ai-offer-toggle" onclick="toggleOffer(this)">{{ block.settings.button_text }} <small>▼</small></button>
+                 <div class="ai-offer-content" style="display:none; padding-top:10px; font-size:13px; color:#555;">
+                    {{ block.settings.offer_desc }}
+                 </div>
+              </div>
+
+            {%- when 'review_testimonial' -%}
+              <div class="ai-reviews-section" {{ block.shopify_attributes }}>
+                 <div class="ai-rev-container">
+                    {% if block.settings.name_1 != blank %}
+                    <div class="ai-review-slide active">
+                       <div style="display:flex; align-items:center; gap:10px;">
+                          <div style="width:40px; height:40px; border-radius:50%; background:#eee; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                             {% if block.settings.img_1 != blank %}
+                                {{ block.settings.img_1 | image_url: width: 80 | image_tag }}
+                             {% else %}
+                                👤
+                             {% endif %}
+                          </div>
+                          <div>
+                             <div style="font-weight:800; font-size:14px;">{{ block.settings.name_1 }} <span class="ai-verified-badge">✓ Verified</span></div>
+                             <div class="ai-stars" style="color:#fbbc05;">★★★★★</div>
+                          </div>
+                       </div>
+                       <p style="font-size:13px; line-height:1.4; color:#444; margin:10px 0;">{{ block.settings.text_1 }}</p>
+                    </div>
+                    {% endif %}
+                    {% if block.settings.name_2 != blank %}
+                    <div class="ai-review-slide {% if block.settings.name_1 == blank %}active{% endif %}">
+                       <div style="display:flex; align-items:center; gap:10px;">
+                          <div style="width:40px; height:40px; border-radius:50%; background:#eee; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                             {% if block.settings.img_2 != blank %}
+                                {{ block.settings.img_2 | image_url: width: 80 | image_tag }}
+                             {% else %}
+                                👤
+                             {% endif %}
+                          </div>
+                          <div>
+                             <div style="font-weight:800; font-size:14px;">{{ block.settings.name_2 }} <span class="ai-verified-badge">✓ Verified</span></div>
+                             <div class="ai-stars" style="color:#fbbc05;">★★★★★</div>
+                          </div>
+                       </div>
+                       <p style="font-size:13px; line-height:1.4; color:#444; margin:10px 0;">{{ block.settings.text_2 }}</p>
+                    </div>
+                    {% endif %}
+                 </div>
+                 <div class="ai-review-dots">
+                    {% if block.settings.name_1 != blank %}<div class="ai-dot active" onclick="setRev(0)"></div>{% endif %}
+                    {% if block.settings.name_2 != blank %}<div class="ai-dot" onclick="setRev(1)"></div>{% endif %}
+                 </div>
+              </div>
+
+            {%- when 'shop_by_rashi' -%}
+                {%- assign rashi_collection = block.settings.collection_picker -%}
+                <div class="ai-rashi-section" {{ block.shopify_attributes }}>
+                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                      <span style="font-weight:800; font-size:16px;">{{ block.settings.title }}</span>
+                      <a href="{{ block.settings.view_more_link }}" style="font-size:11px; font-weight:800; color:#000; text-decoration:none;">View more »</a>
+                   </div>
+
+                   {% if rashi_collection != blank and rashi_collection.products_count > 0 %}
+                   <div class="ai-rashi-slider">
+                      {% for prod in rashi_collection.products limit: 10 %}
+                         <a class="ai-rashi-prod-card" href="{{ prod.url }}">
+                            
+                            <!-- COL 1: Image -->
+                            <div class="ai-rashi-prod-img">
+                               <img src="{{ prod.featured_image | image_url: width: 100 }}" alt="{{ prod.title | escape }}" width="80" height="80" loading="lazy">
+                            </div>
+
+                            <!-- COL 2: Info -->
+                            <div class="ai-rashi-prod-info">
+                               <div class="ai-rashi-prod-title">{{ prod.title }}</div>
+                               <div class="ai-rashi-prod-price">
+                                  <span class="ai-rashi-price-cur" style="font-size:14px;">{{ prod.price | money }}</span>
+                                  {% if prod.compare_at_price > prod.price %}
+                                     <span class="ai-rashi-price-old" style="font-size:11px;">{{ prod.compare_at_price | money }}</span>
+                                  {% endif %}
+                               </div>
+                            </div>
+                            
+                            <!-- COL 3: Cart Icon -->
+                            <div class="ai-rashi-cart-btn">
+                               <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                            </div>
+
+                         </a>
+                      {% endfor %}
+                   </div>
+                   {% else %}
+                   <p style="font-size:13px; color:#999; text-align:center; padding:20px 0;">No products found. Please select a collection in the Theme Editor.</p>
+                   {% endif %}
+                </div>
+
+            {%- when 'buy_buttons' -%}
+               <div class="ai-units-left" style="margin:20px 0;">{{ block.settings.stock_text }}</div>
+               <div style="margin-bottom:20px;">
+                 {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id %}
+               </div>
+
+               <!-- PINCODE -->
+               <div class="ai-pincode-wrap">
+                  <div style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:13px;">
+                     <img src="https://cdn-icons-png.flaticon.com/512/3201/3201921.png" style="width:18px;">
+                     {{ block.settings.pincode_title }}
+                  </div>
+                  <div style="font-size:10px; color:#666; margin:4px 0 0 28px;">{{ block.settings.pincode_sub }}</div>
+                  <div class="ai-pin-input-group">
+                     
+                     <input type="text" placeholder="{{ block.settings.placeholder }}">
+                     <button class="ai-pin-check-btn">{{ block.settings.btn_text }}</button>
+                  </div>
+                  <div class="ai-trust-row" style="display:flex; justify-content:space-between; margin-top:15px; border-top:1px solid #eee; padding-top:15px;">
+                     <div class="ai-trust-item" style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:24px;">{{ block.settings.trust_1_icon }}</span>
+                        <div style="line-height:1.2;">
+                           <span style="display:block; font-weight:700; font-size:12px;">{{ block.settings.trust_1_title }}</span>
+                           <span style="display:block; font-size:9px; color:#666;">{{ block.settings.trust_1_sub }}</span>
+                        </div>
+                     </div>
+                     <div class="ai-trust-item" style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:24px;">{{ block.settings.trust_2_icon }}</span>
+                        <div style="line-height:1.2;">
+                           <span style="display:block; font-weight:700; font-size:12px;">{{ block.settings.trust_2_title }}</span>
+                           <span style="display:block; font-size:9px; color:#666;">{{ block.settings.trust_2_sub }}</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+            {%- when 'description' -%}
+              <div class="product__description rte" {{ block.shopify_attributes }} style="margin:25px 0;">
+                 {{ product.description }}
+                 
+                 {% if block.settings.show_love_heading %}
+                 <div style="text-align:center; margin-top:30px;">
+                    <h2 class="f-premium" style="font-size:{{ block.settings.font_size }}px;">{{ block.settings.love_heading }}</h2>
+                 </div>
+                 {% endif %}
+              </div>
+
+            {%- when 'benefit_cards' -%}
+                <div class="ai-why-premium" {{ block.shopify_attributes }}>
+                   <div class="ai-why-p-card">
+                      <div class="ai-why-p-icon">{{ block.settings.icon_1 }}</div>
+                      <div class="ai-why-p-info"><h4>{{ block.settings.text_1 }}</h4></div>
+                   </div>
+                   <div class="ai-why-p-card">
+                      <div class="ai-why-p-icon">{{ block.settings.icon_2 }}</div>
+                      <div class="ai-why-p-info"><h4>{{ block.settings.text_2 }}</h4></div>
+                   </div>
+                   <div class="ai-why-p-card">
+                      <div class="ai-why-p-icon">{{ block.settings.icon_3 }}</div>
+                      <div class="ai-why-p-info"><h4>{{ block.settings.text_3 }}</h4></div>
+                   </div>
+                   <div class="ai-why-p-card">
+                      <div class="ai-why-p-icon">{{ block.settings.icon_4 }}</div>
+                      <div class="ai-why-p-info"><h4>{{ block.settings.text_4 }}</h4></div>
+                   </div>
+                </div>
+
+            {%- when 'trust_grid' -%}
+                <div style="margin:10px 0 40px 0;" {{ block.shopify_attributes }}>
+                   <h3 class="f-premium" style="font-size:24px; text-align:center; margin-bottom:25px;">{{ block.settings.heading }}</h3>
+                   <div class="ai-why-premium">
+                      <div style="text-align:center;">
+                         {% if block.settings.img_1 != blank %}
+                            {{ block.settings.img_1 | image_url: width: 400 | image_tag: style: "width:100%; border-radius:10px; margin-bottom:10px; border:1px solid #eee;" }}
+                         {% else %}
+                            <img src="https://placehold.co/400x400/png?text=Proof+1" style="width:100%; border-radius:10px; margin-bottom:10px; border:1px solid #eee;">
+                         {% endif %}
+                         <div style="font-weight:800; font-size:12px;">{{ block.settings.txt_1 }}</div>
+                      </div>
+                      <div style="text-align:center;">
+                         {% if block.settings.img_2 != blank %}
+                            {{ block.settings.img_2 | image_url: width: 400 | image_tag: style: "width:100%; border-radius:10px; margin-bottom:10px; border:1px solid #eee;" }}
+                         {% else %}
+                            <img src="https://placehold.co/400x400/png?text=Proof+2" style="width:100%; border-radius:10px; margin-bottom:10px; border:1px solid #eee;">
+                         {% endif %}
+                         <div style="font-weight:800; font-size:12px;">{{ block.settings.txt_2 }}</div>
+                      </div>
+                   </div>
+                </div>
+
+            {%- when 'collapsible_tab' -%}
+                <div class="ai-acc-item" {{ block.shopify_attributes }}>
+                   <button class="ai-acc-header" onclick="toggleAcc(this)">
+                      {{ block.settings.heading }}
+                      <span>+</span>
+                   </button>
+                   <div class="ai-acc-content">
+                      {{ block.settings.content }}
+                   </div>
+                </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STICKY BOTTOM BAR -->
+<div class="ai-sticky-bar" id="StickyBar-{{ section.id }}">
+   <div class="ai-sticky-info">
+      <img src="{{ product.featured_image | image_url: width: 100 }}" alt="prod">
+      <div>
+         <div class="ai-sticky-title">{{ product.title }}</div>
+         <div class="ai-sticky-price">{{ product.price | money }} <s style="font-size:10px; color:#999;">{{ product.compare_at_price | money }}</s></div>
+      </div>
+   </div>
+   <div class="ai-sticky-btns">
+      <button class="ai-btn-atc" onclick="document.querySelector('.product-form__submit').click()">ADD TO CART</button>
+      <button class="ai-btn-buy" onclick="document.querySelector('.product-form__submit').click()">BUY NOW</button>
+   </div>
+</div>
+
+<script>
+  let curMediaIdx = 0;
+  const totalMedia = {{ product.media.size }};
+
+  function changeImg(el, fullUrl, idx) {
+    const thumbs = document.querySelectorAll('.ai-thumb-item');
+    thumbs.forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('FeaturedImage-{{ section.id }}').src = fullUrl;
+    curMediaIdx = idx;
+  }
+
+  function moveGal(dir) {
+    curMediaIdx = (curMediaIdx + dir + totalMedia) % totalMedia;
+    const thumbs = document.querySelectorAll('.ai-thumb-item');
+    thumbs[curMediaIdx].click();
+    thumbs[curMediaIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+
+  function toggleOffer(btn) {
+    const content = btn.nextElementSibling;
+    const isOpen = content.style.display === 'block';
+    content.style.display = isOpen ? 'none' : 'block';
+    btn.querySelector('small').innerText = isOpen ? '▼' : '▲';
+  }
+
+  function toggleAcc(btn) {
+     const content = btn.nextElementSibling;
+     const isOpen = content.style.display === 'block';
+     content.style.display = isOpen ? 'none' : 'block';
+     btn.querySelector('span').innerText = isOpen ? '+' : '−';
+  }
+
+  let curRev = 0;
+  function setRev(idx) {
+     const slides = document.querySelectorAll('.ai-review-slide');
+     const dots = document.querySelectorAll('.ai-dot');
+     if(!slides.length) return;
+     slides.forEach(s => s.classList.remove('active'));
+     dots.forEach(d => d.classList.remove('active'));
+     slides[idx].classList.add('active');
+     dots[idx].classList.add('active');
+     curRev = idx;
+  }
+
+  // Auto-slide reviews
+  setInterval(() => {
+     const slides = document.querySelectorAll('.ai-review-slide');
+     if(slides.length > 1) {
+        curRev = (curRev + 1) % slides.length;
+        setRev(curRev);
+     }
+  }, 4000);
+
+  // Sticky Bar Logic
+  window.addEventListener('scroll', () => {
+     const bar = document.getElementById('StickyBar-{{ section.id }}');
+     const atc = document.querySelector('.product-form__buttons');
+     if(!atc || !bar) return;
+     const atcTop = atc.getBoundingClientRect().top;
+     if(window.innerWidth < 768) {
+        if(atcTop < 0) bar.classList.add('visible');
+        else bar.classList.remove('visible');
+     }
+  });
+
+  // Timer Logic
+  (function() {
+    function updateTimer() {
+      const display = document.getElementById('timer-display-{{ section.id }}');
+      if(!display) return;
+      const now = new Date();
+      const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      const diff = tomorrow - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      display.innerText = `${hours.toString().padStart(2, '0')} hr : ${mins.toString().padStart(2, '0')} min : ${secs.toString().padStart(2, '0')} sec`;
+    }
+    setInterval(updateTimer, 1000); updateTimer();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product: Bracelet",
+  "settings": [
+    { "type": "text", "id": "cashback_amount", "label": "Cashback Amount", "default": "500" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 100, "step": 4, "default": 24, "unit": "px" },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 100, "step": 4, "default": 24, "unit": "px" }
+  ],
+  "blocks": [
+    { "type": "title", "name": "Title & Tags", "limit": 1,
+      "settings": [
+         { "type": "text", "id": "dates", "label": "Date Range", "default": "22 Dec – 19 Jan" },
+         { "type": "text", "id": "tag_1", "label": "Tag 1", "default": "Builds Inner Strength" },
+         { "type": "color", "id": "tag_1_bg", "label": "Tag 1 Background", "default": "#f3e05c" },
+         { "type": "text", "id": "tag_2", "label": "Tag 2", "default": "Releases Emotional Heaviness" },
+         { "type": "color", "id": "tag_2_bg", "label": "Tag 2 Background", "default": "#eaeaff" }
+      ]
+    },
+    { "type": "price", "name": "Price & Timer", "limit": 1,
+      "settings": [
+         { "type": "text", "id": "extra_discount_text", "label": "Extra Discount Text", "default": "+ Extra 20% OFF" },
+         { "type": "text", "id": "timer_prefix", "label": "Timer Prefix", "default": "Offer ends in" }
+      ]
+    },
+    { "type": "special_offer", "name": "Special Offer Box", "limit": 1,
+      "settings": [
+        { "type": "text", "id": "offer_title", "label": "Offer Title", "default": "Akshaya Tritiya Special Offer" },
+        { "type": "text", "id": "save_badge", "label": "Save Badge", "default": "Save ₹500" },
+        { "type": "text", "id": "button_text", "label": "Button Text", "default": "View offer" },
+        { "type": "textarea", "id": "offer_desc", "label": "Offer Description", "default": "Flat ₹500 Cashback on all prepaid orders." }
+      ]
+    },
+    { "type": "review_testimonial", "name": "Review Slider", "limit": 1,
+      "settings": [
+        { "type": "header", "content": "Review 1" },
+        { "type": "image_picker", "id": "img_1", "label": "User Image" },
+        { "type": "text", "id": "name_1", "label": "Name", "default": "Aman Gupta" },
+        { "type": "textarea", "id": "text_1", "label": "Review Text", "default": "Excellent quality!" },
+        { "type": "header", "content": "Review 2" },
+        { "type": "image_picker", "id": "img_2", "label": "User Image" },
+        { "type": "text", "id": "name_2", "label": "Name", "default": "Priya S." },
+        { "type": "textarea", "id": "text_2", "label": "Review Text", "default": "Beautiful bracelet." }
+      ]
+    },
+    { "type": "shop_by_rashi", "name": "Rashi Products", "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Section Heading", "default": "Shop by Rashi" },
+        { "type": "collection", "id": "collection_picker", "label": "Select Collection" },
+        { "type": "url", "id": "view_more_link", "label": "View More Link" }
+      ]
+    },
+    { "type": "benefit_cards", "name": "Premium Benefit Cards", "limit": 1,
+      "settings": [
+        { "type": "text", "id": "icon_1", "label": "Icon 1 (Emoji)", "default": "⚖️" },
+        { "type": "text", "id": "text_1", "label": "Text 1", "default": "Balances Zodiac Traits" },
+        { "type": "text", "id": "icon_2", "label": "Icon 2 (Emoji)", "default": "✨" },
+        { "type": "text", "id": "text_2", "label": "Text 2", "default": "Carefully Curated" },
+        { "type": "text", "id": "icon_3", "label": "Icon 3 (Emoji)", "default": "💪" },
+        { "type": "text", "id": "text_3", "label": "Text 3", "default": "Builds Confidence" },
+        { "type": "text", "id": "icon_4", "label": "Icon 4 (Emoji)", "default": "🧘" },
+        { "type": "text", "id": "text_4", "label": "Text 4", "default": "Inner Focus" }
+      ]
+    },
+    { "type": "trust_grid", "name": "Trust Proof Carousel", "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Section Heading", "default": "Why Trust Astrotalk?" },
+        { "type": "image_picker", "id": "img_1", "label": "Proof Image 1" },
+        { "type": "text", "id": "txt_1", "label": "Proof Text 1", "default": "100% Authentic" },
+        { "type": "image_picker", "id": "img_2", "label": "Proof Image 2" },
+        { "type": "text", "id": "txt_2", "label": "Proof Text 2", "default": "Lab Certified" }
+      ]
+    },
+    { "type": "buy_buttons", "name": "Buy Buttons & Pincode", "limit": 1,
+      "settings": [
+         { "type": "text", "id": "stock_text", "label": "Stock Warning", "default": "⏰ Last 21 Units Left ⏰" },
+         { "type": "text", "id": "pincode_title", "label": "Pincode Title", "default": "Get estimated delivery date" },
+         { "type": "text", "id": "pincode_sub", "label": "Pincode Subtext", "default": "Prepaid orders are priority." },
+         { "type": "text", "id": "placeholder", "label": "Input Placeholder", "default": "Enter pincode" },
+         { "type": "text", "id": "btn_text", "label": "Check Button Text", "default": "Check" },
+         { "type": "header", "content": "Trust Row" },
+         { "type": "text", "id": "trust_1_icon", "label": "Icon 1", "default": "📦" },
+         { "type": "text", "id": "trust_1_title", "label": "Title 1", "default": "₹500 Cashback" },
+         { "type": "text", "id": "trust_1_sub", "label": "Sub 1", "default": "Prepaid only" },
+         { "type": "text", "id": "trust_2_icon", "label": "Icon 2", "default": "🚚" },
+         { "type": "text", "id": "trust_2_title", "label": "Title 2", "default": "FREE Shipping" },
+         { "type": "text", "id": "trust_2_sub", "label": "Sub 2", "default": "On all orders" }
+      ]
+    },
+    { "type": "description", "name": "Description", "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_love_heading", "label": "Show 'Loved by' Heading", "default": true },
+        { "type": "text", "id": "love_heading", "label": "Heading Text", "default": "Loved by 15 lakh+ customers" },
+        { "type": "range", "id": "font_size", "label": "Font Size", "min": 20, "max": 40, "default": 28 }
+      ]
+    },
+    { "type": "collapsible_tab", "name": "Collapsible Tab",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Details" },
+        { "type": "richtext", "id": "content", "label": "Content" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Product: Bracelet" }]
+}
+{% endschema %}
+

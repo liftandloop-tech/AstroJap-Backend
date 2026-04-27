@@ -1,0 +1,453 @@
+{% doc %}
+  @prompt
+    Create a Shopify section named **astrologer-services**.
+    
+    Layout:
+    
+    Grid of expertise cards.
+    
+    Each card includes:
+    
+    * Icon/image
+    * Service name
+    
+    Example:
+    Vedic Astrology
+    Tarot Reading
+    Love Problem
+    Career Guidance
+    Vastu
+    
+    Settings (blocks):
+    
+    * Service icon
+    * Service title
+    
+    Design:
+    
+    * Rounded cards
+    * Soft shadow
+    * Hover effect
+    
+    Responsive:
+    Grid → 3 (desktop), 2 (tablet), 1 (mobile)
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astrologer-services-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-astrologer-services__container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-astrologer-services__heading-{{ ai_gen_id }} {
+    text-align: center;
+    margin: 0 0 {{ block.settings.heading_spacing }}px;
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-astrologer-services__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+  }
+
+  .ai-astrologer-services__card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity }});
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: {{ block.settings.card_content_gap }}px;
+  }
+
+  .ai-astrologer-services__card-{{ ai_gen_id }}:hover {
+    transform: translateY(-{{ block.settings.hover_lift }}px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, {{ block.settings.card_hover_shadow_opacity }});
+  }
+
+  .ai-astrologer-services__icon-wrapper-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ai-astrologer-services__icon-wrapper-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ai-astrologer-services__icon-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-astrologer-services__icon-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-astrologer-services__title-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.service_title_size }}px;
+    color: {{ block.settings.service_title_color }};
+    font-weight: 600;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-astrologer-services__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-astrologer-services__grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-astrologer-services__heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.8);
+    }
+  }
+{% endstyle %}
+
+<astrologer-services-{{ ai_gen_id }} class="ai-astrologer-services-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-astrologer-services__container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-astrologer-services__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-astrologer-services__grid-{{ ai_gen_id }}">
+      {% for i in (1..6) %}
+        {% liquid
+          assign icon_key = 'service_icon_' | append: i
+          assign title_key = 'service_title_' | append: i
+          assign service_icon = block.settings[icon_key]
+          assign service_title = block.settings[title_key]
+        %}
+
+        {% if service_title != blank %}
+          <div class="ai-astrologer-services__card-{{ ai_gen_id }}">
+            <div class="ai-astrologer-services__icon-wrapper-{{ ai_gen_id }}">
+              {% if service_icon %}
+                <img
+                  src="{{ service_icon | image_url: width: 200 }}"
+                  alt="{{ service_title | escape }}"
+                  loading="lazy"
+                  width="200"
+                  height="200"
+                >
+              {% else %}
+                <div class="ai-astrologer-services__icon-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+            <h3 class="ai-astrologer-services__title-{{ ai_gen_id }}">{{ service_title }}</h3>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</astrologer-services-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Astrologer services",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Services"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Heading spacing",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Grid"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Cards"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "card_content_gap",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Content gap",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "label": "Shadow opacity",
+      "default": 0.1
+    },
+    {
+      "type": "range",
+      "id": "card_hover_shadow_opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "label": "Hover shadow opacity",
+      "default": 0.2
+    },
+    {
+      "type": "range",
+      "id": "hover_lift",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Hover lift",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Service content"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "service_title_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "service_title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Service 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "service_icon_1",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "service_title_1",
+      "label": "Title",
+      "default": "Vedic Astrology"
+    },
+    {
+      "type": "header",
+      "content": "Service 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "service_icon_2",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "service_title_2",
+      "label": "Title",
+      "default": "Tarot Reading"
+    },
+    {
+      "type": "header",
+      "content": "Service 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "service_icon_3",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "service_title_3",
+      "label": "Title",
+      "default": "Love Problem"
+    },
+    {
+      "type": "header",
+      "content": "Service 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "service_icon_4",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "service_title_4",
+      "label": "Title",
+      "default": "Career Guidance"
+    },
+    {
+      "type": "header",
+      "content": "Service 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "service_icon_5",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "service_title_5",
+      "label": "Title",
+      "default": "Vastu"
+    },
+    {
+      "type": "header",
+      "content": "Service 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "service_icon_6",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "service_title_6",
+      "label": "Title"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrologer services"
+    }
+  ]
+}
+{% endschema %}

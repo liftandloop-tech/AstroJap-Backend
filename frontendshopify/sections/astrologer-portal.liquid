@@ -1,0 +1,745 @@
+{% comment %}
+  ASTROLOGER PORTAL: LOGIN, ONBOARDING & DASHBOARD
+  This template handles the entire astrologer lifecycle within Shopify.
+  Integration: Backend API at https://astro-jap-backend.vercel.app (or local dev)
+
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://widget-js.cometchat.io/v3/cometchatwidget.js"></script>
+
+
+{%- style -%}
+  :root {
+    --astro-purple: #4361ee;
+    --astro-dark: #2b2d42;
+    --astro-gold: #f3e05c;
+    --astro-green: #2ecc71;
+    --astro-bg: #f8f9fa;
+    --astro-card-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+
+  #AstroPortal {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--astro-bg);
+    min-height: 100vh;
+    padding: 40px 20px;
+    color: var(--astro-dark);
+  }
+
+  .portal-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* PREMIUM CARDS */
+  .astro-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: var(--astro-card-shadow);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+  }
+
+  /* STEPPER */
+  .stepper-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .stepper-row::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #eee;
+    z-index: 1;
+  }
+  .step-item {
+    position: relative;
+    z-index: 2;
+    background: var(--astro-bg);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    border: 2px solid #eee;
+    color: #999;
+    transition: 0.3s;
+  }
+  .step-item.active {
+    background: var(--astro-purple);
+    border-color: var(--astro-purple);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+  }
+  .step-item.completed {
+    background: var(--astro-green);
+    border-color: var(--astro-green);
+    color: #fff;
+  }
+
+  /* FORM ELEMENTS */
+  .form-group { margin-bottom: 25px; }
+  .form-label { display: block; font-weight: 700; margin-bottom: 10px; font-size: 14px; color: #555; }
+  .form-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 1.5px solid #eee;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s;
+    outline: none;
+    background: #fafafa;
+  }
+  .form-input:focus {
+    border-color: var(--astro-purple);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+  }
+
+  .btn-primary {
+    background: var(--astro-purple);
+    color: #fff;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+  }
+
+  /* UTILS */
+  .hidden { display: none !important; }
+  .text-center { text-align: center; }
+  
+  /* DASHBOARD WIDGETS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; }
+  .stat-card { background: #fff; padding: 25px; border-radius: 20px; text-align: center; border: 1px solid #eee; }
+  .stat-val { font-size: 28px; font-weight: 800; color: var(--astro-purple); display: block; }
+  .stat-label { font-size: 13px; color: #888; font-weight: 600; margin-top: 5px; }
+
+{%- endstyle -%}
+
+<div id="AstroPortal">
+  <div class="portal-container">
+    
+    <!-- HEADER -->
+    <div class="text-center" style="margin-bottom: 40px;">
+      <h1 id="PortalTitle" style="font-size: 36px; font-weight: 800; margin-bottom: 10px;">Astrologer Portal</h1>
+      <p id="PortalSubtitle" style="color: #666; font-weight: 500;">Your high-performance consultation hub</p>
+    </div>
+
+    <!-- LOGIN / SIGNUP VIEW -->
+    <div id="AuthView" class="astro-card" style="max-width: 500px; margin: 0 auto;">
+      <div style="display:flex; gap:20px; margin-bottom:30px;">
+        <button class="auth-tab active" onclick="switchAuth('login')">Login</button>
+        <button class="auth-tab" onclick="switchAuth('signup')">Sign Up</button>
+      </div>
+
+      <div id="LoginForm">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="LoginEmail" class="form-input" placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="LoginPass" class="form-input" placeholder="••••••••">
+        </div>
+        <button id="LoginBtn" class="btn-primary" onclick="handleLogin()">Sign In to Dashboard</button>
+
+      </div>
+
+      <div id="SignupForm" class="hidden">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="RegName" class="form-input" placeholder="Your Name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="RegEmail" class="form-input" placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mobile Number</label>
+          <input type="tel" id="RegPhone" class="form-input" placeholder="+91 99999 99999">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Create Password</label>
+          <input type="password" id="RegPass" class="form-input" placeholder="••••••••">
+        </div>
+        <button id="SignupBtn" class="btn-primary" onclick="handleSignup()">Create Account</button>
+
+      </div>
+    </div>
+
+    <!-- ONBOARDING VIEW -->
+    <div id="OnboardingView" class="hidden">
+      <div class="stepper-row">
+        <div class="step-item active" id="Step1">1</div>
+        <div class="step-item" id="Step2">2</div>
+        <div class="step-item" id="Step3">3</div>
+        <div class="step-item" id="Step4">4</div>
+        <div class="step-item" id="Step5">5</div>
+      </div>
+
+      <div id="OnboardingContent" class="astro-card">
+        <!-- Step 1: Profile Details -->
+        <div id="StepSection1">
+          <h2 style="margin-top:0;">Professional Profile</h2>
+          <div class="form-group">
+            <label class="form-label">Experience (Years)</label>
+            <input type="number" id="ExpYears" class="form-input" placeholder="e.g. 10">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Languages Known (Comma separated)</label>
+            <input type="text" id="Langs" class="form-input" placeholder="Hindi, English, etc.">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Short Bio</label>
+            <textarea id="Bio" class="form-input" rows="4" placeholder="Tell users about your journey..."></textarea>
+          </div>
+          <button class="btn-primary" onclick="saveStep(1)">Next Step: Expertise &raquo;</button>
+        </div>
+
+        <!-- Step 2: Expertise & Bio -->
+        <div id="StepSection2" class="hidden">
+          <h2 style="margin-top:0;">Expertise & Background</h2>
+          <div class="form-group">
+            <label class="form-label">Expertise (Select all that apply)</label>
+            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;">
+              <label><input type="checkbox" name="expertise" value="Love"> Love & Relationship</label>
+              <label><input type="checkbox" name="expertise" value="Career"> Career & Job</label>
+              <label><input type="checkbox" name="expertise" value="Finance"> Finance & Wealth</label>
+              <label><input type="checkbox" name="expertise" value="Marriage"> Marriage</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Specialization</label>
+            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;">
+              <label><input type="checkbox" name="spec" value="Vedic"> Vedic Astrology</label>
+              <label><input type="checkbox" name="spec" value="Tarot"> Tarot Reading</label>
+              <label><input type="checkbox" name="spec" value="Numerology"> Numerology</label>
+              <label><input type="checkbox" name="spec" value="Palmistry"> Palmistry</label>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="saveStep(2)">Next Step: Documents &raquo;</button>
+        </div>
+
+        <!-- Step 3: Document Verification -->
+        <div id="StepSection3" class="hidden">
+          <h2 style="margin-top:0;">Identity Verification</h2>
+          <p style="font-size:14px; color:#666; margin-bottom:25px;">Please upload your Aadhar Card or PAN Card for verification.</p>
+          <div class="form-group">
+            <label class="form-label">Govt ID Proof (Photo)</label>
+            <input type="file" id="GovtId" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Selfie with ID Card</label>
+            <input type="file" id="Selfie" class="form-input">
+          </div>
+          <button class="btn-primary" onclick="saveStep(3)">Next Step: Bank Details &raquo;</button>
+        </div>
+
+        <!-- Step 4: Bank Details -->
+        <div id="StepSection4" class="hidden">
+          <h2 style="margin-top:0;">Payout Settings</h2>
+          <div class="form-group">
+            <label class="form-label">Account Holder Name</label>
+            <input type="text" id="BankName" class="form-input" placeholder="As per Bank Records">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bank Account Number</label>
+            <input type="text" id="BankAcc" class="form-input" placeholder="000000000000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">IFSC Code</label>
+            <input type="text" id="BankIfsc" class="form-input" placeholder="SBIN0001234">
+          </div>
+          <div class="form-group">
+            <label class="form-label">UPI ID (Optional)</label>
+            <input type="text" id="UpiId" class="form-input" placeholder="username@upi">
+          </div>
+          <button class="btn-primary" onclick="saveStep(4)">Submit for Approval &raquo;</button>
+        </div>
+
+        <!-- Step 5: Success / Pending -->
+        <div id="StepSection5" class="hidden text-center py-12">
+      <div id="PendingIcon" class="mb-6">
+        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-10 h-10 text-blue-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+      </div>
+      <div id="ApprovedIcon" class="hidden mb-6">
+        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+      </div>
+      
+      <h2 id="SuccessTitle" class="text-3xl font-extrabold text-gray-900 mb-4">Application Submitted!</h2>
+      <p id="SuccessText" class="text-gray-600 max-w-md mx-auto mb-8">
+        Your professional profile is now under review by our team. This usually takes 24-48 hours. We will notify you via email once approved.
+      </p>
+      
+      <div class="flex flex-col gap-4 items-center">
+        <button id="CheckStatusBtn" onclick="location.reload()" class="btn-primary w-full max-w-xs py-3 px-6 rounded-xl font-bold transition-all transform hover:scale-105">
+          Refresh Status
+        </button>
+        <button id="GoDashboardBtn" onclick="window.location.href='/pages/astrologer-dashboard'" class="hidden bg-green-600 text-white w-full max-w-xs py-3 px-6 rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg">
+          Go to Dashboard
+        </button>
+        <button onclick="logout()" class="text-gray-500 hover:text-gray-700 font-medium">
+          Sign Out
+        </button>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="DashboardView" class="hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <h2 style="margin:0;">Welcome back, <span id="AstroName">Astrologer</span></h2>
+        <div id="StatusToggle" class="status-online">Online</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-val" id="StatEarnings">₹0</span>
+          <span class="stat-label">Today's Earnings</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val" id="StatChats">0</span>
+          <span class="stat-label">Active Chats</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val" id="StatRating">5.0</span>
+          <span class="stat-label">Overall Rating</span>
+        </div>
+      </div>
+
+      <!-- RECENT SESSIONS -->
+      <div class="astro-card" style="margin-top:40px;" id="ConsultationHistory">
+        <h3 style="margin-top:0;">Upcoming Consultations</h3>
+        <div id="SessionList">
+          <p style="color:#888;">No active sessions found.</p>
+        </div>
+      </div>
+
+      <!-- CometChat Widget Container (shown when astrologer joins a session) -->
+      <div id="ChatPanel" class="astro-card hidden" style="margin-top:40px; border: 2px solid var(--astro-purple); position: relative; padding: 0; overflow: hidden; border-radius: 20px; min-height: 600px;">
+         <div style="position:absolute; top:-15px; right:30px; background:var(--astro-purple); color:#fff; padding:5px 20px; border-radius:20px; font-weight:800; font-size:14px; z-index:10;">Consultation Chat</div>
+         <div id="cometchat-container" style="width:100%; height:600px;"></div>
+      </div>
+
+      <!-- NEW BOOKING ALERT MODAL (scheduled slot booked by a user) -->
+      <div id="IncomingModal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;">
+         <div class="astro-card text-center" style="max-width:400px; width:100%;">
+            <div style="font-size:64px; margin-bottom:20px;">📅</div>
+            <h2 style="margin-top:0;">New Booking!</h2>
+            <p id="IncomingMsg">A customer has booked a session with you.</p>
+            <div style="display:flex; gap:15px; margin-top:30px;">
+               <button class="btn-primary" onclick="document.getElementById('IncomingModal').classList.add('hidden')">Got It!</button>
+            </div>
+         </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'https://astro-jap-backend.vercel.app/api/astrologers';
+
+  let currentUser = JSON.parse(localStorage.getItem('astro_user')) || null;
+  let socket;
+  let currentSession = null;
+  let timerInterval = null;
+
+  window.onload = async () => {
+    if (currentUser && currentUser.id) {
+      const token = localStorage.getItem('astro_token');
+      
+      // If we have a token, they are fully approved and logged in
+      if (token) {
+        window.location.replace('/pages/astrologer-dashboard');
+        return;
+      }
+      
+      // If no token, they might be pending or in onboarding.
+      // ALWAYS fetch latest status from backend to avoid stale localStorage data.
+      try {
+        const res = await fetch(`${API_BASE}/profile-status/${currentUser.id}`);
+        if (res.ok) {
+          const data = await res.json(); // returns { approval_status, onboarding_step }
+          currentUser.approval_status = data.approval_status;
+          currentUser.onboarding_step  = data.onboarding_step;
+          localStorage.setItem('astro_user', JSON.stringify(currentUser));
+        }
+      } catch (e) { console.warn('Could not refresh status:', e); }
+
+      const status = currentUser.approval_status || 'onboarding';
+      const step   = currentUser.onboarding_step || 1;
+
+      showView('OnboardingView');
+      if (status === 'pending') {
+        document.querySelectorAll('[id^="StepSection"]').forEach(s => s.classList.add('hidden'));
+        document.getElementById('StepSection5').classList.remove('hidden');
+      } else if (status === 'approved') {
+        document.querySelectorAll('[id^="StepSection"]').forEach(s => s.classList.add('hidden'));
+        const step5 = document.getElementById('StepSection5');
+        step5.classList.remove('hidden');
+        
+        // Switch to "Approved" UI
+        document.getElementById('PendingIcon').classList.add('hidden');
+        document.getElementById('ApprovedIcon').classList.remove('hidden');
+        document.getElementById('SuccessTitle').textContent = 'Congratulations!';
+        document.getElementById('SuccessText').textContent  = 'Your application has been approved. You can now access your professional dashboard.';
+        document.getElementById('CheckStatusBtn').classList.add('hidden');
+        document.getElementById('GoDashboardBtn').classList.remove('hidden');
+      } else {
+        jumpToStep(step);
+      }
+    }
+  };
+
+  function initDashboard() {
+    // Kept for compatibility — portal no longer shows inline dashboard.
+    // Redirect to the real dashboard page instead.
+    window.location.replace('/pages/astrologer-dashboard');
+  }
+
+  function initSocket() {
+    socket = io('https://astro-jap-backend.vercel.app');
+
+
+    socket.on('connect', () => {
+      console.log('Connected to Real-time Hub');
+      socket.emit('astrologer-online', currentUser.id);
+    });
+
+    // Notified when a customer books a scheduled slot
+    socket.on('new-booking-alert', (data) => {
+      const when = data.scheduled_at
+        ? new Date(data.scheduled_at).toLocaleString('en-IN', { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', hour12:true })
+        : 'soon';
+      document.getElementById('IncomingMsg').innerText =
+        `${data.customer_name || 'A customer'} booked a ${data.duration}-min session for ${when}.`;
+      document.getElementById('IncomingModal').classList.remove('hidden');
+    });
+
+    // Session-ending warning from server
+    socket.on('session-ending-soon', () => {
+      showAlert('⏰ Session ending in 5 minutes!', 'warning');
+    });
+  }
+
+  // ── CometChat: Called by the dashboard JOIN CHAT button ──────────────────────
+  // sessionId — the DB session ID
+  // userCometchatUid — the user's CometChat UID (shopify_<customer_id>)
+  window.joinSessionChat = async function (sessionId, userCometchatUid) {
+    const ASTRO_ID = localStorage.getItem('astro_id');
+    if (!ASTRO_ID) { showAlert('Please log in again.', 'error'); return; }
+
+    try {
+      // 1. Get a secure auth token for the astrologer
+      // Pass 'uid' directly so getChatToken won't prepend 'shopify_' again
+      const API = window.AstroAPIBase || 'https://astro-jap-backend.vercel.app/api';
+      const astroUID = `astro_${ASTRO_ID}`;
+      const tokenRes = await fetch(`${API}/sessions/get-chat-token`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ uid: astroUID, customer_name: localStorage.getItem('astro_name') || 'Astrologer' })
+      });
+      if (!tokenRes.ok) throw new Error('Could not get chat token');
+      const { authToken } = await tokenRes.json();
+
+      // 2. Init & login to CometChat using the secure token
+      const settings = new CometChat.AppSettingsBuilder()
+        .subscribePresenceForAllUsers()
+        .setRegion('{{ shop.metafields.astro.cometchat_region | default: "in" }}')
+        .build();
+      await CometChat.init('{{ shop.metafields.astro.cometchat_app_id | default: "167764494523f5d44" }}', settings);
+
+      const existing = await CometChat.getLoggedinUser().catch(() => null);
+      if (!existing) await CometChat.login(authToken);
+
+      // 3. Launch CometChat Widget in the chat container
+      document.getElementById('ConsultationHistory').classList.add('hidden');
+      document.getElementById('ChatPanel').classList.remove('hidden');
+
+      CometChatWidget.init({
+        appID:     '{{ shop.metafields.astro.cometchat_app_id | default: "167764494523f5d44" }}',
+        appRegion: '{{ shop.metafields.astro.cometchat_region | default: "in" }}'
+      }).then(() => {
+        CometChatWidget.login({ uid: `astro_${ASTRO_ID}`, authToken });
+        CometChatWidget.launch({
+          widgetID:    window.AstroCometChatWidgetID || '',
+          target:      '#cometchat-container',
+          roundedCorners: 'true',
+          height:      '600px',
+          width:       '100%',
+          defaultID:   userCometchatUid,  // opens directly to the customer
+          defaultType: 'user'
+        });
+      }).catch(err => { showAlert('Chat could not start: ' + err.message, 'error'); console.error(err); });
+
+    } catch (err) {
+      showAlert('Failed to join chat: ' + err.message, 'error');
+      console.error(err);
+    }
+  };
+
+  function toggleStatus() {
+    const el = document.getElementById('StatusToggle');
+    if(el.innerText === 'Online') {
+      socket.emit('astrologer-offline', currentUser.id);
+      el.innerText = 'Offline';
+      el.style.color = '#999';
+    } else {
+      socket.emit('astrologer-online', currentUser.id);
+      el.innerText = 'Online';
+      el.style.color = 'var(--astro-green)';
+    }
+  }
+
+  // Dead functions removed — chat is now handled via CometChat Widget
+  // The portal no longer has a custom Socket.io chatbox.
+  function endSession() {
+    // Close the CometChat panel and return to the consultation list
+    document.getElementById('ChatPanel').classList.add('hidden');
+    document.getElementById('ConsultationHistory').classList.remove('hidden');
+  }
+
+
+  function switchAuth(type) {
+    const loginForm = document.getElementById('LoginForm');
+    const signupForm = document.getElementById('SignupForm');
+    const tabs = document.querySelectorAll('.auth-tab');
+    
+    if (type === 'login') {
+      loginForm.classList.remove('hidden');
+      signupForm.classList.add('hidden');
+      tabs[0].classList.add('active');
+      tabs[1].classList.remove('active');
+    } else {
+      loginForm.classList.add('hidden');
+      signupForm.classList.remove('hidden');
+      tabs[0].classList.remove('active');
+      tabs[1].classList.add('active');
+    }
+  }
+
+  async function handleLogin() {
+    const email    = document.getElementById('LoginEmail').value;
+    const password = document.getElementById('LoginPass').value;
+    const btn      = document.getElementById('LoginBtn');
+
+    if (!email || !password) { showAlert('Please enter your email and password.', 'error'); return; }
+    btn.disabled   = true;
+    btn.textContent = 'Signing in…';
+
+    try {
+      const res  = await fetch(`${API_BASE}/login`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        // ── Approved ── store credentials the dashboard reads from localStorage
+        localStorage.setItem('astro_token', data.token);
+        localStorage.setItem('astro_id',    data.user.id);
+        localStorage.setItem('astro_name',  data.user.name);
+        localStorage.setItem('astro_user',  JSON.stringify(data.user));
+        // Redirect to the full dashboard (main-astrologer-dashboard.liquid)
+        window.location.href = '/pages/astrologer-dashboard';
+
+      } else if (res.status === 403) {
+        // ── Not approved yet ──
+        const status = data.status || 'pending';
+        const step   = data.onboarding_step || 1;
+
+        // Store basic info
+        localStorage.setItem('astro_id',   data.userId);
+        localStorage.setItem('astro_user', JSON.stringify({ id: data.userId, approval_status: status, onboarding_step: step }));
+        currentUser = { id: data.userId, approval_status: status, onboarding_step: step };
+
+        if (status === 'pending') {
+          showView('OnboardingView');
+          // Hide all steps and show Step 5 (Success/Pending)
+          document.querySelectorAll('[id^="StepSection"]').forEach(s => s.classList.add('hidden'));
+          document.getElementById('StepSection5').classList.remove('hidden');
+        } else if (status === 'rejected') {
+          showAlert(`Your application was rejected. Reason: ${data.rejection_reason || 'Please contact support.'}`, 'error');
+        } else {
+          // In onboarding (status 'onboarding' or similar)
+          showView('OnboardingView');
+          jumpToStep(step);
+        }
+
+      } else {
+        showAlert(data.error || 'Login failed. Please check your credentials.', 'error');
+      }
+    } catch (e) {
+      showAlert('Network error. Please try again.', 'error');
+      console.error(e);
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = 'Sign In';
+    }
+  }
+
+  async function handleSignup() {
+    const name     = document.getElementById('RegName').value;
+    const email    = document.getElementById('RegEmail').value;
+    const mobile   = document.getElementById('RegPhone').value;
+    const password = document.getElementById('RegPass').value;
+    const btn      = document.getElementById('SignupBtn');
+
+    if (!name || !email || !mobile || !password) { showAlert('Please fill all fields.', 'error'); return; }
+    btn.disabled   = true;
+    btn.textContent = 'Creating account…';
+
+    try {
+      const res  = await fetch(`${API_BASE}/signup`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ name, email, mobile, password })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        console.log('[Signup] Success! User ID:', data.user.id);
+        // Save the ID so onboarding steps can be saved against it
+        localStorage.setItem('astro_id',   data.user.id);
+        localStorage.setItem('astro_user', JSON.stringify(data.user));
+        currentUser = data.user;
+        showView('OnboardingView');
+      } else {
+        showAlert(data.error || 'Signup failed.', 'error');
+      }
+    } catch (e) {
+      showAlert('Network error. Please try again.', 'error');
+      console.error(e);
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = 'Create Account';
+    }
+  }
+
+  // Toast notification helper (replaces raw alert())
+  function showAlert(msg, type = 'success') {
+    const existing = document.getElementById('portal-toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'portal-toast';
+    toast.style.cssText = `position:fixed;top:24px;right:24px;background:${type==='error'?'#e74c3c':'#22c55e'};color:#fff;padding:14px 22px;border-radius:12px;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);max-width:380px;`;
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+  }
+
+  async function saveStep(step) {
+    if (!currentUser || !currentUser.id) {
+      showAlert('Session lost. Please refresh the page and sign in again.', 'error');
+      return;
+    }
+    const payload = { id: currentUser.id };
+    
+    if(step === 1) {
+      payload.experience_years = document.getElementById('ExpYears').value;
+      payload.languages = document.getElementById('Langs').value.split(',').map(l => l.trim());
+      payload.bio = document.getElementById('Bio').value;
+    } else if(step === 2) {
+      const expertise = Array.from(document.querySelectorAll('input[name="expertise"]:checked')).map(el => el.value);
+      const spec = Array.from(document.querySelectorAll('input[name="spec"]:checked')).map(el => el.value);
+      payload.expertise = expertise;
+      payload.specialization = spec;
+    } else if(step === 3) {
+      // Documents are handled via direct upload or admin review
+      // We just send a ping to the backend to mark this step as seen
+      payload.onboarding_step = 3;
+    } else if(step === 4) {
+      payload.bank_account_name = document.getElementById('BankName').value;
+      payload.bank_account_number = document.getElementById('BankAcc').value;
+      payload.ifsc_code = document.getElementById('BankIfsc').value;
+      payload.upi_id = document.getElementById('UpiId').value;
+      payload.approval_status = 'pending';
+    }
+
+    try {
+      console.log(`[Step ${step}] Saving payload:`, payload);
+      const res = await fetch(`${API_BASE}/update-onboarding`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      if(res.ok) {
+        // Transition UI
+        document.getElementById('StepSection' + step).classList.add('hidden');
+        if(step < 5) {
+          document.getElementById('StepSection' + (step + 1)).classList.remove('hidden');
+        }
+        
+        document.querySelectorAll('.step-item').forEach((item, idx) => {
+          if(idx + 1 === step) item.classList.add('completed');
+          if(idx + 1 === step + 1) item.classList.add('active');
+        });
+      } else {
+        const data = await res.json();
+        alert(data.error);
+      }
+    } catch(e) { console.error(e); }
+  }
+
+  function showView(viewId) {
+    document.getElementById('AuthView').classList.add('hidden');
+    document.getElementById('OnboardingView').classList.add('hidden');
+    document.getElementById('DashboardView').classList.add('hidden');
+    document.getElementById(viewId).classList.remove('hidden');
+    // Note: DashboardView is intentionally left as a stub.
+    // Real dashboard is at /pages/astrologer-dashboard.
+  }
+
+  function jumpToStep(step) {
+    document.querySelectorAll('[id^="StepSection"]').forEach(s => s.classList.add('hidden'));
+    const target = document.getElementById('StepSection' + step);
+    if (target) target.classList.remove('hidden');
+
+    document.querySelectorAll('.step-item').forEach((item, idx) => {
+      item.classList.remove('active', 'completed');
+      if (idx + 1 < step) item.classList.add('completed');
+      if (idx + 1 === step) item.classList.add('active');
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Astrologer Portal",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Astrologer Portal"
+    }
+  ]
+}
+{% endschema %}

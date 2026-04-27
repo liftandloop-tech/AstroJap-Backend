@@ -1,0 +1,167 @@
+{% assign ai_gen_id = block.id | replace: '-', '' | downcase %}
+
+{% style %}
+  /* ── VIEWPORT WRAPPER ── */
+  .hero-slider-wrap-{{ ai_gen_id }} {
+    position: relative; 
+    width: 100%; 
+    height: {{ block.settings.height_desktop | default: 80 }}vh;
+    min-height: 500px; 
+    background: #000; 
+    overflow: hidden;
+  }
+
+  .slide-stage-{{ ai_gen_id }} {
+    position: absolute; inset: 0; 
+    width: 100%; height: 100%;
+  }
+
+  /* ── THE INDIVIDUAL SLIDE ── */
+  .ai-slide-{{ ai_gen_id }} {
+    position: absolute; inset: 0; 
+    opacity: 0; visibility: hidden;
+    transition: opacity 1.2s ease-in-out; /* Smooth transition between banners */
+    z-index: 1; 
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .ai-slide-{{ ai_gen_id }}.active { 
+    opacity: 1; 
+    visibility: visible; 
+    z-index: 2; 
+  }
+
+  /* ── THE ZOOM-OUT IMAGE ENGINE ── */
+  .ai-zoom-img-{{ ai_gen_id }} {
+    position: absolute; inset: 0; 
+    width: 100%; height: 100%;
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Static hidden state prevents flickering */
+    transform: scale(1.3); 
+    will-change: transform;
+  }
+
+  /* RUN THE ZOOM OUT ANIMATION ONLY WHEN ACTIVE */
+  .ai-slide-{{ ai_gen_id }}.active .ai-zoom-img-{{ ai_gen_id }} {
+    animation: zoomOutEngine-{{ ai_gen_id }} {{ block.settings.speed | default: 8 }}s linear forwards;
+  }
+
+  @keyframes zoomOutEngine-{{ ai_gen_id }} {
+    0% { transform: scale(1.35); } /* Start slightly zoomed in more */
+    100% { transform: scale(1); }    /* End at perfect scale */
+  }
+
+  /* ── TEXT CONTENT FADE UP ── */
+  .ai-content-{{ ai_gen_id }} {
+    position: relative; 
+    z-index: 10; 
+    max-width: 800px; padding: 40px; 
+    text-align: center; color: #fff; 
+    opacity: 0; 
+    transform: translateY(40px); 
+    transition: all 1s cubic-bezier(0.23, 1, 0.32, 1) 0.8s; /* Delayed fade up */
+  }
+
+  .ai-slide-{{ ai_gen_id }}.active .ai-content-{{ ai_gen_id }} { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+
+  .ai-ttl-{{ ai_gen_id }} { 
+    font-family: 'Cinzel', serif; 
+    font-size: clamp(34px, 5vw, 68px); 
+    margin: 0 0 15px; text-transform: uppercase; 
+    text-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    letter-spacing: 2px;
+  }
+
+  .ai-btn-{{ ai_gen_id }} {
+    display: inline-block; 
+    padding: 18px 45px; 
+    background: {{ block.settings.btn_color | default: '#c9a84c' }}; 
+    color: #000; 
+    text-decoration: none; 
+    text-transform: uppercase; 
+    font-weight: 700;
+    transition: transform 0.3s ease;
+  }
+  .ai-btn-{{ ai_gen_id }}:hover { transform: scale(1.05); }
+
+  @media (max-width: 768px) {
+    .hero-slider-wrap-{{ ai_gen_id }} { 
+      height: {{ block.settings.height_mobile | default: 60 }}vh !important; 
+    }
+    .ai-content-{{ ai_gen_id }} { width: 90%; padding: 20px; }
+  }
+{% endstyle %}
+
+<div class="hero-slider-wrap-{{ ai_gen_id }}">
+  <div class="slide-stage-{{ ai_gen_id }}" id="slider-{{ ai_gen_id }}">
+    
+    {% for i in (1..3) %}
+      {% capture img_key %}image_{{ i }}{% endcapture %}
+      {% capture ttl_key %}title_{{ i }}{% endcapture %}
+      {% capture url_key %}url_{{ i }}{% endcapture %}
+
+      {% assign img = block.settings[img_key] | image_url: width: 3000 %}
+      {% if block.settings[img_key] == blank %}
+        {% assign img = 'https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-lifestyle-1.png' %}
+      {% endif %}
+
+      <div class="ai-slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" data-idx="{{ forloop.index0 }}">
+        <div class="ai-zoom-img-{{ ai_gen_id }}" style="background-image: url('{{ img }}');"></div>
+        <div class="ai-content-{{ ai_gen_id }}">
+           {% if block.settings[ttl_key] != blank %}<h2 class="ai-ttl-{{ ai_gen_id }}">{{ block.settings[ttl_key] }}</h2>{% endif %}
+           <a href="{{ block.settings[url_key] | default: '#' }}" class="ai-btn-{{ ai_gen_id }}">View More</a>
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+</div>
+
+<script>
+  (function() {
+    const parent = document.querySelector('#slider-{{ ai_gen_id }}');
+    if (!parent) return;
+    const slides = parent.querySelectorAll('.ai-slide-{{ ai_gen_id }}');
+    let cur = 0;
+    
+    function startSlider() {
+      setInterval(() => {
+        slides[cur].classList.remove('active');
+        cur = (cur + 1) % slides.length;
+        slides[cur].classList.add('active');
+      }, {{ block.settings.speed | default: 8 }} * 1000);
+    }
+
+    startSlider();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Triple Zoom Slider",
+  "settings": [
+    { "type": "range", "id": "height_desktop", "min": 40, "max": 95, "step": 5, "unit": "vh", "label": "Full Height (Desktop)", "default": 85 },
+    { "type": "range", "id": "height_mobile", "min": 30, "max": 95, "step": 5, "unit": "vh", "label": "Full Height (Mobile)", "default": 65 },
+    { "type": "range", "id": "speed", "min": 3, "max": 15, "step": 1, "unit": "sec", "label": "Slide Duration (Zoom Speed)", "default": 8 },
+    { "type": "color", "id": "btn_color", "label": "Button Color", "default": "#c9a84c" },
+    { "type": "header", "content": "Banner 1" },
+    { "type": "image_picker", "id": "image_1", "label": "Image 1" },
+    { "type": "text", "id": "title_1", "label": "Headline 1", "default": "Elevated Perspective" },
+    { "type": "url", "id": "url_1", "label": "Link 1" },
+    { "type": "header", "content": "Banner 2" },
+    { "type": "image_picker", "id": "image_2", "label": "Image 2" },
+    { "type": "text", "id": "title_2", "label": "Headline 2", "default": "Cinematic Focus" },
+    { "type": "url", "id": "url_2", "label": "Link 2" },
+    { "type": "header", "content": "Banner 3" },
+    { "type": "image_picker", "id": "image_3", "label": "Image 3" },
+    { "type": "text", "id": "title_3", "label": "Headline 3", "default": "Infinite Motion" },
+    { "type": "url", "id": "url_3", "label": "Link 3" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-switcher",
+      "settings": {}
+    },
+    "reviews": {
+      "type": "global-reviews",
+      "settings": {
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "main",
+    "reviews"
+  ]
+}

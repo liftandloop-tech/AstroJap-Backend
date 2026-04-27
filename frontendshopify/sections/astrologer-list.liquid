@@ -1,0 +1,250 @@
+{% comment %}
+  Astrologer Listing Section - Collection Driven
+{% endcomment %}
+
+{% assign astrologer_collection = collections[section.settings.collection] %}
+
+<div class="astro-list-container">
+    <div class="section-header">
+        <h2>{{ section.settings.title | default: "Consult with our Expert Astrologers" }}</h2>
+        <p>{{ section.settings.subtitle | default: "Premium guidance for your life's journey" }}</p>
+    </div>
+
+    <div class="astro-grid" id="astrologer-grid">
+        {% if astrologer_collection.products.size > 0 %}
+            {% for product in astrologer_collection.products %}
+                {% assign astro_id = product.metafields.custom.astrologer_id | default: product.id %}
+                <div class="astro-card" data-astro-id="{{ astro_id }}" data-handle="{{ product.handle }}">
+                    <div class="astro-image">
+                        <img src="{{ product.featured_image | img_url: '400x400', crop: 'center' }}" alt="{{ product.title }}">
+                        <span class="status-badge status-placeholder">Checking...</span>
+                    </div>
+                    <div class="astro-info">
+                        <h3>{{ product.title }}</h3>
+                        <div class="pricing">
+                            {% comment %} Assuming 2 variants or metafields for pricing {% endcomment %}
+                            <span>20 min: {{ product.variants[0].price | money }}</span>
+                            <span>60 min: {{ product.variants[1].price | money }}</span>
+                        </div>
+                        <button class="chat-btn" 
+                                onclick='openAstroModal({
+                                    id: "{{ astro_id }}",
+                                    name: "{{ product.title }}",
+                                    price_20_min: "{{ product.variants[0].price | money_without_currency }}",
+                                    price_60_min: "{{ product.variants[1].price | money_without_currency }}",
+                                    variant_20_id: "{{ product.variants[0].id }}",
+                                    variant_60_id: "{{ product.variants[1].id }}"
+                                })'>
+                            Chat Now
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-products">No astrologers found in the selected collection.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if customer %}
+<div id="wallet-balance-card" class="wallet-badge" style="display: none;">
+    <span class="wallet-icon">💰</span> Wallet: <span id="current-balance">₹0</span>
+</div>
+{% endif %}
+
+<!-- Duration Selection Modal -->
+<div id="session-modal" class="astro-modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Select Session Duration</h3>
+        <p>Expert guidance for <span id="modal-astro-name"></span></p>
+        <div class="duration-options">
+            <button class="duration-btn" id="btn-20" onclick="handleChatSelect(20)">
+                <span class="time">20 Minutes</span>
+                <span class="price" id="modal-price-20"></span>
+            </button>
+            <button class="duration-btn" id="btn-60" onclick="handleChatSelect(60)">
+                <span class="time">60 Minutes</span>
+                <span class="price" id="modal-price-60"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ 'api.js' | asset_url }}" defer></script>
+
+<script>
+let currentAstro = null;
+const customerId = "{{ customer.id }}";
+const customerName = "{{ customer.first_name | escape }} {{ customer.last_name | escape }}";
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Fetch Balance if logged in
+    if (customerId) {
+        try {
+            const { balance } = await AstroAPI.getWalletBalance(customerId);
+            document.getElementById('current-balance').innerText = `₹${balance}`;
+            document.getElementById('wallet-balance-card').style.display = 'flex';
+        } catch (e) { console.error("Balance check failed", e); }
+    }
+
+    // 2. Hydrate Statuses from Backend
+    try {
+        const astrologers = await AstroAPI.getAstrologers();
+        const cards = document.querySelectorAll('.astro-card');
+        
+        cards.forEach(card => {
+            const astroId = card.getAttribute('data-astro-id');
+            const statusBadge = card.querySelector('.status-badge');
+            
+            // Match Shopify product to Supabase record (by ID or Name/Handle)
+            const backendAstro = astrologers.find(a => a.id === astroId || a.name === card.querySelector('h3').innerText);
+            
+            if (backendAstro) {
+                statusBadge.innerText = backendAstro.status;
+                statusBadge.className = `status-badge ${backendAstro.status}`;
+                // Update the button data if needed
+                const btn = card.querySelector('.chat-btn');
+                btn.setAttribute('data-backend-id', backendAstro.id);
+            } else {
+                statusBadge.innerText = 'offline';
+                statusBadge.className = 'status-badge offline';
+            }
+        });
+    } catch (e) {
+        console.error("Failed to hydrate statuses", e);
+    }
+
+    // Modal close logic
+    document.querySelector('.close-modal').onclick = () => {
+        document.getElementById('session-modal').style.display = 'none';
+    };
+});
+
+function openAstroModal(astro) {
+    currentAstro = astro;
+    document.getElementById('modal-astro-name').innerText = astro.name;
+    document.getElementById('modal-price-20').innerText = `₹${astro.price_20_min}`;
+    document.getElementById('modal-price-60').innerText = `₹${astro.price_60_min}`;
+    document.getElementById('session-modal').style.display = 'flex';
+}
+
+async function handleChatSelect(duration) {
+    if (!currentAstro) return;
+    
+    if (!customerId) {
+        alert("Please login to start your session.");
+        window.location.href = '/account/login?checkout_url=' + window.location.pathname;
+        return;
+    }
+
+    const price = duration === 60 ? currentAstro.price_60_min : currentAstro.price_20_min;
+    const btn = document.getElementById(`btn-${duration}`);
+    btn.disabled = true;
+    const originalText = btn.innerHTML;
+    btn.innerText = "Processing...";
+
+    try {
+        const response = await AstroAPI.createManualSession(customerId, customerName, currentAstro.id, duration);
+        
+        if (response.ok) {
+            const result = await response.json();
+            window.location.href = `/pages/chat?session_id=${result.session_id}`;
+            return;
+        }
+
+        const err = await response.json();
+        if (response.status === 402) {
+            alert("Insufficient balance. Please recharge your wallet.");
+        } else {
+            alert(`Error: ${err.error || 'Failed to start session'}`);
+        }
+    } catch (error) {
+        console.error('Flow failed:', error);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+</script>
+
+<style>
+/* ... (Styles remain largely same, adding a few for Liquid grid) ... */
+.no-products { text-align: center; grid-column: 1 / -1; padding: 40px; color: #999; }
+.status-badge.status-placeholder { background: #eee; color: #666; }
+
+.wallet-badge {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #1a1a2e;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: bold;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ff9800;
+}
+.wallet-icon { font-size: 1.2rem; }
+#current-balance { color: #ff9800; font-size: 1.1rem; }
+
+.astro-list-container { padding: 50px 20px; max-width: 1200px; margin: 0 auto; font-family: 'Outfit', sans-serif; }
+.section-header { text-align: center; margin-bottom: 40px; }
+.section-header h2 { font-size: 2.5rem; color: #333; margin-bottom: 10px; }
+.astro-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+.astro-card { background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; transition: transform 0.3s ease; border: 1px solid #eee; }
+.astro-card:hover { transform: translateY(-10px); }
+.astro-image { position: relative; height: 200px; overflow: hidden; }
+.astro-image img { width: 100%; height: 100%; object-fit: cover; }
+.status-badge { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+.status-badge.online { background: #4caf50; color: #fff; }
+.status-badge.offline { background: #9e9e9e; color: #fff; }
+.astro-info { padding: 20px; text-align: center; }
+.astro-info h3 { margin: 0 0 10px; font-size: 1.4rem; color: #222; }
+.pricing { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; color: #666; font-size: 0.9rem; }
+.chat-btn { background: #ff9800; color: #fff; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.3s; }
+.chat-btn:hover { background: #e68a00; }
+
+.astro-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+.modal-content { background: #fff; padding: 30px; border-radius: 24px; max-width: 450px; width: 90%; text-align: center; position: relative; }
+.close-modal { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; color: #999; }
+.duration-options { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
+.duration-btn { padding: 15px; border: 2px solid #ff9800; background: #fff; border-radius: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+.duration-btn:hover { background: #fff8f0; transform: scale(1.02); }
+.duration-btn .time { font-weight: bold; color: #333; font-size: 1.1rem; }
+.duration-btn .price { color: #ff9800; font-weight: 800; font-size: 1.1rem; }
+</style>
+
+{% schema %}
+{
+  "name": "Astrologer List (Shopify)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Consult with our Expert Astrologers"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Premium guidance for your life's journey"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Astrologer Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrologer List (Shopify)"
+    }
+  ]
+}
+{% endschema %}

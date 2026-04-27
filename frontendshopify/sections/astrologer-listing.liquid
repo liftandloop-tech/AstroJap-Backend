@@ -1,0 +1,162 @@
+{% comment %}
+  Final Premium Astrologer List - Powered by Shopify Collections
+{% endcomment %}
+
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astrologer-list-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 60px 0;
+    font-family: 'Outfit', sans-serif;
+    background: #fdfdfd;
+  }
+  .ai-astrologer-list__container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .ai-astrologer-list__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
+  .ai-astro-card-{{ ai_gen_id }} {
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    border: 1px solid #f0f0f0;
+    transition: transform 0.3s ease;
+  }
+  .ai-astro-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-5px);
+    border-color: #334fb4;
+  }
+  .ai-astro-image-{{ ai_gen_id }} {
+    position: relative;
+    background: #f8f8f8;
+  }
+  .ai-astro-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .status-badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #4caf50;
+    color: white;
+    font-size: 8px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 5px;
+    text-transform: uppercase;
+  }
+  .ai-astro-content-{{ ai_gen_id }} {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .ai-astro-name-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: #1a1a1a;
+  }
+  .ai-astro-tags-{{ ai_gen_id }} {
+    font-size: 11px;
+    color: #ff9800;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .ai-astro-footer-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .ai-astro-price-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334fb4;
+  }
+  .ai-chat-btn-{{ ai_gen_id }} {
+    background: linear-gradient(to right, #334fb4, #536dfe);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+  .ai-chat-btn-{{ ai_gen_id }}:hover { opacity: 0.9; }
+
+  @media screen and (max-width: 989px) { .ai-astrologer-list__grid-{{ ai_gen_id }} { grid-template-columns: 1fr 1fr; } }
+  @media screen and (max-width: 600px) { .ai-astrologer-list__grid-{{ ai_gen_id }} { grid-template-columns: 1fr; } }
+{% endstyle %}
+
+<div class="ai-astrologer-list-{{ ai_gen_id }}">
+  <div class="ai-astrologer-list__container-{{ ai_gen_id }}">
+    <h2 style="text-align: center; font-size: 32px; margin-bottom: 40px;">Consult with Expert Astrologers</h2>
+
+    <div class="ai-astrologer-list__grid-{{ ai_gen_id }}">
+      {% comment %} Replace 'astrologers' with your actual collection handle if different {% endcomment %}
+      {% for expert in collections.astrologers.products %}
+        <div class="ai-astro-card-{{ ai_gen_id }}">
+          <div class="ai-astro-image-{{ ai_gen_id }}">
+            <span class="status-badge-{{ ai_gen_id }}">Online</span>
+            {% if expert.featured_image %}
+              <img
+                src="{{ expert.featured_image | image_url: width: 300 }}"
+                alt="{{ expert.title | escape }}"
+                width="300"
+                height="auto"
+              >
+            {% else %}
+              <div style="background: #eef1ff; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #334fb4;">
+                {{ expert.title | slice: 0 }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="ai-astro-content-{{ ai_gen_id }}">
+            <div>
+              <h3 class="ai-astro-name-{{ ai_gen_id }}">{{ expert.title }}</h3>
+              <div class="ai-astro-tags-{{ ai_gen_id }}">Vedic, Vaastu, Tarot</div>
+            </div>
+
+            <div class="ai-astro-footer-{{ ai_gen_id }}">
+              <div class="ai-astro-price-{{ ai_gen_id }}">{{ expert.price | money }}</div>
+
+              <form action="/cart/add" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="{{ expert.variants.first.id }}">
+
+                {% comment %} Connects this product to the backend chat system {% endcomment %}
+                <input type="hidden" name="properties[astrologer_id]" value="{{ expert.title | handleize }}">
+                <input type="hidden" name="properties[duration]" value="20">
+
+                <input type="hidden" name="return_to" value="/checkout">
+                <button type="submit" class="ai-chat-btn-{{ ai_gen_id }}">Chat Now</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Shopify Expert Grid",
+  "settings": [],
+  "presets": [{ "name": "Shopify Expert Grid" }]
+}
+{% endschema %}

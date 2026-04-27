@@ -1,0 +1,299 @@
+{{ 'api.js' | asset_url | script_tag }}
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+{%- style -%}
+  .chat-container {
+    max-width: 1000px;
+    margin: 120px auto 40px;
+    height: calc(100vh - 200px);
+    display: flex;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    overflow: hidden;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* ── Sidebar ── */
+  .chat-info-sidebar {
+    width: 300px;
+    background: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+  }
+
+  .astro-profile-mini {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .astro-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 15px;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+
+  .timer-box {
+    background: #1e293b;
+    color: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    margin-top: auto;
+  }
+
+  .timer-value {
+    font-size: 32px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Chat Main ── */
+  .chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+
+  .chat-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .chat-messages {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    background: #fdfdfd;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .msg {
+    max-width: 70%;
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.5;
+    position: relative;
+  }
+
+  .msg-received {
+    align-self: flex-start;
+    background: #f1f5f9;
+    color: #1e293b;
+    border-bottom-left-radius: 4px;
+  }
+
+  .msg-sent {
+    align-self: flex-end;
+    background: #f97316;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-input-area {
+    padding: 25px 30px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 15px;
+  }
+
+  .chat-input-area input {
+    flex: 1;
+    padding: 15px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    outline: none;
+    font-size: 15px;
+  }
+
+  .send-btn {
+    background: #f97316;
+    color: #fff;
+    border: none;
+    padding: 0 25px;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .end-btn {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 768px) {
+    .chat-container {
+      margin: 80px 10px 20px;
+      height: calc(100vh - 120px);
+    }
+    .chat-info-sidebar { display: none; }
+  }
+{%- endstyle -%}
+
+<div id="ChatAuthWrapper">
+  <div class="chat-container" id="ChatView" style="display:none;">
+    <!-- Sidebar -->
+    <aside class="chat-info-sidebar">
+      <div class="astro-profile-mini">
+        <img id="AstroImg" src="" class="astro-avatar" alt="">
+        <h3 id="AstroName" style="margin:0;font-weight:800;">Loading...</h3>
+        <p id="AstroExpertise" style="font-size:13px;color:#64748b;margin-top:5px;">Vedic Astrology</p>
+      </div>
+      
+      <div class="timer-box">
+        <div style="font-size:12px;opacity:0.7;margin-bottom:5px;">SESSION TIME REMAINING</div>
+        <div class="timer-value" id="SessionTimer">20:00</div>
+      </div>
+    </aside>
+
+    <!-- Main Chat -->
+    <div class="chat-main">
+      <div class="chat-header">
+        <div>
+          <span style="font-weight:800;color:#1e293b;">Live Consultation</span>
+          <div id="ChatStatus" style="font-size:12px;color:#22c55e;">● Connected</div>
+        </div>
+        <button class="end-btn" onclick="confirmEndChat()">End Session</button>
+      </div>
+
+      <div class="chat-messages" id="ChatMessages">
+        <div class="msg msg-received">Namaste! How can I help you today?</div>
+      </div>
+
+      <form class="chat-input-area" id="ChatForm">
+        <input type="text" id="MsgInput" placeholder="Type your message here..." autocomplete="off">
+        <button type="submit" class="send-btn">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="LoginView" style="display:none; text-align:center; padding:100px 20px; font-family:'Outfit', sans-serif;">
+    <div style="font-size:64px; margin-bottom:20px;">🔒</div>
+    <h2 style="font-weight:800; color:#1e293b;">Login Required</h2>
+    <p style="color:#64748b; max-width:400px; margin:0 auto 30px;">You must be logged in to your account to start a consultation.</p>
+    <a href="/account/login?checkout_url={{ request.path }}?id={{ astrologerId }}" class="btn-primary" style="text-decoration:none; display:inline-block; padding:12px 30px; background:#f97316; color:#fff; border-radius:12px; font-weight:700;">Login to Continue</a>
+  </div>
+</div>
+
+<script>
+  let socket;
+  const urlParams = new URLSearchParams(window.location.search);
+  const astrologerId = urlParams.get('id');
+  const customerId = '{{ customer.id }}';
+  const astroToken = localStorage.getItem('astro_token');
+
+  async function initChat() {
+    if (!astrologerId) {
+      alert('Invalid session. Returning to home.');
+      window.location.href = '/';
+      return;
+    }
+
+    if (!customerId && !astroToken) {
+      console.log('Not logged in. Showing auth view.');
+      document.getElementById('LoginView').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('ChatView').style.display = 'flex';
+
+    // Load Astrologer Info
+    try {
+      const astrologers = await AstroAPI.getAstrologers();
+      const astro = astrologers.find(a => a.id == astrologerId);
+      if (astro) {
+        document.getElementById('AstroName').textContent = astro.name;
+        document.getElementById('AstroImg').src = astro.profile_image || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+      }
+    } catch (e) { console.error(e); }
+
+    // Connect Socket
+    socket = io('https://astro-jap-backend.vercel.app');
+    
+    socket.on('connect', () => {
+      console.log('Connected to chat server');
+      const userId = astroToken ? 'astrologer_' + localStorage.getItem('astro_id') : 'customer_' + customerId;
+      socket.emit('join-chat', { astrologerId, userId });
+    });
+
+    socket.on('message', (data) => {
+      appendMessage(data.text, 'received');
+    });
+
+    // Handle form
+    const chatForm = document.getElementById('ChatForm');
+    if (chatForm) {
+      chatForm.onsubmit = (e) => {
+        e.preventDefault();
+        const input = document.getElementById('MsgInput');
+        if (!input.value.trim()) return;
+        
+        const msg = input.value.trim();
+        appendMessage(msg, 'sent');
+        socket.emit('message', { astrologerId, text: msg });
+        input.value = '';
+      };
+    }
+  }
+
+  function appendMessage(text, type) {
+    const container = document.getElementById('ChatMessages');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = `msg msg-${type}`;
+    div.textContent = text;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function confirmEndChat() {
+    if (confirm('Are you sure you want to end this session?')) {
+      window.location.href = '/';
+    }
+  }
+
+  // Timer logic
+  const timerEl = document.getElementById('SessionTimer');
+  if (timerEl) {
+    let timeLeft = 1200; // 20 mins
+    setInterval(() => {
+      if (timeLeft <= 0) return;
+      timeLeft--;
+      const mins = Math.floor(timeLeft / 60);
+      const secs = timeLeft % 60;
+      timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }, 1000);
+  }
+
+  document.addEventListener('DOMContentLoaded', initChat);
+</script>
+
+{% schema %}
+{
+  "name": "Main Chat",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Main Chat"
+    }
+  ]
+}
+{% endschema %}

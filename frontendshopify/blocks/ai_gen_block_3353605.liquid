@@ -1,0 +1,359 @@
+<div class="astrology-section-wrapper"
+  id="astro-wrapper-{{ section.id }}"
+  data-api-token="{{ section.settings.api_token }}"
+  data-text-color="{{ section.settings.text_color }}"
+  data-border-color="{{ section.settings.border_color }}"
+  style="
+    --bg-color: {{ section.settings.bg_color }};
+    --card-bg: {{ section.settings.card_bg }};
+    --text-color: {{ section.settings.text_color }};
+    --border-color: {{ section.settings.border_color }};
+    --btn-bg: {{ section.settings.btn_bg }};
+    --btn-text: {{ section.settings.btn_text }};
+  "
+>
+  <style>
+    #astro-wrapper-{{ section.id }} {
+      background-color: var(--bg-color);
+      display: flex;
+      justify-content: center;
+      padding: 50px 20px;
+      font-family: inherit;
+      color: var(--text-color);
+    }
+    #astro-wrapper-{{ section.id }} .astrology-container {
+      width: 100%;
+      max-width: 500px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    }
+    #astro-wrapper-{{ section.id }} .astrology-header {
+      padding: 25px 25px 10px;
+      text-align: center;
+    }
+    #astro-wrapper-{{ section.id }} .astrology-header h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    #astro-wrapper-{{ section.id }} .astrology-form {
+      padding: 20px 25px;
+    }
+    #astro-wrapper-{{ section.id }} .astro-form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    #astro-wrapper-{{ section.id }} .astro-form-group-row {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+    }
+    #astro-wrapper-{{ section.id }} .astro-form-group-row > div {
+      flex: 1;
+    }
+    #astro-wrapper-{{ section.id }} label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+    #astro-wrapper-{{ section.id }} input {
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text-color);
+      font-size: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #astro-wrapper-{{ section.id }} input:focus {
+      outline: none;
+      border-color: var(--text-color);
+    }
+    #astro-wrapper-{{ section.id }} .astro-submit-btn {
+      width: 100%;
+      padding: 16px;
+      margin-top: 10px;
+      background-color: var(--btn-bg);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #astro-wrapper-{{ section.id }} .astro-submit-btn:hover {
+      opacity: 0.85;
+    }
+    #astro-wrapper-{{ section.id }} .astro-status {
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+    }
+    #astro-wrapper-{{ section.id }} .astro-error {
+      color: #d9534f;
+      background: #fdf2f2;
+    }
+    #astro-wrapper-{{ section.id }} .astro-loading {
+      color: var(--text-color);
+      opacity: 0.7;
+    }
+    #astro-wrapper-{{ section.id }} .astro-result-area {
+      display: none;
+      background: #ffffff;
+      padding: 25px;
+      border-top: 1px solid var(--border-color);
+    }
+    #astro-wrapper-{{ section.id }} .astro-chart-svg {
+      width: 100%;
+      height: auto;
+      border: 2px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+    #astro-wrapper-{{ section.id }} .astro-chart-svg svg text {
+      fill: var(--text-color) !important;
+    }
+    #astro-wrapper-{{ section.id }} .astro-features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    #astro-wrapper-{{ section.id }} .astro-grid-btn {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      border-radius: 6px;
+      padding: 12px 5px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #astro-wrapper-{{ section.id }} .astro-grid-btn:hover {
+      background-color: var(--bg-color);
+    }
+    @media screen and (max-width: 480px) {
+      #astro-wrapper-{{ section.id }} { padding: 20px 10px; }
+      #astro-wrapper-{{ section.id }} .astrology-container { border-radius: 8px; border: none; }
+    }
+  </style>
+
+  <div class="astrology-container">
+    <div class="astrology-header">
+      <h2>{{ section.settings.heading | escape }}</h2>
+    </div>
+
+    <form class="astrology-form" id="form-astro-{{ section.id }}">
+      
+      <div class="astro-form-group">
+        <label for="name-{{ section.id }}">Full Name</label>
+        <input type="text" id="name-{{ section.id }}" required="required" placeholder="Ex: Ramesh Kumar">
+      </div>
+      
+      <div class="astro-form-group-row">
+        <div>
+          <label for="dob-{{ section.id }}">Date of Birth</label>
+          <input type="date" id="dob-{{ section.id }}" required="required">
+        </div>
+        <div>
+          <label for="tob-{{ section.id }}">Time of Birth</label>
+          <input type="time" id="tob-{{ section.id }}" required="required">
+        </div>
+      </div>
+      
+      <div class="astro-form-group">
+        <label for="place-{{ section.id }}">Place of Birth</label>
+        <input type="text" id="place-{{ section.id }}" required="required" placeholder="New Delhi, India">
+      </div>
+      
+      <button type="submit" class="astro-submit-btn" id="btn-{{ section.id }}">Calculate Kundli</button>
+    </form>
+
+    <div id="loader-{{ section.id }}" class="astro-status astro-loading">Authenticating and retrieving cosmic data...</div>
+    <div id="error-{{ section.id }}" class="astro-status astro-error"></div>
+
+    <div id="result-{{ section.id }}" class="astro-result-area">
+      <div id="svg-wrap-{{ section.id }}" class="astro-chart-svg"></div>
+      
+      <div class="astro-features-grid">
+        <div class="astro-grid-btn">ग्रह</div>
+        <div class="astro-grid-btn">दशा</div>
+        <div class="astro-grid-btn">फलादेश</div>
+        <div class="astro-grid-btn">केपी</div>
+        <div class="astro-grid-btn">षोडशवर्ग</div>
+        <div class="astro-grid-btn">लाल किताब</div>
+        <div class="astro-grid-btn">वर्षफल</div>
+        <div class="astro-grid-btn">राज योग</div>
+        <div class="astro-grid-btn">गोचर</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var rawSectionId = "{{ section.id }}";
+    var wrapperEl = document.getElementById("astro-wrapper-" + rawSectionId);
+    
+    if (wrapperEl) {
+      var rawApiToken = wrapperEl.getAttribute("data-api-token");
+      var rawTextColor = wrapperEl.getAttribute("data-text-color");
+      var rawBorderColor = wrapperEl.getAttribute("data-border-color");
+
+      var formEl = document.getElementById("form-astro-" + rawSectionId);
+      
+      if (formEl) {
+        formEl.addEventListener("submit", async function(event) {
+          event.preventDefault();
+          
+          var btn = document.getElementById("btn-" + rawSectionId);
+          var loader = document.getElementById("loader-" + rawSectionId);
+          var errBox = document.getElementById("error-" + rawSectionId);
+          var rsltBox = document.getElementById("result-" + rawSectionId);
+          var svgWrap = document.getElementById("svg-wrap-" + rawSectionId);
+
+          var dob = document.getElementById("dob-" + rawSectionId).value.split("-");
+          var tob = document.getElementById("tob-" + rawSectionId).value.split(":");
+          var place = document.getElementById("place-" + rawSectionId).value;
+
+          errBox.style.display = "none";
+          rsltBox.style.display = "none";
+          loader.style.display = "block";
+          btn.disabled = true;
+
+          try {
+            var headersReq = {
+              "Content-Type": "application/json",
+              "x-astrologyapi-key": rawApiToken
+            };
+
+            var geoResp = await fetch("https://json.astrologyapi.com/v1/geo_details", {
+              method: "POST",
+              headers: headersReq,
+              body: JSON.stringify({ place: place, maxRows: 1 })
+            });
+            var geoJSON = await geoResp.json();
+
+            if(!geoJSON.geonames || geoJSON.geonames.length === 0) {
+              throw new Error("Location not recognized. Try a closer major city.");
+            }
+
+            var point = geoJSON.geonames[0];
+
+            var chartPayload = {
+              day: parseInt(dob[2], 10),
+              month: parseInt(dob[1], 10),
+              year: parseInt(dob[0], 10),
+              hour: parseInt(tob[0], 10),
+              min: parseInt(tob[1], 10),
+              lat: point.latitude,
+              lon: point.longitude,
+              tzone: point.timezone || 5.5,
+              planetColor: rawTextColor,   
+              signColor: rawTextColor,     
+              lineColor: rawBorderColor,   
+              chartType: "north",
+              image_type: "svg",
+              language: "hi" 
+            };
+
+            var chartResp = await fetch("https://json.astrologyapi.com/v1/horo_chart_image/D1", {
+              method: "POST",
+              headers: headersReq,
+              body: JSON.stringify(chartPayload)
+            });
+            var chartJSON = await chartResp.json();
+
+            if(chartJSON.svg) {
+              svgWrap.innerHTML = chartJSON.svg;
+              rsltBox.style.display = "block";
+            } else {
+              throw new Error("Unable to build ASTRO LOGIC parameters. Provide valid data.");
+            }
+
+          } catch (e) {
+            errBox.textContent = e.message;
+            errBox.style.display = "block";
+          } finally {
+            loader.style.display = "none";
+            btn.disabled = false;
+          }
+        });
+      }
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Kundli Block",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "api_token",
+      "label": "Astrology API Token",
+      "default": "ak-c423f2857c457981cb3278512131a948694aa134"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Generate Free Kundli"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Main Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card Form Background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Universal Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Line and Border Color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_text",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Kundli Generator View",
+      "category": "Astrology Components"
+    }
+  ]
+}
+{% endschema %}

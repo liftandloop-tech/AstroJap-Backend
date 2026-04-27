@@ -1,0 +1,156 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% assign desk_bg = "none" %}
+{% if block.settings.background_image != blank %}
+  {% assign desk_bg = block.settings.background_image | image_url: width: 2800 %}
+  {% assign desk_bg = "url('" | append: desk_bg | append: "')" %}
+{% endif %}
+
+{% assign mob_bg = desk_bg %}
+{% if block.settings.background_image_mobile != blank %}
+  {% assign mob_bg = block.settings.background_image_mobile | image_url: width: 1200 %}
+  {% assign mob_bg = "url('" | append: mob_bg | append: "')" %}
+{% endif %}
+
+{% style %}
+  .ai-astro-hero-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ block.settings.height_desktop | default: 70 }}vh;
+    display: flex;
+    align-items: {{ block.settings.content_alignment }};
+    justify-content: center;
+    overflow: hidden;
+    background-color: #000000;
+    
+    {% if block.settings.background_image != blank or block.settings.background_image_mobile != blank %}
+      background-image: var(--bg-desk);
+      background-size: cover;
+      background-position: {{ block.settings.bg_pos | default: 'center' }};
+      background-repeat: no-repeat;
+      {% if block.settings.enable_parallax %}
+        background-attachment: fixed !important;
+      {% endif %}
+    {% else %}
+      background-image: linear-gradient(135deg, #1a0033 0%, #0a0015 50%, #000428 100%);
+    {% endif %}
+  }
+
+  .ai-astro-hero-overlay-{{ ai_gen_id }} {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(26, 0, 51, {{ block.settings.overlay_opacity }}) 0%, rgba(10, 0, 21, {{ block.settings.overlay_opacity }}) 100%);
+    z-index: 2;
+  }
+
+  .ai-astro-hero-stars-{{ ai_gen_id }} { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
+  .ai-astro-hero-star-{{ ai_gen_id }} { position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; box-shadow: 0 0 {{ block.settings.star_glow }}px rgba(255, 255, 255, 0.8); }
+
+  .ai-astro-hero-content-{{ ai_gen_id }} { position: relative; z-index: 10; text-align: center; padding: 40px 20px; max-width: {{ block.settings.content_max_width }}px; width: 100%; }
+  
+  .ai-astro-hero-heading-{{ ai_gen_id }} { font-size: {{ block.settings.heading_size }}px; color: {{ block.settings.heading_color }}; margin: 0 0 16px; font-weight: 700; line-height: 1.2; text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5); }
+  .ai-astro-hero-subheading-{{ ai_gen_id }} { font-size: {{ block.settings.subheading_size }}px; color: {{ block.settings.subheading_color }}; margin: 0; opacity: 0.9; line-height: 1.5; }
+
+  @media screen and (max-width: 749px) {
+    .ai-astro-hero-{{ ai_gen_id }} {
+      min-height: {{ block.settings.height_mobile | default: 60 }}vh !important;
+      background-image: var(--bg-mob);
+    }
+    .ai-astro-hero-heading-{{ ai_gen_id }} { font-size: {{ block.settings.heading_size | times: 0.6 }}px; }
+    .ai-astro-hero-subheading-{{ ai_gen_id }} { font-size: {{ block.settings.subheading_size | times: 0.8 }}px; }
+  }
+{% endstyle %}
+
+<astro-hero-{{ ai_gen_id }} class="ai-astro-hero-{{ ai_gen_id }}" style="--bg-desk: {{ desk_bg }}; --bg-mob: {{ mob_bg }};" {{ block.shopify_attributes }}>
+  
+  <div class="ai-astro-hero-overlay-{{ ai_gen_id }}"></div>
+
+  {% if block.settings.show_stars %}
+    <div class="ai-astro-hero-stars-{{ ai_gen_id }}" data-star-count="{{ block.settings.star_count }}"></div>
+  {% endif %}
+
+  <div class="ai-astro-hero-content-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h1 class="ai-astro-hero-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h1>
+    {% endif %}
+
+    {% if block.settings.subheading != blank %}
+      <div class="ai-astro-hero-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</div>
+    {% endif %}
+  </div>
+
+</astro-hero-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    // SECURITY CHECK: Prevents the script from crashing inside the Shopify Theme Editor when saving!
+    if (!customElements.get('astro-hero-{{ ai_gen_id }}')) {
+        
+      class AstroHero{{ ai_gen_id }} extends HTMLElement {
+        constructor() {
+          super();
+          this.starsContainer = null;
+        }
+
+        connectedCallback() {
+          this.starsContainer = this.querySelector('.ai-astro-hero-stars-{{ ai_gen_id }}');
+
+          if (this.starsContainer) {
+            this.generateStars();
+          }
+        }
+
+        generateStars() {
+          const starCount = parseInt(this.starsContainer.dataset.starCount) || 50;
+          const fragment = document.createDocumentFragment();
+
+          for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'ai-astro-hero-star-{{ ai_gen_id }}';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.opacity = Math.random() * 0.5 + 0.3;
+            fragment.appendChild(star);
+          }
+
+          this.starsContainer.appendChild(fragment);
+        }
+      }
+
+      customElements.define('astro-hero-{{ ai_gen_id }}', AstroHero{{ ai_gen_id }});
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Cosmic Hero (No CTA)",
+  "settings": [
+    { "type": "header", "content": "Master Layout" },
+    { "type": "checkbox", "id": "enable_parallax", "label": "Enable Parallax Background", "default": true },
+    { "type": "range", "id": "height_desktop", "min": 30, "max": 100, "step": 5, "unit": "vh", "label": "Desktop Height (vh)", "default": 80 },
+    { "type": "range", "id": "height_mobile", "min": 30, "max": 100, "step": 5, "unit": "vh", "label": "Mobile Height (vh)", "default": 65 },
+    { "type": "select", "id": "content_alignment", "label": "Vertical alignment", "options": [{"value": "flex-start", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "flex-end", "label": "Bottom"}], "default": "center" },
+    { "type": "range", "id": "content_max_width", "min": 400, "max": 1000, "step": 50, "unit": "px", "label": "Content max width", "default": 700 },
+    
+    { "type": "header", "content": "Backgrounds" },
+    { "type": "image_picker", "id": "background_image", "label": "Desktop Image (Optional)" },
+    { "type": "image_picker", "id": "background_image_mobile", "label": "Mobile Image (Optional)" },
+    { "type": "select", "id": "bg_pos", "label": "Image Focus (Crop position)", "options": [{"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}], "default": "center" },
+    { "type": "range", "id": "overlay_opacity", "min": 0, "max": 1, "step": 0.1, "label": "Overlay opacity", "default": 0.7 },
+    
+    { "type": "header", "content": "Star Effect" },
+    { "type": "checkbox", "id": "show_stars", "label": "Show animated stars", "default": true },
+    { "type": "range", "id": "star_count", "min": 20, "max": 100, "step": 10, "label": "Star Count", "default": 50 },
+    { "type": "range", "id": "star_glow", "min": 2, "max": 10, "step": 1, "unit": "px", "label": "Star glow intensity", "default": 4 },
+    
+    { "type": "header", "content": "Content" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Discover Your Cosmic Destiny" },
+    { "type": "range", "id": "heading_size", "min": 30, "max": 80, "step": 2, "unit": "px", "label": "Heading size", "default": 56 },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#ffffff" },
+    { "type": "inline_richtext", "id": "subheading", "label": "Subheading", "default": "Unlock the secrets of the stars and explore what the universe has in store for you" },
+    { "type": "range", "id": "subheading_size", "min": 14, "max": 28, "step": 1, "unit": "px", "label": "Subheading size", "default": 18 },
+    { "type": "color", "id": "subheading_color", "label": "Subheading color", "default": "#e0d4f7" }
+  ],
+  "presets": [{"name": "Cosmic Hero (No CTA)"}]
+}
+{% endschema %}

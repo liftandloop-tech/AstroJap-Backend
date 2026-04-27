@@ -1,0 +1,897 @@
+{% doc %}
+  @prompt
+    🚨 IMPORTANT (STRICT INSTRUCTION)
+    
+    DO NOT create a simple text section.
+    DO NOT create plain reviews.
+    
+    Create a premium testimonial highlight section with video/image cards and customer feedback.
+    
+    🧾 SECTION TITLE
+    
+    Add heading:
+    
+    What Our Customers Say
+    
+    Subheading:
+    
+    Real experiences from people who trusted Astrojap for guidance and transformation.
+    
+    🧱 LAYOUT (MANDATORY)
+    
+    Grid or slider layout
+    
+    Show:
+    
+    3–4 testimonial cards on desktop
+    
+    1–2 on mobile
+    
+    Each card should be visually rich (NOT plain text)
+    
+    🧩 TESTIMONIAL CARD STRUCTURE (VERY IMPORTANT)
+    
+    Each card must include:
+    
+    1. MEDIA (TOP)
+    
+    Video OR Image
+    
+    Rounded corners
+    
+    Vertical (reels style preferred)
+    
+    Optional play button if video
+    
+    2. CONTENT (BOTTOM)
+    
+    Short testimonial text (2–3 lines)
+    
+    Customer name
+    
+    Optional location
+    
+    3. OPTIONAL PRODUCT LINK (HIGH CONVERSION)
+    
+    Small product reference below:
+    
+    Product name
+    
+    OR “View Product” button
+    
+    🎨 DESIGN STYLE
+    
+    Premium ecommerce feel
+    
+    Card background: white or light grey
+    
+    Border radius: 14px
+    
+    Soft shadow
+    
+    Clean spacing
+    
+    ⚙️ FULLY EDITABLE (VERY IMPORTANT)
+    
+    Use Shopify blocks
+    
+    Each block must include:
+    
+    Video upload OR image
+    
+    Testimonial text
+    
+    Customer name
+    
+    Optional product link
+    
+    Allow:
+    
+    Add/remove testimonials
+    
+    Reorder
+    
+    📱 MOBILE BEHAVIOR
+    
+    Swipeable cards
+    
+    Proper spacing
+    
+    Vertical stacking
+    
+    ⚙️ TECHNICAL REQUIREMENTS
+    
+    Use Liquid + schema
+    
+    Media support:
+    
+    Video OR image
+    
+    Responsive grid or slider
+    
+    🚀 GOAL
+    
+    This section should:
+    
+    Build trust immediately after hero
+    
+    Show real customer proof
+    
+    Increase engagement
+    
+    ❗ FINAL INSTRUCTION
+    
+    Focus on:
+    
+    Visual storytelling
+    
+    Clean card UI
+    
+    Strong spacing
+    
+    Do NOT make it look like basic reviews.
+    
+    💡 PRO TIP (IMPORTANT FLOW)
+    
+    Your page structure should be:
+    
+    Hero section
+    
+    This testimonial highlight section ✅
+    
+    Video testimonials section (you created earlier)
+    
+    Product CTA
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-testimonial-highlight-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 60px 20px;
+    background-color: {{ block.settings.section_background }};
+  }
+
+  .ai-testimonial-highlight-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-testimonial-highlight-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .ai-testimonial-highlight-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+
+  .ai-testimonial-highlight-subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_size }}px;
+    color: {{ block.settings.subheading_color }};
+    margin: 0;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ai-testimonial-highlight-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.card_spacing }}px;
+  }
+
+  .ai-testimonial-highlight-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity }});
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-testimonial-highlight-media-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    background-color: #f4f4f4;
+    overflow: hidden;
+  }
+
+  .ai-testimonial-highlight-media-wrapper-{{ ai_gen_id }} img,
+  .ai-testimonial-highlight-media-wrapper-{{ ai_gen_id }} video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-testimonial-highlight-media-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+    position: relative;
+  }
+
+  .ai-testimonial-highlight-media-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-testimonial-highlight-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-testimonial-highlight-play-button-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+
+  .ai-testimonial-highlight-play-button-{{ ai_gen_id }} svg {
+    width: 24px;
+    height: 24px;
+    margin-left: 4px;
+  }
+
+  .ai-testimonial-highlight-content-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-testimonial-highlight-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.testimonial_text_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .ai-testimonial-highlight-customer-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ai-testimonial-highlight-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.name_size }}px;
+    color: {{ block.settings.name_color }};
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .ai-testimonial-highlight-location-{{ ai_gen_id }} {
+    font-size: {{ block.settings.location_size }}px;
+    color: {{ block.settings.location_color }};
+    margin: 0;
+  }
+
+  .ai-testimonial-highlight-product-{{ ai_gen_id }} {
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-testimonial-highlight-product-link-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: {{ block.settings.product_link_color }};
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .ai-testimonial-highlight-product-link-{{ ai_gen_id }}:hover {
+    text-decoration: underline;
+  }
+
+  .ai-testimonial-highlight-product-link-{{ ai_gen_id }} svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-testimonial-highlight-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-testimonial-highlight-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .ai-testimonial-highlight-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.8);
+    }
+
+    .ai-testimonial-highlight-subheading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subheading_size }}px * 0.9);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-testimonial-highlight-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+    }
+
+    .ai-testimonial-highlight-content-{{ ai_gen_id }} {
+      padding: 16px;
+    }
+  }
+{% endstyle %}
+
+<testimonial-highlight-{{ ai_gen_id }} class="ai-testimonial-highlight-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-testimonial-highlight-container-{{ ai_gen_id }}">
+    <div class="ai-testimonial-highlight-header-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-testimonial-highlight-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {% endif %}
+      {% if block.settings.subheading != blank %}
+        <p class="ai-testimonial-highlight-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-testimonial-highlight-grid-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% liquid
+          assign video_key = 'video_' | append: i
+          assign image_key = 'image_' | append: i
+          assign autoplay_key = 'autoplay_' | append: i
+          assign text_key = 'testimonial_text_' | append: i
+          assign name_key = 'customer_name_' | append: i
+          assign location_key = 'customer_location_' | append: i
+          assign product_key = 'product_' | append: i
+          assign enabled_key = 'enable_card_' | append: i
+
+          assign video = block.settings[video_key]
+          assign image = block.settings[image_key]
+          assign autoplay = block.settings[autoplay_key]
+          assign testimonial_text = block.settings[text_key]
+          assign customer_name = block.settings[name_key]
+          assign customer_location = block.settings[location_key]
+          assign product = block.settings[product_key]
+          assign enabled = block.settings[enabled_key]
+        %}
+
+        {% if enabled %}
+          <div class="ai-testimonial-highlight-card-{{ ai_gen_id }}">
+            <div class="ai-testimonial-highlight-media-wrapper-{{ ai_gen_id }}">
+              {% if video != blank %}
+                <video
+                  src="{{ video }}"
+                  playsinline
+                  {% if autoplay %}autoplay muted loop{% endif %}
+                  class="ai-testimonial-highlight-video-{{ ai_gen_id }}"
+                  data-video-id="{{ i }}"
+                ></video>
+                {% unless autoplay %}
+                  <button
+                    class="ai-testimonial-highlight-play-button-{{ ai_gen_id }}"
+                    aria-label="Play video"
+                    data-play-button="{{ i }}"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </button>
+                {% endunless %}
+              {% elsif image != blank %}
+                <img
+                  src="{{ image | image_url: width: 600 }}"
+                  alt="{{ customer_name | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="1067"
+                >
+              {% else %}
+                <div class="ai-testimonial-highlight-media-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                  <div class="ai-testimonial-highlight-empty-state-{{ ai_gen_id }}">
+                    Add video or image
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="ai-testimonial-highlight-content-{{ ai_gen_id }}">
+              {% if testimonial_text != blank %}
+                <p class="ai-testimonial-highlight-text-{{ ai_gen_id }}">{{ testimonial_text }}</p>
+              {% endif %}
+
+              <div class="ai-testimonial-highlight-customer-{{ ai_gen_id }}">
+                {% if customer_name != blank %}
+                  <p class="ai-testimonial-highlight-name-{{ ai_gen_id }}">{{ customer_name }}</p>
+                {% endif %}
+                {% if customer_location != blank %}
+                  <p class="ai-testimonial-highlight-location-{{ ai_gen_id }}">{{ customer_location }}</p>
+                {% endif %}
+              </div>
+
+              {% if product != blank %}
+                <div class="ai-testimonial-highlight-product-{{ ai_gen_id }}">
+                  <a
+                    href="{{ product.url }}"
+                    class="ai-testimonial-highlight-product-link-{{ ai_gen_id }}"
+                  >
+                    {{ product.title }}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</testimonial-highlight-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class TestimonialHighlight{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupVideoPlayers();
+      }
+
+      setupVideoPlayers() {
+        const playButtons = this.querySelectorAll('[data-play-button]');
+        
+        playButtons.forEach(button => {
+          const videoId = button.getAttribute('data-play-button');
+          const video = this.querySelector(`[data-video-id="${videoId}"]`);
+          
+          if (video) {
+            button.addEventListener('click', () => {
+              if (video.paused) {
+                video.play();
+                button.style.display = 'none';
+              }
+            });
+
+            video.addEventListener('click', () => {
+              if (!video.paused) {
+                video.pause();
+                button.style.display = 'flex';
+              }
+            });
+
+            video.addEventListener('ended', () => {
+              button.style.display = 'flex';
+            });
+          }
+        });
+      }
+    }
+
+    customElements.define('testimonial-highlight-{{ ai_gen_id }}', TestimonialHighlight{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Testimonial highlight",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Real experiences from people who trusted Astrojap for guidance and transformation."
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card spacing",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "label": "Card shadow opacity",
+      "default": 0.1
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 12,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "range",
+      "id": "testimonial_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Testimonial text size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "name_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Name size",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Name color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "location_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Location size",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "location_color",
+      "label": "Location color",
+      "default": "#999999"
+    },
+    {
+      "type": "color",
+      "id": "product_link_color",
+      "label": "Product link color",
+      "default": "#334fb4"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_card_1",
+      "label": "Enable card 1",
+      "default": true
+    },
+    {
+      "type": "video",
+      "id": "video_1",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_1",
+      "label": "Autoplay video",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_1",
+      "label": "Testimonial text",
+      "default": "This product changed my life. Highly recommend!"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_1",
+      "label": "Customer name",
+      "default": "Sarah Johnson"
+    },
+    {
+      "type": "text",
+      "id": "customer_location_1",
+      "label": "Location"
+    },
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_card_2",
+      "label": "Enable card 2",
+      "default": true
+    },
+    {
+      "type": "video",
+      "id": "video_2",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_2",
+      "label": "Autoplay video",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_2",
+      "label": "Testimonial text",
+      "default": "Amazing quality and fast delivery. Will buy again!"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_2",
+      "label": "Customer name",
+      "default": "Michael Chen"
+    },
+    {
+      "type": "text",
+      "id": "customer_location_2",
+      "label": "Location"
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_card_3",
+      "label": "Enable card 3",
+      "default": true
+    },
+    {
+      "type": "video",
+      "id": "video_3",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_3",
+      "label": "Autoplay video",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_3",
+      "label": "Testimonial text",
+      "default": "Exceeded my expectations. Great customer service too!"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_3",
+      "label": "Customer name",
+      "default": "Emma Davis"
+    },
+    {
+      "type": "text",
+      "id": "customer_location_3",
+      "label": "Location"
+    },
+    {
+      "type": "product",
+      "id": "product_3",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_card_4",
+      "label": "Enable card 4",
+      "default": false
+    },
+    {
+      "type": "video",
+      "id": "video_4",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_4",
+      "label": "Autoplay video",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_4",
+      "label": "Testimonial text",
+      "default": "Best purchase I've made this year!"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_4",
+      "label": "Customer name",
+      "default": "James Wilson"
+    },
+    {
+      "type": "text",
+      "id": "customer_location_4",
+      "label": "Location"
+    },
+    {
+      "type": "product",
+      "id": "product_4",
+      "label": "Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial highlight"
+    }
+  ]
+}
+{% endschema %}

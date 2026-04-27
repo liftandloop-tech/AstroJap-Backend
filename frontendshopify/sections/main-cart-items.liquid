@@ -1,0 +1,582 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart-items.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+{{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* ASTROTALK PREMIUM CART STYLES */
+  .at-cart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'Inter', sans-serif;
+    margin-top: 150px; /* Added margin to prevent overlap with category grid */
+  }
+
+  .at-cart-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .at-cart-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0;
+    color: #000;
+  }
+
+  .at-cart-timer {
+    background: #f1f1f1;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .at-cart-timer .time {
+    color: #000;
+  }
+
+  .at-cart-layout {
+    display: flex;
+    gap: 30px;
+  }
+
+  .at-cart-main {
+    flex: 1;
+  }
+
+  .at-cart-sidebar {
+    width: 350px;
+    border-left: 1px solid #eee;
+    padding-left: 20px;
+  }
+
+  @media screen and (max-width: 990px) {
+    .at-cart-layout { flex-direction: column; }
+    .at-cart-sidebar { width: 100%; border-left: none; padding-left: 0; border-top: 1px solid #eee; padding-top: 20px; }
+  }
+
+  /* Cart Item Styling */
+  .at-cart-item {
+    display: flex;
+    gap: 15px;
+    padding: 20px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .at-item-image {
+    width: 100px;
+    height: 100px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .at-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .at-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .at-item-top {
+    margin-bottom: 5px;
+  }
+
+  .at-item-tags {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 5px;
+  }
+
+  .at-tag {
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .at-tag.prepaid { color: #e67e22; }
+  .at-tag.sale { color: #e74c3c; }
+
+  .at-item-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+  }
+
+  .at-item-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .at-qty-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .at-qty-btn {
+    background: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .at-qty-input {
+    width: 30px;
+    text-align: center;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .at-item-price {
+    text-align: right;
+  }
+
+  .at-price-now {
+    font-size: 16px;
+    font-weight: 800;
+    color: #000;
+  }
+
+  .at-price-old {
+    font-size: 12px;
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 5px;
+  }
+
+  /* Sidebar Styling */
+  .at-sidebar-title {
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .at-upsell-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 15px;
+    align-items: center;
+  }
+
+  .at-upsell-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f9f9f9;
+  }
+
+  .at-upsell-img img { width: 100%; height: 100%; object-fit: cover; }
+
+  .at-upsell-info { flex: 1; }
+
+  .at-upsell-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    display: block;
+    margin-bottom: 2px;
+    text-decoration: none;
+  }
+
+  .at-upsell-price {
+    font-size: 13px;
+    font-weight: 800;
+    color: #000;
+  }
+
+  .at-upsell-price .old {
+    font-size: 10px;
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 4px;
+  }
+
+  .at-upsell-add {
+    background: #444;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  .at-upsell-add:hover { background: #000; }
+  .at-upsell-add:hover { background: #000; }
+
+  /* OFFERS VIEW STYLES */
+  #at-offers-view {
+    display: none;
+    padding: 20px 0;
+    background: #f8f9fa;
+    border-radius: 20px;
+    margin-top: 20px;
+  }
+
+  .at-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #333;
+    text-decoration: none;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+
+  .offers-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .offers-header h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: #000;
+    margin: 0 0 10px 0;
+  }
+
+  .offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .offer-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid #eee;
+  }
+
+  .offer-logo {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+  }
+
+  .offer-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+  .offer-brand { font-size: 12px; font-weight: 700; color: #999; text-transform: uppercase; margin-bottom: 5px; }
+  .offer-title { font-size: 16px; font-weight: 800; color: #000; margin-bottom: 10px; }
+  .offer-meta { font-size: 12px; color: #555; background: #f1f1f1; padding: 4px 10px; border-radius: 15px; margin-bottom: 15px; }
+  .offer-btn { width: 100%; background: #000; color: #fff; border: none; padding: 12px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; }
+{%- endstyle -%}
+
+
+
+<cart-items id="main-cart-items" data-id="{{ section.id }}" class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}">
+  <div class="page-width">
+    
+    <div class="cart__warnings">
+      <h1 class="cart__empty-text">{{ 'sections.cart.empty' | t }}</h1>
+      <a href="{{ routes.all_products_collection_url }}" class="button">
+        {{ 'general.continue_shopping' | t }}
+      </a>
+    </div>
+
+    <form action="{{ routes.cart_url }}" class="cart__contents critical-hidden" method="post" id="cart">
+      <div class="at-cart-container">
+        
+        <!-- HEADER -->
+        <div class="at-cart-header">
+          <h2 class="at-cart-title">My Cart ({{ cart.item_count }})</h2>
+          <div class="at-cart-timer">
+            Items saved for : <span class="time" id="at-countdown">10m 00s</span>
+          </div>
+        </div>
+
+        <div class="at-cart-layout">
+          
+          <!-- LEFT: CART ITEMS -->
+          <div class="at-cart-main js-contents">
+            {%- if cart != empty -%}
+              {%- for item in cart.items -%}
+                <div class="at-cart-item cart-item" id="CartItem-{{ item.index | plus: 1 }}">
+                  <div class="at-item-image">
+                    {% if item.image %}
+                      <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.image.alt | escape }}" loading="lazy">
+                    {% endif %}
+                  </div>
+                  
+                  <div class="at-item-info">
+                    <div class="at-item-top">
+                      <div class="at-item-tags" style="justify-content: space-between; align-items: center;">
+                        <div>
+                          <span class="at-tag prepaid">REPAID ORDERS 🥳</span>
+                          {% if item.original_price > item.final_price %}
+                            <span class="at-tag sale">SALE ACTIVE</span>
+                          {% endif %}
+                        </div>
+                        <cart-remove-button id="Remove-{{ item.index | plus: 1 }}" data-index="{{ item.index | plus: 1 }}">
+                          <button type="button" style="background: none; border: none; color: #999; cursor: pointer; font-size: 18px; padding: 0;">✕</button>
+                        </cart-remove-button>
+                      </div>
+                      <a href="{{ item.url }}" class="at-item-title">{{ item.product.title | escape }}</a>
+                    </div>
+
+                    <div class="at-item-controls">
+                      <div class="at-qty-wrap">
+                        <button type="button" class="at-qty-btn" onclick="const input = this.parentNode.querySelector('input'); input.stepDown(); input.dispatchEvent(new Event('change', { bubbles: true }));">-</button>
+                        <input 
+                          class="at-qty-input" 
+                          type="number" 
+                          name="updates[]"
+                          value="{{ item.quantity }}" 
+                          min="0" 
+                          id="Quantity-{{ item.index | plus: 1 }}"
+                          data-index="{{ item.index | plus: 1 }}" 
+                          data-quantity-variant-id="{{ item.variant.id }}"
+                          data-min="{{ item.variant.quantity_rule.min }}"
+                          {% if item.variant.quantity_rule.max != null %}
+                            max="{{ item.variant.quantity_rule.max }}"
+                          {% endif %}
+                          step="{{ item.variant.quantity_rule.increment }}"
+                        >
+                        <button type="button" class="at-qty-btn" onclick="const input = this.parentNode.querySelector('input'); input.stepUp(); input.dispatchEvent(new Event('change', { bubbles: true }));">+</button>
+                      </div>
+                      
+                      <div class="at-item-price">
+                        <span class="at-price-now">₹{{ item.final_line_price | divided_by: 100 }}</span>
+                        {% if item.original_line_price > item.final_line_price %}
+                          <span class="at-price-old">₹{{ item.original_line_price | divided_by: 100 }}</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+
+          <!-- RIGHT: SIDEBAR UPSELL -->
+          <div class="at-cart-sidebar">
+            <div class="at-sidebar-title">
+              ⬇️ Add another product & get EXTRA 25% OFF ⬇️
+            </div>
+            
+            <div class="at-upsell-list">
+              {% assign upsell_count = 0 %}
+              {% for product in collections.all.products limit: 10 %}
+                {% if upsell_count < 6 %}
+                  {% assign already_in_cart = false %}
+                  {% for item in cart.items %}
+                    {% if item.product_id == product.id %}
+                      {% assign already_in_cart = true %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {% unless already_in_cart %}
+                    <div class="at-upsell-item">
+                      <div class="at-upsell-img">
+                        <img src="{{ product.featured_image | image_url: width: 120 }}" alt="{{ product.title }}">
+                      </div>
+                      <div class="at-upsell-info">
+                        <a href="{{ product.url }}" class="at-upsell-name">{{ product.title | truncate: 30 }}</a>
+                        <div class="at-upsell-price">
+                          ₹{{ product.price | divided_by: 100 }}
+                          {% if product.compare_at_price > product.price %}
+                            <span class="old">₹{{ product.compare_at_price | divided_by: 100 }}</span>
+                          {% endif %}
+                        </div>
+                      </div>
+                      <form method="post" action="/cart/add">
+                        <input type="hidden" name="id" value="{{ product.variants.first.id }}" />
+                        <button type="submit" class="at-upsell-add">ADD TO CART</button>
+                      </form>
+                    </div>
+                    {% assign upsell_count = upsell_count | plus: 1 %}
+                  {% endunless %}
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <p class="visually-hidden" id="shopping-cart-line-item-status" role="status" aria-hidden="true">{{ 'accessibility.loading' | t }}</p>
+      <p id="cart-live-region-text" class="visually-hidden" role="status" aria-hidden="true"></p>
+    </form>
+
+    <!-- OFFERS VIEW (HIDDEN BY DEFAULT) -->
+    <div id="at-offers-view">
+      <div class="at-back-btn" onclick="toggleOffers(false)">
+        ← BACK TO CART
+      </div>
+      
+      <div class="offers-header">
+        <h1>Exclusive Offers</h1>
+        <p>Redeem your points for premium brand vouchers</p>
+      </div>
+
+      <div class="offers-grid">
+        <div class="offer-card">
+          <div class="offer-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg"></div>
+          <div class="offer-brand">Amazon</div>
+          <div class="offer-title">₹200 Gift Voucher</div>
+          <div class="offer-meta">Valid on ₹1999+</div>
+          <button type="button" class="offer-btn">CLAIM NOW</button>
+        </div>
+        <div class="offer-card">
+          <div class="offer-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Flipkart_logo.png"></div>
+          <div class="offer-brand">Flipkart</div>
+          <div class="offer-title">₹500 Gift Card</div>
+          <div class="offer-meta">Valid on ₹4999+</div>
+          <button type="button" class="offer-btn">CLAIM NOW</button>
+        </div>
+        <div class="offer-card">
+          <div class="offer-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/b/bc/Myntra_Logo.png"></div>
+          <div class="offer-brand">Myntra</div>
+          <div class="offer-title">25% OFF Code</div>
+          <div class="offer-meta">No Min. Purchase</div>
+          <button type="button" class="offer-btn">GET CODE</button>
+        </div>
+        <div class="offer-card">
+          <div class="offer-logo"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Swiggy_logo.svg/1200px-Swiggy_logo.svg.png"></div>
+          <div class="offer-brand">Swiggy</div>
+          <div class="offer-title">₹100 Swiggy Money</div>
+          <div class="offer-meta">Food & Instamart</div>
+          <button type="button" class="offer-btn">CLAIM NOW</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</cart-items>
+
+<script>
+  function toggleOffers(show) {
+    const cartView = document.querySelector('#cart');
+    const footer = document.querySelector('#main-cart-footer');
+    const offersView = document.querySelector('#at-offers-view');
+    
+    if (show) {
+      cartView.style.display = 'none';
+      if(footer) footer.style.display = 'none';
+      offersView.style.display = 'block';
+      window.scrollTo(0,0);
+    } else {
+      cartView.style.display = 'block';
+      if(footer) footer.style.display = 'block';
+      offersView.style.display = 'none';
+      window.scrollTo(0,0);
+    }
+  }
+
+  // Countdown Timer Script
+  function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+      minutes = parseInt(timer / 60, 10);
+      seconds = parseInt(timer % 60, 10);
+
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+      display.textContent = minutes + "m " + seconds + "s";
+
+      if (--timer < 0) {
+        timer = duration;
+      }
+    }, 1000);
+  }
+
+  window.onload = function () {
+    var tenMinutes = 60 * 10,
+        display = document.querySelector('#at-countdown');
+    if(display) startTimer(tenMinutes, display);
+  };
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-items.name",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

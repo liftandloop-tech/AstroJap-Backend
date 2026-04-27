@@ -1,0 +1,1186 @@
+{% doc %}
+  @prompt
+    🚨 IMPORTANT (STRICT INSTRUCTION)
+    
+    DO NOT create a simple banner.
+    DO NOT create plain text with a button.
+    
+    Create a premium feature highlight section that clearly explains the kundli tool and encourages users to generate their kundli.
+    
+    🧾 SECTION PURPOSE
+    
+    This section should:
+    
+    Promote the Free Kundli Generator
+    
+    Explain benefits briefly
+    
+    Drive users to the Kundli page
+    
+    🧱 LAYOUT (MANDATORY)
+    
+    Use a 2-column layout:
+    
+    Left Side:
+    
+    Heading
+    
+    Subheading
+    
+    Feature points
+    
+    CTA button
+    
+    Right Side:
+    
+    Astrology-themed image (kundli chart / zodiac / birth chart illustration)
+    
+    🧾 CONTENT (Astrojap Data)
+    Heading:
+    
+    Generate Your Free Kundli
+    
+    Subheading:
+    
+    Get your detailed Janam Kundli with accurate planetary positions and predictions based on your birth details.
+    
+    Feature Points (Bullet Style):
+    
+    Instant kundli generation
+    
+    Accurate Vedic astrology calculations
+    
+    Insights on career, marriage & health
+    
+    Easy and free to use
+    
+    🔘 CTA BUTTON (VERY IMPORTANT)
+    
+    Button text:
+    
+    Create Your Kundli
+    
+    Button link:
+    
+    /pages/free-kundli
+    
+    👉 This must redirect to the kundli page
+    
+    🎨 DESIGN STYLE
+    
+    Premium astrology feel
+    
+    Background:
+    
+    Light gradient OR soft dark theme
+    
+    Clean spacing
+    
+    Rounded elements
+    
+    Subtle shadows
+    
+    ⚙️ FULLY EDITABLE (VERY IMPORTANT)
+    
+    All elements must be editable from Shopify customizer:
+    
+    Heading
+    
+    Subheading
+    
+    Feature points
+    
+    Button text & link
+    
+    Image
+    
+    Background color
+    
+    📱 MOBILE BEHAVIOR
+    
+    Stack layout (image below text)
+    
+    Full-width CTA button
+    
+    Proper spacing
+    
+    ⚙️ TECHNICAL REQUIREMENTS
+    
+    Use Shopify Liquid + section schema
+    
+    Reusable section
+    
+    Optimized for performance
+    
+    🚀 GOAL
+    
+    Create a high-converting homepage section that:
+    
+    Promotes kundli feature
+    
+    Drives users to generate kundli
+    
+    Increases engagement
+    
+    ❗ FINAL INSTRUCTION
+    
+    Focus on:
+    
+    Strong CTA
+    
+    Clear value proposition
+    
+    Clean premium UI
+    
+    Do NOT make it look basic., create a different design 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-kundli-premium-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background: {{ block.settings.background_gradient }};
+    background-color: {{ block.settings.background_color }};
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-kundli-premium-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, {{ block.settings.accent_color }}15 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .ai-kundli-premium-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, {{ block.settings.accent_color }}10 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .ai-kundli-premium-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-kundli-premium-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 45% 55%;
+    gap: {{ block.settings.grid_gap }}px;
+    align-items: center;
+  }
+
+  .ai-kundli-premium-content-{{ ai_gen_id }} {
+    padding: 40px;
+    background: {{ block.settings.content_bg_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    box-shadow: {{ block.settings.card_shadow_x }}px {{ block.settings.card_shadow_y }}px {{ block.settings.card_shadow_blur }}px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity }});
+    backdrop-filter: blur(10px);
+    border: 1px solid {{ block.settings.card_border_color }};
+  }
+
+  .ai-kundli-premium-badge-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: {{ block.settings.badge_bg_color }};
+    color: {{ block.settings.badge_text_color }};
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-kundli-premium-badge-{{ ai_gen_id }} svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+  }
+
+  .ai-kundli-premium-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 800;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 16px 0;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+
+  .ai-kundli-premium-subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin: 0 0 32px 0;
+    line-height: 1.6;
+  }
+
+  .ai-kundli-premium-features-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .ai-kundli-premium-feature-card-{{ ai_gen_id }} {
+    background: {{ block.settings.feature_card_bg }};
+    padding: 16px;
+    border-radius: {{ block.settings.feature_card_radius }}px;
+    border: 1px solid {{ block.settings.feature_card_border }};
+    transition: all 0.3s ease;
+  }
+
+  .ai-kundli-premium-feature-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-color: {{ block.settings.accent_color }};
+  }
+
+  .ai-kundli-premium-feature-icon-wrapper-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    background: {{ block.settings.feature_icon_bg }};
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .ai-kundli-premium-feature-icon-wrapper-{{ ai_gen_id }} svg {
+    width: 22px;
+    height: 22px;
+    stroke: {{ block.settings.feature_icon_color }};
+  }
+
+  .ai-kundli-premium-feature-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.feature_text_size }}px;
+    color: {{ block.settings.feature_text_color }};
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .ai-kundli-premium-cta-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .ai-kundli-premium-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: {{ block.settings.button_padding_y }}px {{ block.settings.button_padding_x }}px;
+    background: {{ block.settings.button_bg }};
+    color: {{ block.settings.button_text_color }};
+    font-size: {{ block.settings.button_text_size }}px;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: {{ block.settings.button_radius }}px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px {{ block.settings.button_bg }}40;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-kundli-premium-button-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .ai-kundli-premium-button-{{ ai_gen_id }}:hover::before {
+    left: 100%;
+  }
+
+  .ai-kundli-premium-button-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.button_hover_bg }};
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px {{ block.settings.button_bg }}60;
+  }
+
+  .ai-kundli-premium-button-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-kundli-premium-button-{{ ai_gen_id }}:hover svg {
+    transform: translateX(4px);
+  }
+
+  .ai-kundli-premium-trust-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: {{ block.settings.trust_text_color }};
+  }
+
+  .ai-kundli-premium-trust-{{ ai_gen_id }} svg {
+    width: 18px;
+    height: 18px;
+    fill: {{ block.settings.accent_color }};
+  }
+
+  .ai-kundli-premium-image-section-{{ ai_gen_id }} {
+    position: relative;
+    height: 100%;
+    min-height: 500px;
+  }
+
+  .ai-kundli-premium-image-main-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: {{ block.settings.image_radius }}px;
+    overflow: hidden;
+    box-shadow: {{ block.settings.image_shadow_x }}px {{ block.settings.image_shadow_y }}px {{ block.settings.image_shadow_blur }}px rgba(0, 0, 0, {{ block.settings.image_shadow_opacity }});
+  }
+
+  .ai-kundli-premium-image-main-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-kundli-premium-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-kundli-premium-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 350px;
+    max-height: 350px;
+    opacity: 0.2;
+  }
+
+  .ai-kundli-premium-empty-message-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 16px 28px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-kundli-premium-floating-card-{{ ai_gen_id }} {
+    position: absolute;
+    background: {{ block.settings.floating_card_bg }};
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .ai-kundli-premium-floating-card-1-{{ ai_gen_id }} {
+    top: 40px;
+    right: -20px;
+    width: 180px;
+  }
+
+  .ai-kundli-premium-floating-card-2-{{ ai_gen_id }} {
+    bottom: 60px;
+    left: -30px;
+    width: 160px;
+  }
+
+  .ai-kundli-premium-floating-title-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.floating_text_color }};
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .ai-kundli-premium-floating-value-{{ ai_gen_id }} {
+    font-size: 24px;
+    font-weight: 800;
+    color: {{ block.settings.accent_color }};
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ai-kundli-premium-floating-value-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    stroke: {{ block.settings.accent_color }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-kundli-premium-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .ai-kundli-premium-content-{{ ai_gen_id }} {
+      padding: 32px 24px;
+    }
+
+    .ai-kundli-premium-features-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-kundli-premium-image-section-{{ ai_gen_id }} {
+      min-height: 400px;
+    }
+
+    .ai-kundli-premium-floating-card-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .ai-kundli-premium-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.75);
+    }
+
+    .ai-kundli-premium-cta-wrapper-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .ai-kundli-premium-button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-kundli-premium-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top | times: 0.6 }}px 16px {{ block.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-kundli-premium-content-{{ ai_gen_id }} {
+      padding: 24px 20px;
+    }
+
+    .ai-kundli-premium-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.65);
+    }
+
+    .ai-kundli-premium-image-section-{{ ai_gen_id }} {
+      min-height: 350px;
+    }
+  }
+{% endstyle %}
+
+<kundli-premium-{{ ai_gen_id }} class="ai-kundli-premium-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-kundli-premium-container-{{ ai_gen_id }}">
+    <div class="ai-kundli-premium-grid-{{ ai_gen_id }}">
+      <div class="ai-kundli-premium-content-{{ ai_gen_id }}">
+        {% if block.settings.badge_text != blank %}
+          <div class="ai-kundli-premium-badge-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            {{ block.settings.badge_text }}
+          </div>
+        {% endif %}
+
+        {% if block.settings.title != blank %}
+          <h2 class="ai-kundli-premium-title-{{ ai_gen_id }}">
+            {{ block.settings.title }}
+          </h2>
+        {% endif %}
+
+        {% if block.settings.subtitle != blank %}
+          <p class="ai-kundli-premium-subtitle-{{ ai_gen_id }}">
+            {{ block.settings.subtitle }}
+          </p>
+        {% endif %}
+
+        <div class="ai-kundli-premium-features-{{ ai_gen_id }}">
+          {% if block.settings.feature_1 != blank %}
+            <div class="ai-kundli-premium-feature-card-{{ ai_gen_id }}">
+              <div class="ai-kundli-premium-feature-icon-wrapper-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-kundli-premium-feature-text-{{ ai_gen_id }}">
+                {{ block.settings.feature_1 }}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.feature_2 != blank %}
+            <div class="ai-kundli-premium-feature-card-{{ ai_gen_id }}">
+              <div class="ai-kundli-premium-feature-icon-wrapper-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                  <path d="M2 17l10 5 10-5"></path>
+                  <path d="M2 12l10 5 10-5"></path>
+                </svg>
+              </div>
+              <div class="ai-kundli-premium-feature-text-{{ ai_gen_id }}">
+                {{ block.settings.feature_2 }}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.feature_3 != blank %}
+            <div class="ai-kundli-premium-feature-card-{{ ai_gen_id }}">
+              <div class="ai-kundli-premium-feature-icon-wrapper-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div class="ai-kundli-premium-feature-text-{{ ai_gen_id }}">
+                {{ block.settings.feature_3 }}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.feature_4 != blank %}
+            <div class="ai-kundli-premium-feature-card-{{ ai_gen_id }}">
+              <div class="ai-kundli-premium-feature-icon-wrapper-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <div class="ai-kundli-premium-feature-text-{{ ai_gen_id }}">
+                {{ block.settings.feature_4 }}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="ai-kundli-premium-cta-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.cta_button_text != blank %}
+            <a href="{{ block.settings.button_link }}" class="ai-kundli-premium-button-{{ ai_gen_id }}">
+              {{ block.settings.cta_button_text }}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          {% endif %}
+
+          {% if block.settings.trust_text != blank %}
+            <div class="ai-kundli-premium-trust-{{ ai_gen_id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+              </svg>
+              {{ block.settings.trust_text }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="ai-kundli-premium-image-section-{{ ai_gen_id }}">
+        <div class="ai-kundli-premium-image-main-{{ ai_gen_id }}">
+          {% if block.settings.main_image %}
+            <img
+              src="{{ block.settings.main_image | image_url: width: 900 }}"
+              alt="{{ block.settings.main_image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.main_image.width }}"
+              height="{{ block.settings.main_image.height }}"
+            >
+          {% else %}
+            <div class="ai-kundli-premium-image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-kundli-premium-empty-message-{{ ai_gen_id }}">
+                Add astrology image
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if block.settings.show_floating_cards %}
+          <div class="ai-kundli-premium-floating-card-{{ ai_gen_id }} ai-kundli-premium-floating-card-1-{{ ai_gen_id }}">
+            <div class="ai-kundli-premium-floating-title-{{ ai_gen_id }}">{{ block.settings.stat_1_label }}</div>
+            <div class="ai-kundli-premium-floating-value-{{ ai_gen_id }}">
+              {{ block.settings.stat_1_value }}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="ai-kundli-premium-floating-card-{{ ai_gen_id }} ai-kundli-premium-floating-card-2-{{ ai_gen_id }}">
+            <div class="ai-kundli-premium-floating-title-{{ ai_gen_id }}">{{ block.settings.stat_2_label }}</div>
+            <div class="ai-kundli-premium-floating-value-{{ ai_gen_id }}">
+              {{ block.settings.stat_2_value }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</kundli-premium-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class KundliPremium{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.initAnimations();
+      }
+
+      initAnimations() {
+        const cards = this.querySelectorAll('.ai-kundli-premium-feature-card-{{ ai_gen_id }}');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+              setTimeout(() => {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+              }, index * 100);
+            }
+          });
+        }, { threshold: 0.1 });
+
+        cards.forEach((card) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          card.style.transition = 'all 0.5s ease';
+          observer.observe(card);
+        });
+      }
+    }
+
+    customElements.define('kundli-premium-{{ ai_gen_id }}', KundliPremium{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Kundli premium feature",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Free Tool"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "Generate Your Free Kundli"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Get your detailed Janam Kundli with accurate planetary positions and predictions based on your birth details."
+    },
+    {
+      "type": "text",
+      "id": "feature_1",
+      "label": "Feature 1",
+      "default": "Instant kundli generation"
+    },
+    {
+      "type": "text",
+      "id": "feature_2",
+      "label": "Feature 2",
+      "default": "Accurate Vedic astrology"
+    },
+    {
+      "type": "text",
+      "id": "feature_3",
+      "label": "Feature 3",
+      "default": "Career & marriage insights"
+    },
+    {
+      "type": "text",
+      "id": "feature_4",
+      "label": "Feature 4",
+      "default": "Easy and free to use"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "Button text",
+      "default": "Create Your Kundli"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "trust_text",
+      "label": "Trust text",
+      "default": "100% Free & Accurate"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Main image"
+    },
+    {
+      "type": "header",
+      "content": "Floating stats"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_floating_cards",
+      "label": "Show floating cards",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 label",
+      "default": "Users"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_value",
+      "label": "Stat 1 value",
+      "default": "50K+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 label",
+      "default": "Accuracy"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_value",
+      "label": "Stat 2 value",
+      "default": "99%"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container width",
+      "min": 900,
+      "max": 1400,
+      "step": 100,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid gap",
+      "min": 30,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#0f0f23"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "content_bg_color",
+      "label": "Content background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Badge style"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Background",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 28,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Subtitle size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Feature cards"
+    },
+    {
+      "type": "color",
+      "id": "feature_card_bg",
+      "label": "Background",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "color",
+      "id": "feature_card_border",
+      "label": "Border color",
+      "default": "#e9ecef"
+    },
+    {
+      "type": "range",
+      "id": "feature_card_radius",
+      "label": "Border radius",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "feature_icon_bg",
+      "label": "Icon background",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "feature_icon_color",
+      "label": "Icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "feature_text_size",
+      "label": "Text size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "feature_text_color",
+      "label": "Text color",
+      "default": "#2d3748"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Text size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "label": "Vertical padding",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "label": "Horizontal padding",
+      "min": 24,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Border radius",
+      "min": 4,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Background",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg",
+      "label": "Hover background",
+      "default": "#5568d3"
+    },
+    {
+      "type": "color",
+      "id": "trust_text_color",
+      "label": "Trust text color",
+      "default": "#718096"
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Border radius",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Border color",
+      "default": "#e9ecef"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_x",
+      "label": "Shadow X",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_y",
+      "label": "Shadow Y",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_blur",
+      "label": "Shadow blur",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.1
+    },
+    {
+      "type": "header",
+      "content": "Image style"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Border radius",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "image_shadow_x",
+      "label": "Shadow X",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_shadow_y",
+      "label": "Shadow Y",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_shadow_blur",
+      "label": "Shadow blur",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "image_shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.2
+    },
+    {
+      "type": "header",
+      "content": "Floating cards"
+    },
+    {
+      "type": "color",
+      "id": "floating_card_bg",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "floating_text_color",
+      "label": "Text color",
+      "default": "#718096"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Kundli premium feature"
+    }
+  ]
+}
+{% endschema %}

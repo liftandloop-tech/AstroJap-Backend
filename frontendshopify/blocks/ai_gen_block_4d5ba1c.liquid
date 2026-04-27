@@ -1,0 +1,711 @@
+{% doc %}
+  @prompt
+    🚨 IMPORTANT
+    
+    DO NOT create plain text.
+    Create a visual CTA section with cards/buttons.
+    
+    🧱 LAYOUT
+    
+    3–4 cards in a row (desktop)
+    
+    Stack on mobile
+    
+    🧩 CARDS
+    Card 1:
+    
+    Talk to Astrologer
+    Get instant guidance from experts
+    Button: Call Now
+    
+    Card 2:
+    
+    Chat Support
+    Chat with our support team
+    Button: Start Chat
+    
+    Card 3:
+    
+    Email Support
+    Send us your queries anytime
+    Button: Send Email
+    
+    🎨 DESIGN
+    
+    Light background
+    
+    Rounded cards
+    
+    Icons on top
+    
+    Hover effect
+    
+    ⚙️ EDITABLE
+    
+    Each card:
+    
+    Title
+    
+    Description
+    
+    Button text
+    
+    Link
+    
+    Icon
+    
+    📱 MOBILE
+    
+    Stack cards
+    
+    Full width buttons
+    
+    🚀 GOAL
+    
+    Create a high-converting support section that gives users quick ways to contact.
+    
+    💡 FINAL STRUCTURE (IMPORTANT)
+    
+    Your Contact Page should be:
+    
+    Hero Section ✅
+    
+    Contact Form Section ✅
+    
+    Quick Support Section ✅
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-support-section-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-support-section__container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-support-section__heading-{{ ai_gen_id }} {
+    text-align: center;
+    margin: 0 0 {{ block.settings.heading_spacing }}px;
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-support-section__cards-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.cards_per_row }}, 1fr);
+    gap: {{ block.settings.card_gap }}px;
+  }
+
+  .ai-support-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-support-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-support-card__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    margin: 0 auto {{ block.settings.icon_spacing }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-support-card__icon-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ai-support-card__icon-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-support-card__icon-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-support-card__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_title_size }}px;
+    font-weight: 600;
+    margin: 0 0 {{ block.settings.title_spacing }}px;
+    color: {{ block.settings.card_title_color }};
+  }
+
+  .ai-support-card__description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_description_size }}px;
+    margin: 0 0 {{ block.settings.description_spacing }}px;
+    color: {{ block.settings.card_description_color }};
+    line-height: 1.5;
+  }
+
+  .ai-support-card__button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-support-card__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    transform: scale(1.05);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-support-section__cards-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-support-card__button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-support-section__heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.8);
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .ai-support-section__cards-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+{% endstyle %}
+
+<quick-support-{{ ai_gen_id }} class="ai-support-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-support-section__container-{{ ai_gen_id }}">
+    {% if block.settings.section_heading != blank %}
+      <h2 class="ai-support-section__heading-{{ ai_gen_id }}">{{ block.settings.section_heading }}</h2>
+    {% endif %}
+
+    <div class="ai-support-section__cards-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% liquid
+          assign card_enabled_key = 'card_' | append: i | append: '_enabled'
+          assign card_icon_key = 'card_' | append: i | append: '_icon'
+          assign card_title_key = 'card_' | append: i | append: '_title'
+          assign card_description_key = 'card_' | append: i | append: '_description'
+          assign card_button_text_key = 'card_' | append: i | append: '_button_text'
+          assign card_button_link_key = 'card_' | append: i | append: '_button_link'
+
+          assign card_enabled = block.settings[card_enabled_key]
+          assign card_icon = block.settings[card_icon_key]
+          assign card_title = block.settings[card_title_key]
+          assign card_description = block.settings[card_description_key]
+          assign card_button_text = block.settings[card_button_text_key]
+          assign card_button_link = block.settings[card_button_link_key]
+        %}
+
+        {% if card_enabled %}
+          <div class="ai-support-card-{{ ai_gen_id }}">
+            <div class="ai-support-card__icon-{{ ai_gen_id }}">
+              {% if card_icon %}
+                <img
+                  src="{{ card_icon | image_url: width: 200 }}"
+                  alt="{{ card_title | escape }}"
+                  loading="lazy"
+                  width="200"
+                  height="200"
+                >
+              {% else %}
+                <div class="ai-support-card__icon-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            {% if card_title != blank %}
+              <h3 class="ai-support-card__title-{{ ai_gen_id }}">{{ card_title }}</h3>
+            {% endif %}
+
+            {% if card_description != blank %}
+              <p class="ai-support-card__description-{{ ai_gen_id }}">{{ card_description }}</p>
+            {% endif %}
+
+            {% if card_button_text != blank %}
+              <a
+                href="{{ card_button_link }}"
+                class="ai-support-card__button-{{ ai_gen_id }}"
+              >
+                {{ card_button_text }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</quick-support-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class QuickSupport{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccessibility();
+      }
+
+      setupAccessibility() {
+        const buttons = this.querySelectorAll('.ai-support-card__button-{{ ai_gen_id }}');
+        buttons.forEach((button) => {
+          if (!button.getAttribute('aria-label')) {
+            const cardTitle = button.closest('.ai-support-card-{{ ai_gen_id }}').querySelector('.ai-support-card__title-{{ ai_gen_id }}');
+            if (cardTitle) {
+              button.setAttribute('aria-label', cardTitle.textContent.trim());
+            }
+          }
+        });
+      }
+    }
+
+    customElements.define('quick-support-{{ ai_gen_id }}', QuickSupport{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Quick support section",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "How Can We Help You?"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "cards_per_row",
+      "label": "Cards per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 15,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "icon_spacing",
+      "label": "Icon spacing",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Title spacing",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "card_description_size",
+      "label": "Description size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "card_description_color",
+      "label": "Description color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "description_spacing",
+      "label": "Description spacing",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#334fb4"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Button vertical padding",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Button horizontal padding",
+      "min": 15,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_1_enabled",
+      "label": "Enable card 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Talk to Astrologer"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_1_description",
+      "label": "Description",
+      "default": "Get instant guidance from experts"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_1_button_text",
+      "label": "Button text",
+      "default": "Call Now"
+    },
+    {
+      "type": "url",
+      "id": "card_1_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_2_enabled",
+      "label": "Enable card 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Chat Support"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_2_description",
+      "label": "Description",
+      "default": "Chat with our support team"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_2_button_text",
+      "label": "Button text",
+      "default": "Start Chat"
+    },
+    {
+      "type": "url",
+      "id": "card_2_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_3_enabled",
+      "label": "Enable card 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Email Support"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_3_description",
+      "label": "Description",
+      "default": "Send us your queries anytime"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_3_button_text",
+      "label": "Button text",
+      "default": "Send Email"
+    },
+    {
+      "type": "url",
+      "id": "card_3_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_4_enabled",
+      "label": "Enable card 4",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_4_title",
+      "label": "Title",
+      "default": "FAQ"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_4_description",
+      "label": "Description",
+      "default": "Find answers to common questions"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_4_button_text",
+      "label": "Button text",
+      "default": "View FAQ"
+    },
+    {
+      "type": "url",
+      "id": "card_4_button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quick support section"
+    }
+  ]
+}
+{% endschema %}

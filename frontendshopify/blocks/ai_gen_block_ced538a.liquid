@@ -1,0 +1,1061 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  :root {
+    --header-height-{{ ai_gen_id }}: auto;
+  }
+
+  /* ── Outer wrapper ── */
+  .ai-astrojap-header-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  /* ── FIXED top container (marquee + main nav) ── */
+  .ai-astrojap-header__sticky-top-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: {{ block.settings.header_bg_color }};
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  /* ── Spacer: Liquid-calculated fallback, JS overrides precisely ── */
+  .ai-astrojap-header__spacer-{{ ai_gen_id }} {
+    height: calc(38px + {{ block.settings.header_padding | times: 2 }}px + 64px);
+  }
+
+  /* ── Centered announcement slider ── */
+  .ai-astrojap-marquee-{{ ai_gen_id }} {
+    background-color: {{ block.settings.marquee_bg_color }};
+    color: {{ block.settings.marquee_text_color }};
+    overflow: hidden;
+    position: relative;
+    font-size: {{ block.settings.marquee_font_size }}px;
+    font-weight: 500;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .ai-astrojap-marquee-content-{{ ai_gen_id }} {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    white-space: nowrap;
+    padding: 0 20px;
+  }
+
+  .ai-astrojap-marquee-content-{{ ai_gen_id }}.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-astrojap-marquee-content-{{ ai_gen_id }}.is-exit {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  /* ── Main header top bar ── */
+  .ai-astrojap-header__top-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: {{ block.settings.header_padding }}px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px; /* Slightly reduced gap for better fit */
+    background-color: {{ block.settings.header_bg_color }};
+    box-sizing: border-box;
+  }
+
+  /* ── Logo ── */
+  .ai-astrojap-header__logo-{{ ai_gen_id }} { 
+    flex-shrink: 0; 
+    min-width: fit-content;
+  }
+  .ai-astrojap-header__logo-link-{{ ai_gen_id }} { display: block; }
+  .ai-astrojap-header__logo-image-{{ ai_gen_id }} {
+    display: block;
+    max-width: {{ block.settings.logo_width }}px;
+    height: auto;
+  }
+  .ai-astrojap-header__logo-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.logo_text_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.logo_text_color }};
+    text-decoration: none;
+    display: block;
+  }
+
+  /* ── Nav (desktop only) ── */
+  .ai-astrojap-header__nav-{{ ai_gen_id }} {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    min-width: 0; /* Important: allows the nav to shrink if the menu is wide */
+    overflow: hidden;
+  }
+  .ai-astrojap-header__menu-{{ ai_gen_id }} {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(8, max-content);
+    gap: 10px {{ block.settings.menu_spacing }}px;
+    align-items: center;
+    justify-content: center;
+  }
+  .ai-astrojap-header__menu-item-{{ ai_gen_id }} {
+    position: relative;
+  }
+  .ai-astrojap-header__menu-link-{{ ai_gen_id }} {
+    color: {{ block.settings.menu_text_color }};
+    text-decoration: none;
+    font-size: {{ block.settings.menu_font_size }}px;
+    font-weight: 500;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+  }
+  .ai-astrojap-header__menu-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.menu_hover_color }};
+  }
+
+  /* ── Icons & CTA Container ── */
+  .ai-astrojap-header__actions-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.icon_spacing }}px;
+    flex-shrink: 0; /* Ensures the button and icons never shrink */
+    white-space: nowrap;
+  }
+
+  /* ── CTA button ── */
+  .ai-astrojap-header__cta-{{ ai_gen_id }} {
+    background-color: {{ block.settings.cta_bg_color }};
+    color: {{ block.settings.cta_text_color }};
+    padding: {{ block.settings.cta_padding_vertical }}px {{ block.settings.cta_padding_horizontal }}px;
+    border-radius: {{ block.settings.cta_border_radius }}px;
+    text-decoration: none;
+    font-size: {{ block.settings.cta_font_size }}px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-block;
+    flex-shrink: 0; /* Prevents button itself from overflowing/squeezing */
+  }
+  .ai-astrojap-header__cta-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.cta_hover_bg_color }};
+    color: {{ block.settings.cta_hover_text_color }};
+  }
+
+  /* ── Icons ── */
+  .ai-astrojap-header__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    color: {{ block.settings.icon_color }};
+    cursor: pointer;
+    transition: color 0.3s ease;
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .ai-astrojap-header__icon-{{ ai_gen_id }}:hover { color: {{ block.settings.icon_hover_color }}; }
+  .ai-astrojap-header__icon-{{ ai_gen_id }} svg { width: 100%; height: 100%; }
+
+  /* ── Dropdowns ── */
+  .ai-astrojap-header__menu-item-{{ ai_gen_id }}.has-dropdown-{{ ai_gen_id }}:hover .ai-astrojap-header__dropdown-wrapper-{{ ai_gen_id }} {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+  .ai-astrojap-header__dropdown-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    padding-top: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    z-index: 1000;
+  }
+  .ai-astrojap-header__dropdown-{{ ai_gen_id }} {
+    background-color: {{ block.settings.header_bg_color }};
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+    padding: 24px 32px;
+    border-radius: 12px;
+  }
+  .ai-astrojap-header__dropdown-list-{{ ai_gen_id }} {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-rows: repeat(8, auto);
+    grid-auto-flow: column;
+    column-gap: 40px;
+    row-gap: 16px;
+  }
+  .ai-astrojap-header__dropdown-list-{{ ai_gen_id }} li a {
+    color: {{ block.settings.menu_text_color }};
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+    display: block;
+  }
+  .ai-astrojap-header__dropdown-list-{{ ai_gen_id }} li a:hover {
+    color: {{ block.settings.menu_hover_color }};
+  }
+
+  /* ── Mobile toggle ── */
+  .ai-astrojap-header__mobile-toggle-{{ ai_gen_id }} {
+    display: none;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: {{ block.settings.icon_color }};
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ai-astrojap-header__mobile-toggle-{{ ai_gen_id }} svg { width: 100%; height: 100%; }
+
+  /* ── Mobile popup simplified ── */
+  .ai-mobile-popup-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    z-index: 9999;
+  }
+  .ai-mobile-popup-overlay-{{ ai_gen_id }} {
+    position: absolute; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+  }
+  .ai-mobile-popup-content-{{ ai_gen_id }} {
+    position: absolute; top: 0; left: -100%;
+    width: 85%; max-width: 320px; height: 100%;
+    background: #ffffff; transition: left 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .ai-mobile-popup-{{ ai_gen_id }}.active { display: block; }
+  .ai-mobile-popup-{{ ai_gen_id }}.active .ai-mobile-popup-content-{{ ai_gen_id }} { left: 0; }
+  .ai-mobile-header-{{ ai_gen_id }} {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; font-weight: 600; font-size: 16px;
+    border-bottom: 1px solid #eee; flex-shrink: 0;
+  }
+  .ai-mobile-close-{{ ai_gen_id }} {
+    background: none; border: none; font-size: 22px;
+    cursor: pointer; color: #333; line-height: 1; padding: 0;
+  }
+  .ai-mobile-menu-{{ ai_gen_id }} { list-style: none; padding: 10px 0; margin: 0; flex-grow: 1; }
+  .ai-mobile-menu-{{ ai_gen_id }} li { border-bottom: 1px solid #f2f2f2; }
+  .ai-mobile-menu-{{ ai_gen_id }} li a {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 20px; text-decoration: none; color: #111;
+    font-size: 15px; transition: background 0.2s;
+  }
+  .ai-mobile-menu-{{ ai_gen_id }} li a:hover { background: #f8f8f8; }
+  .ai-mobile-submenu-{{ ai_gen_id }} { list-style: none; padding: 0; margin: 0; background: #fafafa; }
+  .ai-mobile-submenu-{{ ai_gen_id }} li { border-top: 1px solid #f2f2f2; border-bottom: none !important; }
+  .ai-mobile-submenu-{{ ai_gen_id }} li a { padding: 12px 20px 12px 30px; font-size: 14px; color: #444; }
+
+  .ai-mobile-cta-{{ ai_gen_id }} { padding: 16px 20px; border-top: 1px solid #eee; flex-shrink: 0; }
+  .ai-mobile-cta-{{ ai_gen_id }} a {
+    display: block; text-align: center;
+    background-color: {{ block.settings.cta_bg_color }};
+    color: {{ block.settings.cta_text_color }};
+    padding: 12px 20px;
+    border-radius: {{ block.settings.cta_border_radius }}px;
+    text-decoration: none; font-size: 14px; font-weight: 600;
+  }
+
+  /* ── Responsive ── */
+  @media screen and (max-width: 989px) {
+    .ai-astrojap-header__nav-{{ ai_gen_id }} { display: none; }
+    .ai-astrojap-header__cta-{{ ai_gen_id }} { display: none; }
+    .ai-astrojap-header__mobile-toggle-{{ ai_gen_id }} { display: flex; }
+    .ai-astrojap-header__top-{{ ai_gen_id }} { gap: 12px; padding: 14px 16px; }
+    .ai-astrojap-header__actions-{{ ai_gen_id }} { gap: 14px; }
+    .ai-astrojap-header__spacer-{{ ai_gen_id }} { height: calc(38px + 28px + 64px); }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-astrojap-header__top-{{ ai_gen_id }} { padding: 12px 14px; gap: 10px; }
+    .ai-astrojap-header__logo-image-{{ ai_gen_id }} { max-width: {{ block.settings.logo_width | times: 0.65 }}px; }
+    .ai-astrojap-header__logo-text-{{ ai_gen_id }} { font-size: {{ block.settings.logo_text_size | times: 0.75 }}px; }
+    .ai-astrojap-header__actions-{{ ai_gen_id }} { gap: 10px; }
+    .ai-astrojap-header__icon-{{ ai_gen_id }} { width: 20px; height: 20px; }
+    .ai-astrojap-header__mobile-toggle-{{ ai_gen_id }} { width: 20px; height: 20px; }
+    .ai-astrojap-header__spacer-{{ ai_gen_id }} { height: calc(38px + 24px + 56px); }
+  }
+{% endstyle %}
+
+<astrojap-header-{{ ai_gen_id }} class="ai-astrojap-header-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+
+  <div class="ai-astrojap-header__sticky-top-{{ ai_gen_id }}" id="sticky-top-{{ ai_gen_id }}">
+
+    {% if block.settings.show_marquee %}
+      {% assign marquee_messages = block.settings.marquee_text | split: "|" %}
+      <div class="ai-astrojap-marquee-{{ ai_gen_id }}">
+        {% for msg in marquee_messages %}
+          <div class="ai-astrojap-marquee-content-{{ ai_gen_id }}{% if forloop.first %} is-visible{% endif %}">
+            {{ msg | strip }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="ai-astrojap-header__top-{{ ai_gen_id }}">
+
+      {% if block.settings.menu != blank %}
+        <button
+          class="ai-astrojap-header__mobile-toggle-{{ ai_gen_id }}"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      {% endif %}
+
+      <div class="ai-astrojap-header__logo-{{ ai_gen_id }}">
+        {% if block.settings.logo != blank %}
+          <a href="{{ routes.root_url }}" class="ai-astrojap-header__logo-link-{{ ai_gen_id }}">
+            <img
+              src="{{ block.settings.logo | image_url: width: 400 }}"
+              alt="{{ shop.name }}"
+              class="ai-astrojap-header__logo-image-{{ ai_gen_id }}"
+              width="{{ block.settings.logo_width }}"
+              height="auto"
+              loading="eager"
+            >
+          </a>
+        {% else %}
+          <a href="{{ routes.root_url }}" class="ai-astrojap-header__logo-link-{{ ai_gen_id }}">
+            <span class="ai-astrojap-header__logo-text-{{ ai_gen_id }}">{{ block.settings.logo_text }}</span>
+          </a>
+        {% endif %}
+      </div>
+
+      {% if block.settings.menu != blank %}
+        <nav class="ai-astrojap-header__nav-{{ ai_gen_id }}">
+          <ul class="ai-astrojap-header__menu-{{ ai_gen_id }}">
+            {% for link in linklists[block.settings.menu].links %}
+              <li class="ai-astrojap-header__menu-item-{{ ai_gen_id }} {% if link.links.size > 0 %}has-dropdown-{{ ai_gen_id }}{% endif %}">
+                <a href="{{ link.url }}" class="ai-astrojap-header__menu-link-{{ ai_gen_id }}">
+                  {{ link.title }}
+                  {% if link.links.size > 0 %}
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" style="margin-left: 6px; flex-shrink: 0;">
+                      <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {% endif %}
+                </a>
+                
+                {% if link.links.size > 0 %}
+                  <div class="ai-astrojap-header__dropdown-wrapper-{{ ai_gen_id }}">
+                    <div class="ai-astrojap-header__dropdown-{{ ai_gen_id }}">
+                      <ul class="ai-astrojap-header__dropdown-list-{{ ai_gen_id }}">
+                        {% for childlink in link.links %}
+                          <li>
+                            <a href="{{ childlink.url }}">{{ childlink.title }}</a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endif %}
+
+      <div class="ai-astrojap-header__actions-{{ ai_gen_id }}">
+        {% if block.settings.show_search %}
+          <div class="ai-header-search-wrapper-{{ ai_gen_id }}">
+            <button class="ai-astrojap-header__icon-{{ ai_gen_id }} ai-search-toggle-{{ ai_gen_id }}" aria-label="Search">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </button>
+            <div class="ai-header-search-bar-{{ ai_gen_id }}{% if template == 'search' and search.performed %} active{% endif %}">
+              <form action="{{ routes.search_url }}" method="get" role="search">
+                <input type="search" name="q" placeholder="Search products..." class="ai-search-input-{{ ai_gen_id }}" value="{{ search.terms | escape }}">
+                <button type="submit" class="ai-search-submit-{{ ai_gen_id }}">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </button>
+                <button type="button" class="ai-search-close-{{ ai_gen_id }}">✕</button>
+              </form>
+            </div>
+          </div>
+        {% endif %}
+
+        <style>
+          .ai-header-search-wrapper-{{ ai_gen_id }} { position: relative; display: flex; align-items: center; }
+          .ai-header-search-bar-{{ ai_gen_id }} {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%) scaleX(0);
+            transform-origin: right;
+            background: #fff;
+            width: 300px;
+            padding: 5px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1001;
+          }
+          .ai-header-search-bar-{{ ai_gen_id }}.active {
+            transform: translateY(-50%) scaleX(1);
+            opacity: 1;
+            visibility: visible;
+          }
+          .ai-header-search-bar-{{ ai_gen_id }} form { width: 100%; display: flex; align-items: center; padding: 0 10px; }
+          .ai-search-input-{{ ai_gen_id }} {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 8px 10px;
+            font-size: 14px;
+            background: transparent;
+          }
+          .ai-search-submit-{{ ai_gen_id }} { background: none; border: none; padding: 0; cursor: pointer; color: #666; width: 18px; height: 18px; }
+          .ai-search-close-{{ ai_gen_id }} { background: none; border: none; margin-left: 10px; cursor: pointer; color: #999; font-size: 16px; }
+
+          @media screen and (max-width: 749px) {
+            .ai-header-search-bar-{{ ai_gen_id }} {
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              width: 100%;
+              height: 60px;
+              border-radius: 0;
+              transform: translateY(-100%);
+              transform-origin: top;
+            }
+            .ai-header-search-bar-{{ ai_gen_id }}.active {
+              transform: translateY(0);
+            }
+          }
+        </style>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const toggle = document.querySelector('.ai-search-toggle-{{ ai_gen_id }}');
+            const searchBar = document.querySelector('.ai-header-search-bar-{{ ai_gen_id }}');
+            const closeBtn = document.querySelector('.ai-search-close-{{ ai_gen_id }}');
+            const input = document.querySelector('.ai-search-input-{{ ai_gen_id }}');
+
+            if (toggle && searchBar) {
+              toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                searchBar.classList.add('active');
+                input.focus();
+              });
+            }
+
+            if (closeBtn) {
+              closeBtn.addEventListener('click', function() {
+                searchBar.classList.remove('active');
+              });
+            }
+
+            document.addEventListener('click', function(e) {
+              if (!searchBar.contains(e.target) && !toggle.contains(e.target)) {
+                searchBar.classList.remove('active');
+              }
+            });
+          });
+        </script>
+        {% if block.settings.show_account %}
+          <a href="{{ routes.account_url }}" class="ai-astrojap-header__icon-{{ ai_gen_id }}" aria-label="Account">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+          </a>
+        {% endif %}
+        {% if block.settings.show_cart %}
+          <a href="{{ routes.cart_url }}" class="ai-astrojap-header__icon-{{ ai_gen_id }}" aria-label="Cart">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+          </a>
+        {% endif %}
+        {% if block.settings.cta_text != blank %}
+          <a href="{{ block.settings.cta_link }}" class="ai-astrojap-header__cta-{{ ai_gen_id }}">{{ block.settings.cta_text }}</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+  <div class="ai-astrojap-header__spacer-{{ ai_gen_id }}" id="header-spacer-{{ ai_gen_id }}"></div>
+
+  {% if block.settings.menu != blank %}
+    <div class="ai-mobile-popup-{{ ai_gen_id }}" aria-hidden="true">
+      <div class="ai-mobile-popup-overlay-{{ ai_gen_id }}"></div>
+      <div class="ai-mobile-popup-content-{{ ai_gen_id }}">
+        <div class="ai-mobile-header-{{ ai_gen_id }}">
+          <span>Menu</span>
+          <button class="ai-mobile-close-{{ ai_gen_id }}" aria-label="Close menu">✕</button>
+        </div>
+
+        <style>
+          .at-mobile-drawer-wrap-{{ ai_gen_id }} {
+            padding: 15px;
+            font-family: 'Inter', sans-serif;
+            background: #fff !important;
+            border-bottom: 1px solid #f0f0f0;
+          }
+
+          .at-drawer-section-title-{{ ai_gen_id }} {
+            font-size: 15px;
+            font-weight: 800;
+            color: #222;
+            margin: 15px 0 12px 0;
+            text-align: left;
+            padding-left: 5px;
+          }
+
+          .at-circle-grid-{{ ai_gen_id }} {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px 8px;
+            margin-bottom: 15px;
+          }
+
+          .at-circle-item-{{ ai_gen_id }} {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            gap: 5px;
+          }
+
+          .at-circle-img-{{ ai_gen_id }} {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #f0f0f0;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+          }
+
+          .at-circle-img-{{ ai_gen_id }} img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .at-circle-label-{{ ai_gen_id }} {
+            font-size: 10px;
+            font-weight: 600;
+            color: #444;
+            text-align: center;
+            line-height: 1.1;
+          }
+
+          .at-purpose-img-{{ ai_gen_id }} { width: 35px; height: 35px; }
+          .at-purpose-img-{{ ai_gen_id }} img { width: 100%; height: 100%; object-fit: contain; }
+          .at-purpose-label-{{ ai_gen_id }} { font-size: 11px; font-weight: 700; color: #333; }
+        </style>
+
+        <div class="at-mobile-drawer-wrap-{{ ai_gen_id }}">
+          <h2 class="at-drawer-section-title-{{ ai_gen_id }}">Categories</h2>
+          <div class="at-circle-grid-{{ ai_gen_id }}">
+            {% assign category_menu = linklists['categories'] %}
+            {% for link in category_menu.links %}
+              {%- liquid
+                assign label = link.title
+                assign link_url = link.url
+
+                # Manual override to ensure pages are used instead of collections
+                if label == "Rudraksha"
+                  assign link_url = "/pages/rudraksha"
+                elsif label == "Bracelet" or label == "Bracelets"
+                  assign link_url = "/pages/bracelets"
+                elsif label == "Pyrite"
+                  assign link_url = "/pages/pyrite"
+                elsif label == "Crystals" or label == "Dome Tree"
+                  assign link_url = "/pages/crystals"
+                elsif label == "Gemstones"
+                  assign link_url = "/pages/gemstones"
+                elsif label == "Karungali"
+                  assign link_url = "/pages/karungali"
+                elsif label == "Malas"
+                  assign link_url = "/pages/malas"
+                elsif label == "Idols"
+                  assign link_url = "/pages/idols"
+                elsif label == "Yantras" or label == "Yantra"
+                  assign link_url = "/pages/yantra"
+                elsif label == "Our Combos" or label == "Combo"
+                  assign link_url = "/pages/combo"
+                elsif label == "Tower and Tumbles"
+                  assign link_url = "/pages/tower-and-tumbles"
+                elsif label == "Kavach"
+                  assign link_url = "/pages/kavach"
+                elsif label == "Evil Eye"
+                  assign link_url = "/pages/evil-eye"
+                elsif label == "Anklets"
+                  assign link_url = "/pages/anklets"
+                elsif label == "Pyramid"
+                  assign link_url = "/pages/pyramid"
+                endif
+
+                assign collection = link.object
+                assign img_url = "https://astrotalk.com/assets/images/category_placeholder.png"
+                if collection and collection.image
+                  assign img_url = collection.image | image_url: width: 120
+                endif
+              -%}
+              <a href="{{ link_url }}" class="at-circle-item-{{ ai_gen_id }}">
+                <div class="at-circle-img-{{ ai_gen_id }}">
+                  <img src="{{ img_url }}" alt="{{ label | escape }}">
+                </div>
+                <span class="at-circle-label-{{ ai_gen_id }}">{{ label | escape }}</span>
+              </a>
+            {% endfor %}
+          </div>
+
+        </div>
+        <ul class="ai-mobile-menu-{{ ai_gen_id }}">
+          {% for link in linklists[block.settings.menu].links %}
+            <li>
+              <a href="{{ link.url }}">{{ link.title }}<span>›</span></a>
+              {% if link.links.size > 0 %}
+                <ul class="ai-mobile-submenu-{{ ai_gen_id }}">
+                  {% for childlink in link.links %}
+                    <li><a href="{{ childlink.url }}">- {{ childlink.title }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+        {% if block.settings.cta_text != blank %}
+          <div class="ai-mobile-cta-{{ ai_gen_id }}">
+            <a href="{{ block.settings.cta_link }}">{{ block.settings.cta_text }}</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+</astrojap-header-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstrojapHeader{{ ai_gen_id }} extends HTMLElement {
+      connectedCallback() {
+        this.toggle   = this.querySelector('.ai-astrojap-header__mobile-toggle-{{ ai_gen_id }}');
+        this.popup    = this.querySelector('.ai-mobile-popup-{{ ai_gen_id }}');
+        this.closeBtn = this.querySelector('.ai-mobile-close-{{ ai_gen_id }}');
+        this.overlay  = this.querySelector('.ai-mobile-popup-overlay-{{ ai_gen_id }}');
+
+        if (this.toggle)   this.toggle.addEventListener('click',   () => this.openMenu());
+        if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.closeMenu());
+        if (this.overlay)  this.overlay.addEventListener('click',  () => this.closeMenu());
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.closeMenu(); });
+
+        const stickyTop     = document.getElementById('sticky-top-{{ ai_gen_id }}');
+        const spacer        = document.getElementById('header-spacer-{{ ai_gen_id }}');
+        const parentSection = this.closest('.shopify-section') || this.parentElement;
+
+        const setHeight = () => {
+          if (!stickyTop) return;
+          let totalHeight = stickyTop.getBoundingClientRect().height;
+          
+          // Also find the Category Grid sibling if it exists and add its height
+          const categoryGrid = document.querySelector('[class*="ai-cg-section"]');
+          if (categoryGrid) {
+            totalHeight += categoryGrid.getBoundingClientRect().height;
+          }
+
+          if (totalHeight > 0) {
+            if (spacer) spacer.style.height = totalHeight + 'px';
+            if (parentSection) parentSection.style.height = totalHeight + 'px';
+            document.documentElement.style.setProperty('--header-height', totalHeight + 'px');
+          }
+        };
+
+        setHeight();
+        requestAnimationFrame(setHeight);
+        setTimeout(setHeight, 100);
+        setTimeout(setHeight, 300);
+        setTimeout(setHeight, 1000);
+        window.addEventListener('load',   setHeight, { passive: true });
+        window.addEventListener('resize', setHeight, { passive: true });
+
+        this.initMarquee();
+      }
+
+      initMarquee() {
+        const items = Array.from(this.querySelectorAll('.ai-astrojap-marquee-content-{{ ai_gen_id }}'));
+        if (items.length <= 1) return;
+        let current = 0;
+        setInterval(() => {
+          items[current].classList.remove('is-visible');
+          items[current].classList.add('is-exit');
+          const prev = current;
+          current = (current + 1) % items.length;
+          setTimeout(() => {
+            items[prev].classList.remove('is-exit');
+            items[current].classList.add('is-visible');
+          }, 500);
+        }, 3500);
+      }
+
+      openMenu() {
+        if (this.popup) {
+          this.popup.classList.add('active');
+          this.popup.setAttribute('aria-hidden', 'false');
+          if (this.toggle) this.toggle.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden';
+        }
+      }
+
+      closeMenu() {
+        if (this.popup) {
+          this.popup.classList.remove('active');
+          this.popup.setAttribute('aria-hidden', 'true');
+          if (this.toggle) this.toggle.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        }
+      }
+    }
+
+    if (!customElements.get('astrojap-header-{{ ai_gen_id }}')) {
+      customElements.define('astrojap-header-{{ ai_gen_id }}', AstrojapHeader{{ ai_gen_id }});
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Astrojap header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Marquee"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_marquee",
+      "label": "Show Marquee",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "marquee_text",
+      "label": "Marquee Text (use | to separate messages)",
+      "default": "✨ Welcome to Astrojap - Your Daily Astrology Guide ✨ | 🌟 Free Kundli Report | 🪐 Chat with Expert Astrologer"
+    },
+    {
+      "type": "color",
+      "id": "marquee_bg_color",
+      "label": "Marquee Background",
+      "default": "#6b46c1"
+    },
+    {
+      "type": "color",
+      "id": "marquee_text_color",
+      "label": "Marquee Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "marquee_font_size",
+      "label": "Font Size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "header_padding",
+      "label": "Header padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "header_bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width",
+      "min": 80,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 140
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text",
+      "default": "Astrojap"
+    },
+    {
+      "type": "range",
+      "id": "logo_text_size",
+      "label": "Logo text size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "logo_text_color",
+      "label": "Logo text color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "range",
+      "id": "menu_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "menu_spacing",
+      "label": "Menu spacing",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "menu_text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "menu_hover_color",
+      "label": "Hover color",
+      "default": "#6b46c1"
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show cart icon",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 18,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "icon_spacing",
+      "label": "Icon spacing",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "icon_hover_color",
+      "label": "Icon hover color",
+      "default": "#6b46c1"
+    },
+    {
+      "type": "header",
+      "content": "CTA button"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "Chat with Astrologer"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "cta_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "cta_padding_vertical",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "cta_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 16,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "cta_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "cta_bg_color",
+      "label": "Background color",
+      "default": "#6b46c1"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#5a3aa3"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_text_color",
+      "label": "Hover text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrojap header"
+    }
+  ]
+}
+{% endschema %}

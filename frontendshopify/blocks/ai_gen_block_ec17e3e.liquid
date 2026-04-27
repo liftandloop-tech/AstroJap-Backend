@@ -1,0 +1,877 @@
+{% doc %}
+  @prompt
+    🚨 IMPORTANT (STRICT INSTRUCTION)
+    
+    DO NOT create a simple text banner.
+    DO NOT create a basic button section.
+    
+    Create a premium feature highlight section that visually promotes the horoscope tool and encourages clicks.
+    
+    🧾 SECTION PURPOSE
+    
+    This section should:
+    
+    Highlight the Horoscope feature
+    
+    Explain its benefits briefly
+    
+    Drive users to the Horoscope page
+    
+    🧱 LAYOUT (MANDATORY)
+    
+    Choose a 2-column layout:
+    
+    Left Side:
+    
+    Heading
+    
+    Subheading
+    
+    Short feature points
+    
+    CTA button
+    
+    Right Side:
+    
+    Image OR illustration (zodiac / astrology theme)
+    
+    🧾 CONTENT (Astrojap Data)
+    Heading:
+    
+    Check Your Daily Horoscope
+    
+    Subheading:
+    
+    Get personalized astrology insights for your love, career, and health in seconds.
+    
+    Feature Points (Bullet Style):
+    
+    Accurate zodiac-based predictions
+    
+    Daily updates for all 12 signs
+    
+    Insights for love, career & health
+    
+    Easy and instant access
+    
+    🔘 CTA BUTTON (VERY IMPORTANT)
+    
+    Button text:
+    
+    View Horoscope
+    
+    Button link:
+    
+    /pages/horoscope
+    
+    👉 This must redirect to the horoscope page
+    
+    🎨 DESIGN STYLE
+    
+    Premium astrology look
+    
+    Light or gradient background
+    
+    Soft shadows
+    
+    Clean spacing
+    
+    Rounded elements
+    
+    ⚙️ FULLY EDITABLE (VERY IMPORTANT)
+    
+    All elements must be editable from Shopify customizer:
+    
+    Heading
+    
+    Subheading
+    
+    Feature points
+    
+    Button text & link
+    
+    Image
+    
+    Background color
+    
+    📱 MOBILE BEHAVIOR
+    
+    Stack layout (image below text)
+    
+    Full-width button
+    
+    Proper spacing
+    
+    ⚙️ TECHNICAL REQUIREMENTS
+    
+    Use Shopify Liquid + schema
+    
+    Make section reusable
+    
+    Optimize for performance
+    
+    🚀 GOAL
+    
+    Create a high-converting homepage section that:
+    
+    Promotes horoscope feature
+    
+    Drives traffic to horoscope page
+    
+    Improves engagement
+    
+    ❗ FINAL INSTRUCTION
+    
+    Focus on:
+    
+    Clear CTA
+    
+    Clean layout
+    
+    Strong visual hierarchy
+    
+    Do NOT make it look basic.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-horoscope-feature-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    background: {{ block.settings.background_gradient }};
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: {{ block.settings.section_padding }}px;
+    box-shadow: 0 {{ block.settings.shadow_vertical }}px {{ block.settings.shadow_blur }}px rgba(0, 0, 0, {{ block.settings.shadow_opacity }});
+  }
+
+  .ai-horoscope-feature__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.column_gap }}px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-horoscope-feature__content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.content_spacing }}px;
+  }
+
+  .ai-horoscope-feature__heading-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.heading_size }}px;
+    line-height: 1.2;
+    color: {{ block.settings.heading_color }};
+    font-weight: 700;
+  }
+
+  .ai-horoscope-feature__subheading-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.subheading_size }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    opacity: 0.9;
+  }
+
+  .ai-horoscope-feature__features-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.feature_spacing }}px;
+    margin: {{ block.settings.features_margin_top }}px 0 0;
+  }
+
+  .ai-horoscope-feature__feature-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .ai-horoscope-feature__feature-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ block.settings.icon_background }};
+    border-radius: 50%;
+    margin-top: 2px;
+  }
+
+  .ai-horoscope-feature__feature-icon-{{ ai_gen_id }} svg {
+    width: calc({{ block.settings.icon_size }}px * 0.5);
+    height: calc({{ block.settings.icon_size }}px * 0.5);
+    fill: {{ block.settings.icon_color }};
+  }
+
+  .ai-horoscope-feature__feature-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.feature_text_size }}px;
+    line-height: 1.6;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-horoscope-feature__cta-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_text_size }}px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: {{ block.settings.button_margin_top }}px;
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, {{ block.settings.button_shadow_opacity }});
+  }
+
+  .ai-horoscope-feature__cta-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, {{ block.settings.button_shadow_opacity | times: 1.5 }});
+  }
+
+  .ai-horoscope-feature__cta-icon-{{ ai_gen_id }} {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-horoscope-feature__cta-{{ ai_gen_id }}:hover .ai-horoscope-feature__cta-icon-{{ ai_gen_id }} {
+    transform: translateX(4px);
+  }
+
+  .ai-horoscope-feature__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-horoscope-feature__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-horoscope-feature__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: {{ block.settings.image_border_radius }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-horoscope-feature__image-placeholder-{{ ai_gen_id }} svg {
+    width: 80%;
+    height: 80%;
+    opacity: 0.3;
+  }
+
+  .ai-horoscope-feature__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-horoscope-feature__container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.mobile_gap }}px;
+    }
+
+    .ai-horoscope-feature__image-wrapper-{{ ai_gen_id }} {
+      order: {{ block.settings.mobile_image_position }};
+      min-height: 300px;
+    }
+
+    .ai-horoscope-feature__content-{{ ai_gen_id }} {
+      order: 1;
+    }
+
+    .ai-horoscope-feature__heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.8);
+    }
+
+    .ai-horoscope-feature__subheading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subheading_size }}px * 0.9);
+    }
+
+    .ai-horoscope-feature__cta-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-horoscope-feature-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding | times: 0.6 }}px;
+    }
+
+    .ai-horoscope-feature__heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.7);
+    }
+  }
+{% endstyle %}
+
+<horoscope-feature-{{ ai_gen_id }} class="ai-horoscope-feature-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-horoscope-feature__container-{{ ai_gen_id }}">
+    <div class="ai-horoscope-feature__content-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-horoscope-feature__heading-{{ ai_gen_id }}">
+          {{ block.settings.heading }}
+        </h2>
+      {% endif %}
+
+      {% if block.settings.subheading != blank %}
+        <p class="ai-horoscope-feature__subheading-{{ ai_gen_id }}">
+          {{ block.settings.subheading }}
+        </p>
+      {% endif %}
+
+      <div class="ai-horoscope-feature__features-{{ ai_gen_id }}">
+        {% if block.settings.feature_1 != blank %}
+          <div class="ai-horoscope-feature__feature-item-{{ ai_gen_id }}">
+            <div class="ai-horoscope-feature__feature-icon-{{ ai_gen_id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+              </svg>
+            </div>
+            <p class="ai-horoscope-feature__feature-text-{{ ai_gen_id }}">
+              {{ block.settings.feature_1 }}
+            </p>
+          </div>
+        {% endif %}
+
+        {% if block.settings.feature_2 != blank %}
+          <div class="ai-horoscope-feature__feature-item-{{ ai_gen_id }}">
+            <div class="ai-horoscope-feature__feature-icon-{{ ai_gen_id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+              </svg>
+            </div>
+            <p class="ai-horoscope-feature__feature-text-{{ ai_gen_id }}">
+              {{ block.settings.feature_2 }}
+            </p>
+          </div>
+        {% endif %}
+
+        {% if block.settings.feature_3 != blank %}
+          <div class="ai-horoscope-feature__feature-item-{{ ai_gen_id }}">
+            <div class="ai-horoscope-feature__feature-icon-{{ ai_gen_id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+              </svg>
+            </div>
+            <p class="ai-horoscope-feature__feature-text-{{ ai_gen_id }}">
+              {{ block.settings.feature_3 }}
+            </p>
+          </div>
+        {% endif %}
+
+        {% if block.settings.feature_4 != blank %}
+          <div class="ai-horoscope-feature__feature-item-{{ ai_gen_id }}">
+            <div class="ai-horoscope-feature__feature-icon-{{ ai_gen_id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+              </svg>
+            </div>
+            <p class="ai-horoscope-feature__feature-text-{{ ai_gen_id }}">
+              {{ block.settings.feature_4 }}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if block.settings.button_text != blank %}
+        <a 
+          href="{{ block.settings.button_link }}" 
+          class="ai-horoscope-feature__cta-{{ ai_gen_id }}"
+        >
+          {{ block.settings.button_text }}
+          <svg class="ai-horoscope-feature__cta-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="ai-horoscope-feature__image-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.feature_image %}
+        <img
+          src="{{ block.settings.feature_image | image_url: width: 800 }}"
+          alt="{{ block.settings.feature_image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.feature_image.width }}"
+          height="{{ block.settings.feature_image.height }}"
+          class="ai-horoscope-feature__image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-horoscope-feature__image-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-horoscope-feature__empty-state-{{ ai_gen_id }}">
+            Add an astrology or zodiac themed image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</horoscope-feature-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class HoroscopeFeature{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccessibility();
+      }
+
+      setupAccessibility() {
+        const ctaButton = this.querySelector('.ai-horoscope-feature__cta-{{ ai_gen_id }}');
+        if (ctaButton) {
+          ctaButton.setAttribute('role', 'button');
+        }
+      }
+    }
+
+    customElements.define('horoscope-feature-{{ ai_gen_id }}', HoroscopeFeature{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Horoscope feature",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Check Your Daily Horoscope"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Get personalized astrology insights for your love, career, and health in seconds."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "feature_1",
+      "label": "Feature 1",
+      "default": "Accurate zodiac-based predictions"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "feature_2",
+      "label": "Feature 2",
+      "default": "Daily updates for all 12 signs"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "feature_3",
+      "label": "Feature 3",
+      "default": "Insights for love, career & health"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "feature_4",
+      "label": "Feature 4",
+      "default": "Easy and instant access"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "View Horoscope"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_image",
+      "label": "Feature image"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "content_spacing",
+      "label": "Content spacing",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "feature_spacing",
+      "label": "Feature spacing",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "features_margin_top",
+      "label": "Features top margin",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Button top margin",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_position",
+      "label": "Mobile image position",
+      "options": [
+        {
+          "value": "0",
+          "label": "Above text"
+        },
+        {
+          "value": "2",
+          "label": "Below text"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "icon_background",
+      "label": "Icon background",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#667eea"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#5568d3"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border",
+      "default": "#667eea"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "default": 0.2
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "feature_text_size",
+      "label": "Feature text size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Button text size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Effects"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Section border radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "shadow_vertical",
+      "label": "Shadow vertical offset",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "label": "Shadow blur",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "default": 0.1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Horoscope feature"
+    }
+  ]
+}
+{% endschema %}

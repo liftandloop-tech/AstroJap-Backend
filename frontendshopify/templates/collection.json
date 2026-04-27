@@ -1,0 +1,496 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "177322749930a0be17": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_81d8eb2_EmdBRd": {
+          "type": "ai_gen_block_81d8eb2",
+          "settings": {
+            "slider_height_desktop": 600,
+            "slider_height_mobile": 700,
+            "image_fit": "contain",
+            "mobile_image_position": "top",
+            "autoplay": true,
+            "autoplay_speed": 5,
+            "show_arrows": true,
+            "show_dots": true,
+            "background_color": "#ffffff",
+            "arrow_bg_color": "#ffffff",
+            "arrow_color": "#121212",
+            "dot_color": "#121212",
+            "dot_active_color": "#121212",
+            "text_alignment": "left",
+            "badge_bg_color": "#334fb4",
+            "badge_text_color": "#ffffff",
+            "badge_font_size": 12,
+            "badge_border_radius": 20,
+            "heading_color": "#121212",
+            "heading_font_size": 50,
+            "subheading_color": "#121212",
+            "subheading_font_size": 28,
+            "description_color": "#121212",
+            "description_font_size": 16,
+            "button_bg_color": "#121212",
+            "button_text_color": "#ffffff",
+            "button_hover_bg_color": "#334fb4",
+            "button_hover_text_color": "#ffffff",
+            "button_font_size": 14,
+            "button_border_radius": 4,
+            "button_border_width": 0,
+            "button_border_color": "#121212",
+            "slide_1_enabled": true,
+            "slide_1_image": "shopify://shop_images/Untitled-12.png",
+            "slide_1_badge": "10X More Powerful",
+            "slide_1_heading": "NEW ARRIVAL",
+            "slide_1_subheading": "Divine Idols Collection",
+            "slide_1_description": "<p>Bring Home Faith, Peace & Positivity</p>",
+            "slide_1_button_text": "SHOP NOW",
+            "slide_1_button_link": "",
+            "slide_2_enabled": true,
+            "slide_2_image": "shopify://shop_images/spritiual_jewellery.png",
+            "slide_2_badge": "Sacred Energy",
+            "slide_2_heading": "RUDRAKSHA",
+            "slide_2_subheading": "Authentic Rudraksha Collection",
+            "slide_2_description": "<p>Experience Divine Protection & Spiritual Growth</p>",
+            "slide_2_button_text": "SHOP NOW",
+            "slide_2_button_link": "",
+            "slide_3_enabled": true,
+            "slide_3_image": "shopify://shop_images/tge_combo_11.webp",
+            "slide_3_badge": "Natural Healing",
+            "slide_3_heading": "GEMSTONES",
+            "slide_3_subheading": "Premium Gemstone Collection",
+            "slide_3_description": "<p>Harness the Power of Natural Crystals</p>",
+            "slide_3_button_text": "SHOP NOW",
+            "slide_3_button_link": ""
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_0f1e61a_DAtjQp": {
+          "type": "ai_gen_block_0f1e61a",
+          "settings": {
+            "heading": "Shop by Purpose",
+            "heading_font": "serif",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 48,
+            "cards_per_row": 5,
+            "cards_per_row_tablet": 4,
+            "card_spacing": 24,
+            "mobile_card_width": 170,
+            "card_background": "#f5f1ea",
+            "card_border_radius": 14,
+            "card_padding": 20,
+            "card_shadow_opacity": 0.1,
+            "hover_lift": 4,
+            "card_title_size": 15,
+            "card_title_weight": "500",
+            "card_title_color": "#121212",
+            "card_1_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.33.20_AM.png",
+            "card_1_title": "Money",
+            "card_1_link": "https://astrojap.com/pages/money",
+            "card_2_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.31.44_AM.png",
+            "card_2_title": "Love",
+            "card_2_link": "https://astrojap.com/pages/love",
+            "card_3_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.41.12_AM.png",
+            "card_3_title": "Protection",
+            "card_3_link": "https://astrojap.com/pages/protection",
+            "card_4_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.42.33_AM.png",
+            "card_4_title": "",
+            "card_4_link": "",
+            "card_5_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.47.58_AM.png",
+            "card_5_title": "Evil Eye",
+            "card_5_link": "https://astrojap.com/pages/evil-eye",
+            "card_6_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.45.11_AM.png",
+            "card_6_title": "Health",
+            "card_6_link": "https://astrojap.com/pages/health",
+            "card_7_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.54.23_AM.png",
+            "card_7_title": "",
+            "card_7_link": "",
+            "card_8_title": "",
+            "card_8_link": "",
+            "card_9_title": "",
+            "card_9_link": "",
+            "card_10_title": "",
+            "card_10_link": ""
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_c100f68_nPMkyz": {
+          "type": "ai_gen_block_c100f68",
+          "name": "Purchased sessions",
+          "settings": {
+            "show_heading": true,
+            "heading": "Your Purchased Sessions",
+            "subheading": "Connect with your astrologers",
+            "heading_alignment": "center",
+            "heading_size": 36,
+            "subheading_size": 16,
+            "heading_color": "#1a1a1a",
+            "subheading_color": "#666666",
+            "heading_spacing": 40,
+            "api_endpoint": "",
+            "chat_page_url": "/pages/chat",
+            "container_max_width": 1200,
+            "section_padding_top": 60,
+            "section_padding_bottom": 60,
+            "background_color": "#ffffff",
+            "grid_gap": 24,
+            "grid_spacing": 32,
+            "card_min_width": 220,
+            "card_background": "#fcf8f1",
+            "card_border_radius": 24,
+            "card_padding": 28,
+            "card_shadow_opacity": 0.1,
+            "image_size": 100,
+            "image_spacing": 16,
+            "name_size": 18,
+            "name_color": "#1a1a1a",
+            "duration_size": 14,
+            "duration_color": "#666666",
+            "button_gradient": "linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%)",
+            "button_text_color": "#ffffff",
+            "button_font_size": 14,
+            "button_padding_vertical": 12,
+            "button_padding_horizontal": 24,
+            "button_border_radius": 24,
+            "button_spacing": 16
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_70b54b2_kqciiq": {
+          "type": "ai_gen_block_70b54b2",
+          "name": "Chat with astrologer",
+          "disabled": true,
+          "settings": {
+            "title": "My Purchased Sessions",
+            "subtitle": "Continuing your spiritual journey",
+            "section_bg": "#ffffff",
+            "card_bg": "#fcf8f1",
+            "button_label": "Chat Now",
+            "button_bg": "#ff9800",
+            "button_text_color": "#ffffff",
+            "padding_top": 60,
+            "padding_bottom": 60
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_81d8eb2_EmdBRd",
+        "ai_gen_block_0f1e61a_DAtjQp",
+        "ai_gen_block_c100f68_nPMkyz",
+        "ai_gen_block_70b54b2_kqciiq"
+      ],
+      "settings": {}
+    },
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": false,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "1773229996ff23d543": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "17738205335367dceb": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "blocks_qPPtVq": {
+      "type": "_blocks",
+      "name": "Best sellers slider",
+      "settings": {}
+    },
+    "rich_text_WrFLfT": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_BF7za8": {
+          "type": "heading",
+          "settings": {
+            "heading": "Talk about your brand",
+            "heading_size": "h1"
+          }
+        },
+        "text_ewDqCH": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.</p>"
+          }
+        },
+        "button_CQViy7": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "button_label": "Button label",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_BF7za8",
+        "text_ewDqCH",
+        "button_CQViy7"
+      ],
+      "disabled": true,
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
+    "17748696338e2696ef": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1773233481a7b31712": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "17733148699be00254": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1773753144317b4dec": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_c100f68_rbQAdJ": {
+          "type": "ai_gen_block_c100f68",
+          "name": "Purchased sessions",
+          "settings": {
+            "show_heading": true,
+            "heading": "Your Purchased Sessions",
+            "subheading": "Connect with your astrologers",
+            "heading_alignment": "center",
+            "heading_size": 36,
+            "subheading_size": 16,
+            "heading_color": "#1a1a1a",
+            "subheading_color": "#666666",
+            "heading_spacing": 40,
+            "api_endpoint": "",
+            "chat_page_url": "/pages/chat",
+            "container_max_width": 1200,
+            "section_padding_top": 60,
+            "section_padding_bottom": 60,
+            "background_color": "#ffffff",
+            "grid_gap": 24,
+            "grid_spacing": 32,
+            "card_min_width": 220,
+            "card_background": "#fcf8f1",
+            "card_border_radius": 24,
+            "card_padding": 28,
+            "card_shadow_opacity": 0.1,
+            "image_size": 100,
+            "image_spacing": 16,
+            "name_size": 18,
+            "name_color": "#1a1a1a",
+            "duration_size": 14,
+            "duration_color": "#666666",
+            "button_gradient": "linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%)",
+            "button_text_color": "#ffffff",
+            "button_font_size": 14,
+            "button_padding_vertical": 12,
+            "button_padding_horizontal": 24,
+            "button_border_radius": 24,
+            "button_spacing": 16
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_c605e38_hggx3K": {
+          "type": "ai_gen_block_c605e38",
+          "disabled": true,
+          "settings": {
+            "title": "Elite Astrology Remedies",
+            "collection": "astrojap-best-seller",
+            "bg_color": "#ffffff",
+            "show_badge": true,
+            "badge_size_desktop": 100,
+            "badge_size_mobile": 50,
+            "badge_l1": "100%*",
+            "badge_l2": "CASHBACK",
+            "badge_l3": "on prepaid order",
+            "badge_bg_color": "#ffdc00",
+            "badge_text_color": "#1a1a1a"
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_c100f68_xAXUJb": {
+          "type": "ai_gen_block_c100f68",
+          "name": "Purchased sessions",
+          "settings": {
+            "show_heading": true,
+            "heading": "Your Purchased Sessions",
+            "subheading": "Connect with your astrologers",
+            "heading_alignment": "center",
+            "heading_size": 36,
+            "subheading_size": 16,
+            "heading_color": "#1a1a1a",
+            "subheading_color": "#666666",
+            "heading_spacing": 40,
+            "api_endpoint": "",
+            "chat_page_url": "/pages/chat",
+            "container_max_width": 1200,
+            "section_padding_top": 60,
+            "section_padding_bottom": 60,
+            "background_color": "#ffffff",
+            "grid_gap": 24,
+            "grid_spacing": 32,
+            "card_min_width": 220,
+            "card_background": "#fcf8f1",
+            "card_border_radius": 24,
+            "card_padding": 28,
+            "card_shadow_opacity": 0.1,
+            "image_size": 100,
+            "image_spacing": 16,
+            "name_size": 18,
+            "name_color": "#1a1a1a",
+            "duration_size": 14,
+            "duration_color": "#666666",
+            "button_gradient": "linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%)",
+            "button_text_color": "#ffffff",
+            "button_font_size": 14,
+            "button_padding_vertical": 12,
+            "button_padding_horizontal": 24,
+            "button_border_radius": 24,
+            "button_spacing": 16
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_c605e38_63TeBh": {
+          "type": "ai_gen_block_c605e38",
+          "name": "Infinite Product Grid",
+          "settings": {
+            "title": "Elite Astrology Products",
+            "collection": "astrojap-best-seller",
+            "bg_color": "#ffffff",
+            "show_badge": true,
+            "badge_size_desktop": 100,
+            "badge_size_mobile": 80,
+            "badge_l1": "100%*",
+            "badge_l2": "CASHBACK",
+            "badge_l3": "on prepaid order",
+            "badge_bg_color": "#ffdc00",
+            "badge_text_color": "#1a1a1a"
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_e62c191_bWm4TB": {
+          "type": "ai_gen_block_e62c191",
+          "settings": {
+            "heading": "Testimonials",
+            "sub_heading": "Trusted by Thousands",
+            "bg_color": "#f9f9f9",
+            "v_type_1": "insta",
+            "v_url_1": "https://www.instagram.com/reel/DViwTNHDBE1/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+            "c_1": "Absolutely wonderful!",
+            "r_1": 5,
+            "p_1": "",
+            "v_type_2": "insta",
+            "v_url_2": "https://www.instagram.com/reel/DViwTNHDBE1/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+            "c_2": "",
+            "r_2": 5,
+            "p_2": "",
+            "v_type_3": "insta",
+            "v_url_3": "https://www.instagram.com/reel/DViwTNHDBE1/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+            "c_3": "",
+            "r_3": 5,
+            "p_3": "",
+            "v_type_4": "insta",
+            "v_url_4": "https://www.instagram.com/reel/DViwTNHDBE1/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+            "c_4": "",
+            "r_4": 5,
+            "p_4": "",
+            "v_type_5": "insta",
+            "v_url_5": "",
+            "c_5": "",
+            "r_5": 5,
+            "p_5": "",
+            "v_type_6": "insta",
+            "v_url_6": "",
+            "c_6": "",
+            "r_6": 5,
+            "p_6": "",
+            "v_type_7": "insta",
+            "v_url_7": "",
+            "c_7": "",
+            "r_7": 5,
+            "p_7": "",
+            "v_type_8": "insta",
+            "v_url_8": "",
+            "c_8": "",
+            "r_8": 5,
+            "p_8": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_c100f68_rbQAdJ",
+        "ai_gen_block_c605e38_hggx3K",
+        "ai_gen_block_c100f68_xAXUJb",
+        "ai_gen_block_c605e38_63TeBh",
+        "ai_gen_block_e62c191_bWm4TB"
+      ],
+      "settings": {}
+    },
+    "1773755460b74abbda": {
+      "type": "_blocks",
+      "settings": {}
+    }
+  },
+  "order": [
+    "177322749930a0be17",
+    "banner",
+    "1773229996ff23d543",
+    "product-grid",
+    "17738205335367dceb",
+    "blocks_qPPtVq",
+    "rich_text_WrFLfT",
+    "17748696338e2696ef",
+    "1773233481a7b31712",
+    "17733148699be00254",
+    "1773753144317b4dec",
+    "1773755460b74abbda"
+  ]
+}

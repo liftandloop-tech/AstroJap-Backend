@@ -1,0 +1,113 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "1773143638e9fb3b81": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_41055af_nUNGW9": {
+          "type": "ai_gen_block_41055af",
+          "settings": {},
+          "blocks": {}
+        },
+        "ai_gen_block_21ae12e_YzRWQh": {
+          "type": "ai_gen_block_21ae12e",
+          "settings": {
+            "section_title": "Chat With Astrologer",
+            "title_size": 32,
+            "title_color": "#121212",
+            "background_color": "#ffffff",
+            "search_placeholder": "Search name...",
+            "search_border_color": "#cccccc",
+            "search_focus_color": "#121212",
+            "search_border_radius": 8,
+            "card_background": "#ffffff",
+            "card_border_radius": 12,
+            "image_size": 100,
+            "image_border_color": "#ffd700",
+            "text_color": "#121212",
+            "name_size": 18,
+            "detail_color": "#666666",
+            "detail_size": 14,
+            "price_color": "#121212",
+            "price_size": 16,
+            "button_text": "Chat",
+            "button_background": "#ffffff",
+            "button_text_color": "#22c55e",
+            "button_border_color": "#22c55e",
+            "button_hover_background": "#22c55e",
+            "button_hover_text_color": "#ffffff",
+            "button_hover_border_color": "#22c55e",
+            "button_border_radius": 8,
+            "astrologer_1_name": "Astrologer 1",
+            "astrologer_1_specialization": "Vedic, Tarot",
+            "astrologer_1_languages": "Hindi, English",
+            "astrologer_1_experience": "5 Years",
+            "astrologer_1_orders": "1500",
+            "astrologer_1_price": "₹43/min",
+            "astrologer_1_link": "",
+            "astrologer_2_name": "Astrologer 2",
+            "astrologer_2_specialization": "Numerology, Palmistry",
+            "astrologer_2_languages": "Hindi, English",
+            "astrologer_2_experience": "7 Years",
+            "astrologer_2_orders": "2000",
+            "astrologer_2_price": "₹50/min",
+            "astrologer_2_link": "",
+            "astrologer_3_name": "Astrologer 3",
+            "astrologer_3_specialization": "KP Astrology, Vastu",
+            "astrologer_3_languages": "Hindi, English, Tamil",
+            "astrologer_3_experience": "10 Years",
+            "astrologer_3_orders": "3500",
+            "astrologer_3_price": "₹60/min",
+            "astrologer_3_link": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_41055af_nUNGW9",
+        "ai_gen_block_21ae12e_YzRWQh"
+      ],
+      "settings": {}
+    },
+    "1773142536007bfbaa": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1773142802fc9e8f47": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "17731441166fe9fa34": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "177331704623e604ee": {
+      "type": "_blocks",
+      "settings": {}
+    }
+  },
+  "order": [
+    "1773143638e9fb3b81",
+    "1773142536007bfbaa",
+    "1773142802fc9e8f47",
+    "17731441166fe9fa34",
+    "main",
+    "177331704623e604ee"
+  ]
+}

@@ -1,0 +1,708 @@
+
+{{ 'api.js' | asset_url | script_tag }}
+{%- style -%}
+  .astro-dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Outfit', sans-serif;
+    color: #1e293b;
+    margin-top: 150px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .astro-dashboard {
+      flex-direction: column;
+      margin-top: 100px;
+    }
+  }
+
+  /* ── Sidebar ── */
+  .astro-sidebar {
+    width: 260px;
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    position: sticky;
+    top: 150px;
+    height: calc(100vh - 150px);
+    z-index: 10;
+  }
+
+  @media screen and (max-width: 989px) {
+    .astro-sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+      top: 0;
+      padding: 12px;
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 8px;
+      border-right: none;
+      border-bottom: 1px solid #e2e8f0;
+      scrollbar-width: none;
+    }
+    .astro-sidebar::-webkit-scrollbar { display: none; }
+  }
+
+  .astro-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+  }
+
+  @media screen and (max-width: 989px) {
+    .astro-nav-item {
+      white-space: nowrap;
+      margin-bottom: 0;
+      padding: 10px 14px;
+    }
+  }
+
+  .astro-nav-item:hover, .astro-nav-item.active {
+    background: #fff7ed;
+    color: #f97316;
+  }
+
+  .astro-nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* ── Main Content ── */
+  .astro-main {
+    flex: 1;
+    padding: 32px;
+    max-width: 1200px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .astro-main { padding: 20px; }
+  }
+
+  /* ── Tab Content Visibility ── */
+  .tab-pane { display: none; animation: fadeIn 0.3s ease; }
+  .tab-pane.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Components ── */
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    gap: 20px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .dashboard-header { flex-direction: column; align-items: flex-start; }
+  }
+
+  .dashboard-header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+
+  .status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    padding: 6px 14px;
+    border-radius: 50px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
+  .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+  input:checked + .slider { background-color: #22c55e; }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .status-label { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+  input:checked ~ .status-label { color: #22c55e; }
+
+  /* ── Cards Grid ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
+  @media screen and (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media screen and (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+
+  .stat-card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+  }
+  .stat-card:hover { transform: translateY(-2px); border-color: #f97316; }
+  .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .stat-value { font-size: 22px; font-weight: 800; display: block; margin-bottom: 4px; }
+  .stat-label { font-size: 13px; color: #64748b; font-weight: 500; }
+
+  /* ── Form Styling (Profile Tab) ── */
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 24px; }
+  @media screen and (max-width: 749px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group label { font-size: 13px; font-weight: 600; color: #475569; }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus { border-color: #f97316; }
+  .btn-primary {
+    background: #f97316;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 20px;
+  }
+  .btn-primary:hover { background: #ea580c; }
+
+  /* ── Table Styling ── */
+  .table-container { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; margin-top: 24px; }
+  .astro-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+  .astro-table th { background: #f8fafc; padding: 16px; text-align: left; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+  .astro-table td { padding: 16px; font-size: 14px; border-bottom: 1px solid #f1f5f9; }
+  .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .status-completed { background: #dcfce7; color: #166534; }
+  .status-busy { background: #fee2e2; color: #991b1b; }
+
+  /* ── Chat Mockup ── */
+  .chat-mockup {
+    display: flex;
+    height: 500px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+  }
+  .chat-sidebar { width: 250px; border-right: 1px solid #e2e8f0; background: #f8fafc; padding: 16px; }
+  .chat-window { flex: 1; display: flex; flex-direction: column; }
+  .chat-header { padding: 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+  .chat-messages { flex: 1; padding: 20px; background: #fff; overflow-y: auto; }
+  .chat-input { padding: 16px; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; }
+  .chat-input input { flex: 1; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; }
+
+{%- endstyle -%}
+
+<div class="astro-dashboard" id="astroDashboard">
+  <aside class="astro-sidebar">
+    <button class="astro-nav-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Overview
+    </button>
+    <button class="astro-nav-item" data-tab="sessions" onclick="switchTab('sessions')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      Upcoming
+    </button>
+    <button class="astro-nav-item" data-tab="history" onclick="switchTab('history')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      History
+    </button>
+    <button class="astro-nav-item" data-tab="availability" onclick="switchTab('availability')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Set Slots
+    </button>
+    <button class="astro-nav-item" data-tab="wallet" onclick="switchTab('wallet')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      Earnings
+    </button>
+    <button class="astro-nav-item" data-tab="settings" onclick="switchTab('settings')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Settings
+    </button>
+    <div style="margin-top: auto;">
+      <a href="/account/logout" class="astro-nav-item" style="color: #ef4444;">
+        Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <main class="astro-main">
+    <!-- ── Dashboard Overview Tab ── -->
+    <div id="dashboard" class="tab-pane active">
+      <div class="dashboard-header">
+        <h1>Welcome, <span id="astro-welcome-name">…</span></h1>
+        <div class="status-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" id="availability-toggle" onchange="handleToggle(this)">
+            <span class="slider"></span>
+          </label>
+          <span class="status-label" id="mainStatusLabel">LOADING…</span>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#ecfdf5;color:#10b981;">₹</div>
+          <span class="stat-value" id="stat-today">—</span>
+          <span class="stat-label">Today's Earnings</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#eff6ff;color:#3b82f6;">📅</div>
+          <span class="stat-value" id="stat-week">—</span>
+          <span class="stat-label">This Week</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fefce8;color:#ca8a04;">💰</div>
+          <span class="stat-value" id="stat-balance">—</span>
+          <span class="stat-label">Wallet Balance</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fff7ed;color:#f97316;">💬</div>
+          <span class="stat-value" id="stat-sessions">—</span>
+          <span class="stat-label">Total Sessions</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f0fdf4;color:#22c55e;">📌</div>
+          <span class="stat-value" id="stat-upcoming">—</span>
+          <span class="stat-label">Upcoming Bookings</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef2f2;color:#ef4444;">⭐</div>
+          <span class="stat-value" id="stat-rating">—</span>
+          <span class="stat-label">Avg. Rating</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Upcoming Sessions Tab ── -->
+    <div id="sessions" class="tab-pane">
+      <div class="dashboard-header"><h1>Upcoming Bookings</h1></div>
+      <div class="table-container">
+        <table class="astro-table">
+          <thead><tr><th>Customer</th><th>Date &amp; Time</th><th>Duration</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="upcoming-tbody">
+            <tr><td colspan="5" style="text-align:center;color:#aaa;padding:32px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Session History Tab ── -->
+    <div id="history" class="tab-pane">
+      <div class="dashboard-header"><h1>Session History</h1></div>
+      <div class="table-container">
+        <table class="astro-table">
+          <thead><tr><th>Date</th><th>Duration</th><th>Earned</th><th>Status</th></tr></thead>
+          <tbody id="history-tbody">
+            <tr><td colspan="4" style="text-align:center;color:#aaa;padding:32px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="history-info" style="text-align:center;padding:16px;color:#64748b;font-size:13px;"></div>
+    </div>
+
+    <!-- ── Availability / Slot Generation Tab ── -->
+    <div id="availability" class="tab-pane">
+      <div class="dashboard-header"><h1>Set Available Slots</h1></div>
+      <div class="section-card">
+        <h3>Generate Slots (T+1 minimum)</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="slot-date">
+          </div>
+          <div class="form-group">
+            <label>Session Duration</label>
+            <select id="slot-duration">
+              <option value="20">20 Minutes</option>
+              <option value="60">60 Minutes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Start Time</label>
+            <input type="time" id="slot-start" value="09:00">
+          </div>
+          <div class="form-group">
+            <label>End Time</label>
+            <input type="time" id="slot-end" value="18:00">
+          </div>
+        </div>
+        <button class="btn-primary" id="gen-slot-btn" onclick="generateSlots()">Generate Slots</button>
+      </div>
+    </div>
+
+    <!-- ── Wallet / Earnings Tab ── -->
+    <div id="wallet" class="tab-pane">
+      <div class="dashboard-header"><h1>Wallet &amp; Payouts</h1></div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Current Balance</span>
+          <span class="stat-value" id="wallet-balance-display">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total Earned</span>
+          <span class="stat-value" id="wallet-total-display">—</span>
+        </div>
+      </div>
+      <div class="section-card">
+        <h3>Withdraw Request <small style="font-size:12px;color:#64748b;">(Min ₹500)</small></h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Amount to Withdraw (₹)</label>
+            <input type="number" id="payout-amount" placeholder="Enter amount (min ₹500)" min="500">
+          </div>
+        </div>
+        <button class="btn-primary" id="payout-btn" onclick="requestPayout()">Request Payout</button>
+      </div>
+      <div class="section-card" style="margin-top:24px;">
+        <h3>Payout History</h3>
+        <div class="table-container">
+          <table class="astro-table">
+            <thead><tr><th>Date</th><th>Amount</th><th>Status</th><th>Note</th></tr></thead>
+            <tbody id="payout-tbody">
+              <tr><td colspan="4" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Settings / Pricing Tab ── -->
+    <div id="settings" class="tab-pane">
+      <div class="dashboard-header"><h1>Pricing Settings</h1></div>
+      <div class="section-card">
+        <h3>Session Pricing</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>20-Min Session Price (₹)</label>
+            <input type="number" id="setting-price-20" placeholder="e.g. 299" min="0">
+          </div>
+          <div class="form-group">
+            <label>60-Min Session Price (₹)</label>
+            <input type="number" id="setting-price-60" placeholder="e.g. 799" min="0">
+          </div>
+        </div>
+        <button class="btn-primary" id="save-pricing-btn" onclick="savePricing()">Save Pricing</button>
+      </div>
+    </div>
+
+    <!-- ── Reviews Tab ── -->
+    <div id="reviews" class="tab-pane">
+      <div class="dashboard-header"><h1>Client Reviews</h1></div>
+      <div class="section-card">
+        <div style="margin-bottom: 20px;">
+          <div id="stat-rating-big" style="font-size: 40px; font-weight: 800;">—</div>
+          <div style="color: #f97316;">⭐ Average Rating</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ─── Config ──────────────────────────────────────────────────────────────────
+  // astrologer_id is stored in localStorage after login via the portal page.
+  const ASTRO_ID   = localStorage.getItem('astro_id');
+  const ASTRO_NAME = localStorage.getItem('astro_name') || 'Astrologer';
+  const API        = window.AstroAPIBase || 'https://astro-jap-backend.vercel.app/api';
+
+  // ─── Format helpers ───────────────────────────────────────────────────────────
+  function fmtINR(n)  { return '₹' + Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }); }
+  function fmtDate(d) { return new Date(d).toLocaleString('en-IN', { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:true }); }
+  function fmtStars(r){ return '⭐'.repeat(Math.round(r)) + ' ' + Number(r).toFixed(1); }
+  function toast(msg, type='success') {
+    const t = document.createElement('div');
+    t.style.cssText = `position:fixed;bottom:24px;right:24px;background:${type==='error'?'#e74c3c':'#22c55e'};color:#fff;padding:14px 22px;border-radius:12px;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);animation:fadeIn 0.3s ease`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+
+  // ─── Tab navigation ───────────────────────────────────────────────────────────
+  function switchTab(tabId) {
+    document.querySelectorAll('.astro-nav-item').forEach(btn => btn.classList.remove('active'));
+    const targetBtn = Array.from(document.querySelectorAll('.astro-nav-item'))
+      .find(b => b.dataset.tab === tabId);
+    if (targetBtn) targetBtn.classList.add('active');
+
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    const pane = document.getElementById(tabId);
+    if (pane) pane.classList.add('active');
+
+    // Lazy-load tabs
+    if (tabId === 'sessions')     loadUpcomingSessions();
+    if (tabId === 'history')      loadSessionHistory();
+    if (tabId === 'wallet')       loadPayoutHistory();
+    if (tabId === 'availability') loadScheduleTab();
+  }
+
+  // ─── Dashboard: load stats ────────────────────────────────────────────────────
+  async function loadDashboard() {
+    if (!ASTRO_ID) {
+      document.querySelector('.astro-main').innerHTML = `
+        <div style="text-align:center;padding:80px 20px;">
+          <h2>Session expired</h2>
+          <p>Please <a href="/pages/astrologer-portal">log in again</a>.</p>
+        </div>`;
+      return;
+    }
+
+    // Set name
+    document.getElementById('astro-welcome-name').textContent = ASTRO_NAME;
+
+    try {
+      const stats = await AstroAPI.getDashboardStats(ASTRO_ID);
+
+      document.getElementById('stat-today').textContent    = fmtINR(stats.today_earnings);
+      document.getElementById('stat-week').textContent     = fmtINR(stats.week_earnings);
+      document.getElementById('stat-balance').textContent  = fmtINR(stats.wallet_balance);
+      document.getElementById('stat-sessions').textContent = stats.total_sessions;
+      document.getElementById('stat-upcoming').textContent = stats.upcoming_sessions;
+      document.getElementById('stat-rating').textContent   = fmtStars(stats.rating || 5);
+
+      // Availability toggle state
+      const toggle = document.getElementById('availability-toggle');
+      toggle.checked = !!stats.is_accepting_bookings;
+      updateToggleLabel(toggle.checked);
+
+      // Settings tab prefill
+      const p20 = stats.price_20_min || 0;
+      const p60 = stats.price_60_min || 0;
+      document.getElementById('setting-price-20').value = p20 > 0 ? p20 : '';
+      document.getElementById('setting-price-60').value = p60 > 0 ? p60 : '';
+      
+      console.log('Dashboard data loaded:', stats);
+
+    } catch (e) {
+      console.error('Dashboard stats error:', e);
+    }
+  }
+
+  // ─── Availability toggle ──────────────────────────────────────────────────────
+  function updateToggleLabel(isOn) {
+    const lbl = document.getElementById('mainStatusLabel');
+    lbl.textContent = isOn ? 'ACCEPTING BOOKINGS' : 'NOT ACCEPTING';
+    lbl.style.color = isOn ? '#22c55e' : '#ef4444';
+  }
+
+  async function handleToggle(checkbox) {
+    checkbox.disabled = true;
+    try {
+      const res  = await AstroAPI.toggleAvailability(ASTRO_ID);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      updateToggleLabel(data.is_accepting_bookings);
+      toast(data.is_accepting_bookings ? '✅ You are now accepting bookings!' : '🔴 Bookings paused.');
+    } catch (e) {
+      checkbox.checked = !checkbox.checked; // revert
+      toast('Failed to update: ' + e.message, 'error');
+    } finally {
+      checkbox.disabled = false;
+    }
+  }
+
+  // ─── Upcoming sessions tab ────────────────────────────────────────────────────
+  async function loadUpcomingSessions() {
+    const tbody = document.getElementById('upcoming-tbody');
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>';
+    try {
+      const sessions = await AstroAPI.getUpcomingSessions(ASTRO_ID);
+      if (!sessions.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:32px;">No upcoming sessions booked yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = sessions.map(s => {
+        const scheduledAt  = new Date(s.scheduled_at);
+        const now          = new Date();
+        const minsUntil    = Math.floor((scheduledAt - now) / 60000);
+        const canJoin      = minsUntil <= 15 && minsUntil >= -5;
+
+        // user_cometchat_uid follows the pattern shopify_<user_id>
+        const userUID  = s.user_cometchat_uid || `shopify_${s.user_id}`;
+        const joinBtn  = canJoin
+          ? `<button class="btn-primary" style="padding:6px 14px;font-size:12px;margin:0;" onclick="window.joinSessionChat && window.joinSessionChat('${s.id}', '${userUID}')">JOIN CHAT</button>`
+          : `<span style="font-size:12px;color:#aaa;">${minsUntil > 0 ? `In ${minsUntil}m` : 'Ended'}</span>`;
+        return `
+          <tr>
+            <td><b>Customer</b></td>
+            <td>${fmtDate(s.scheduled_at)}</td>
+            <td>${s.duration_minutes} min</td>
+            <td><span class="status-badge status-completed">Scheduled</span></td>
+            <td>${joinBtn}</td>
+          </tr>`;
+      }).join('');
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="5" style="color:#e74c3c;padding:24px;">${e.message}</td></tr>`;
+    }
+  }
+
+  // ─── Session history tab ──────────────────────────────────────────────────────
+  let historyPage = 1;
+  async function loadSessionHistory(page = 1) {
+    const tbody = document.getElementById('history-tbody');
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>';
+    try {
+      const { sessions, total } = await AstroAPI.getSessionHistory(ASTRO_ID, page);
+      if (!sessions.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;padding:32px;">No completed sessions yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = sessions.map(s => `
+        <tr>
+          <td>${fmtDate(s.start_time || s.created_at)}</td>
+          <td>${s.duration_minutes} min</td>
+          <td><span class="status-badge status-completed">Completed</span></td>
+          <td style="color:#22c55e;font-weight:700;">—</td>
+        </tr>`).join('');
+      document.getElementById('history-info').textContent = `Showing ${sessions.length} of ${total} sessions`;
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="4" style="color:#e74c3c;padding:24px;">${e.message}</td></tr>`;
+    }
+  }
+
+  // ─── Earnings / Payout tab ────────────────────────────────────────────────────
+  async function loadPayoutHistory() {
+    const tbody = document.getElementById('payout-tbody');
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;padding:24px;">Loading…</td></tr>';
+    try {
+      // Refresh wallet balance
+      const stats = await AstroAPI.getDashboardStats(ASTRO_ID);
+      document.getElementById('wallet-balance-display').textContent = fmtINR(stats.wallet_balance);
+      document.getElementById('wallet-total-display').textContent   = fmtINR(stats.total_earned);
+
+      const payouts = await AstroAPI.getPayoutHistory(ASTRO_ID);
+      if (!payouts.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa;padding:32px;">No payout requests yet.</td></tr>';
+        return;
+      }
+      const statusColor = { pending:'#f59e0b', processing:'#3b82f6', paid:'#22c55e', failed:'#ef4444' };
+      tbody.innerHTML = payouts.map(p => `
+        <tr>
+          <td>${new Date(p.requested_at).toLocaleDateString('en-IN')}</td>
+          <td style="font-weight:700;">${fmtINR(p.amount)}</td>
+          <td><span class="status-badge" style="background:${statusColor[p.status]}20;color:${statusColor[p.status]};">${p.status.toUpperCase()}</span></td>
+          <td style="font-size:12px;color:#888;">${p.processed_at ? new Date(p.processed_at).toLocaleDateString('en-IN') : '—'}</td>
+        </tr>`).join('');
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="4" style="color:#e74c3c;padding:24px;">${e.message}</td></tr>`;
+    }
+  }
+
+  async function submitPayoutRequest() {
+    const amount = parseFloat(document.getElementById('payout-amount').value);
+    const btn    = document.getElementById('payout-btn');
+    if (!amount || amount < 500) { toast('Minimum payout is ₹500', 'error'); return; }
+
+    btn.disabled   = true;
+    btn.textContent = 'Submitting…';
+    try {
+      const res  = await AstroAPI.requestPayout(ASTRO_ID, amount);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast('✅ Payout request submitted! Processing in 2-3 business days.');
+      document.getElementById('payout-amount').value = '';
+      loadPayoutHistory();
+    } catch (e) {
+      toast(e.message, 'error');
+    } finally {
+      btn.disabled   = false;
+      btn.textContent = 'Request Payout';
+    }
+  }
+
+  // ─── Settings tab ─────────────────────────────────────────────────────────────
+  async function savePricing() {
+    const p20  = parseFloat(document.getElementById('setting-price-20').value);
+    const p60  = parseFloat(document.getElementById('setting-price-60').value);
+    const btn  = document.getElementById('save-pricing-btn');
+    if (!p20 || !p60 || p20 < 100 || p60 < 100) { toast('Minimum price is ₹100', 'error'); return; }
+
+    btn.disabled   = true;
+    btn.textContent = 'Saving…';
+    try {
+      const res  = await AstroAPI.updatePricing(ASTRO_ID, p20, p60);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast('✅ Pricing updated successfully!');
+    } catch (e) {
+      toast(e.message, 'error');
+    } finally {
+      btn.disabled   = false;
+      btn.textContent = 'Save Pricing';
+    }
+  }
+
+  // ─── Availability tab: slot generator ────────────────────────────────────────
+  function loadScheduleTab() {
+    // Enforce T+1: slot-date cannot be today or earlier
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0]; // YYYY-MM-DD
+    const dateInput = document.getElementById('slot-date');
+    if (dateInput) { dateInput.min = minDate; dateInput.value = minDate; }
+  }
+
+  async function generateSlots() {
+    const date     = document.getElementById('slot-date').value;
+    const duration = parseInt(document.getElementById('slot-duration').value, 10);
+    const start    = document.getElementById('slot-start').value;
+    const end      = document.getElementById('slot-end').value;
+    const btn      = document.getElementById('gen-slot-btn');
+
+    if (!date || !start || !end) { toast('Please fill all fields', 'error'); return; }
+
+    // Build slot objects every `duration` minutes between start and end
+    const slots = [];
+    const startMs = new Date(`${date}T${start}`).getTime();
+    const endMs   = new Date(`${date}T${end}`).getTime();
+    let cur = startMs;
+
+    while (cur + duration * 60000 <= endMs) {
+      slots.push({ start_time: new Date(cur).toISOString(), duration_min: duration });
+      cur += duration * 60000;
+    }
+
+    if (!slots.length) { toast('No valid slots in that range', 'error'); return; }
+
+    btn.disabled   = true;
+    btn.textContent = `Creating ${slots.length} slots…`;
+
+    try {
+      const res  = await AstroAPI.generateSlots(ASTRO_ID, slots);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast(`✅ ${data.message}`);
+    } catch (e) {
+      toast(e.message, 'error');
+    } finally {
+      btn.disabled   = false;
+      btn.textContent = 'Generate Slots';
+    }
+  }
+
+  // ─── Init ─────────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+{% schema %}
+{
+  "name": "Astrologer Dashboard",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Astrologer Dashboard"
+    }
+  ]
+}
+{% endschema %}

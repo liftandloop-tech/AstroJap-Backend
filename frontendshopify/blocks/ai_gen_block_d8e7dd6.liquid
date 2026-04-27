@@ -1,0 +1,709 @@
+<kundli-generator
+  class="ai-kundli-generator"
+  data-api-token="{{ block.settings.api_token }}"
+  data-bg-color="{{ block.settings.background_color }}"
+  data-card-bg="{{ block.settings.card_background_color }}"
+  data-text-color="{{ block.settings.text_color }}"
+  data-border-color="{{ block.settings.border_color }}"
+  data-button-bg="{{ block.settings.button_background_color }}"
+  data-button-text="{{ block.settings.button_text_color }}"
+  data-accent-color="{{ block.settings.accent_color }}"
+  style="
+    --bg-color: {{ block.settings.background_color }};
+    --card-bg: {{ block.settings.card_background_color }};
+    --text-color: {{ block.settings.text_color }};
+    --border-color: {{ block.settings.border_color }};
+    --button-bg: {{ block.settings.button_background_color }};
+    --button-text: {{ block.settings.button_text_color }};
+    --accent-color: {{ block.settings.accent_color }};
+  "
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-kundli-container">
+    <div class="ai-kundli-header">
+      <div class="ai-kundli-brand">
+        {% if block.settings.logo %}
+          <img 
+            src="{{ block.settings.logo | image_url: width: 200 }}" 
+            alt="AstroJap" 
+            class="ai-kundli-brand-logo"
+            width="120"
+            height="auto"
+            loading="lazy"
+          />
+        {% else %}
+          <svg class="ai-kundli-brand-icon" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+          <span class="ai-kundli-brand-name">AstroJap</span>
+        {% endif %}
+      </div>
+      <h2 class="ai-kundli-heading">{{ block.settings.heading }}</h2>
+      <p class="ai-kundli-subheading">{{ block.settings.subheading }}</p>
+    </div>
+
+    <form class="ai-kundli-form" class="kundli-form-target">
+      <div class="ai-kundli-form-grid">
+        <div class="ai-kundli-input-group">
+          <label class="ai-kundli-label">
+            <svg class="ai-kundli-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Full Name
+          </label>
+          <input type="text" name="fullName" class="ai-kundli-input" placeholder="Enter your full name" required="required" />
+        </div>
+
+        <div class="ai-kundli-input-group">
+          <label class="ai-kundli-label">
+            <svg class="ai-kundli-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Date of Birth
+          </label>
+          <input type="date" name="dob" class="ai-kundli-input" required="required" />
+        </div>
+
+        <div class="ai-kundli-input-group">
+          <label class="ai-kundli-label">
+            <svg class="ai-kundli-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Time of Birth
+          </label>
+          <input type="time" name="tob" class="ai-kundli-input" required="required" />
+        </div>
+
+        <div class="ai-kundli-input-group">
+          <label class="ai-kundli-label">
+            <svg class="ai-kundli-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Place of Birth
+          </label>
+          <input type="text" name="pob" class="ai-kundli-input" placeholder="Enter city name" required="required" />
+        </div>
+      </div>
+
+      <button type="submit" class="ai-kundli-submit-btn">
+        <svg class="ai-kundli-btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+        Generate Kundli
+      </button>
+    </form>
+
+    <div class="ai-kundli-loading kundli-loading-target" style="display: none;">
+      <div class="ai-kundli-spinner"></div>
+      <p class="ai-kundli-loading-text">Calculating your Kundli...</p>
+    </div>
+
+    <div class="ai-kundli-error kundli-error-target" style="display: none;">
+      <svg class="ai-kundli-error-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      <p class="ai-kundli-error-text"></p>
+    </div>
+
+    <div class="ai-kundli-result kundli-result-target" style="display: none;">
+      <div class="ai-kundli-chart-header">
+        <h3 class="ai-kundli-chart-title">Your Kundli Chart</h3>
+        <p class="ai-kundli-user-info kundli-userinfo-target"></p>
+      </div>
+      
+      <div class="ai-kundli-chart-wrapper">
+        <div class="ai-kundli-chart kundli-chart-target"></div>
+      </div>
+
+      <div class="ai-kundli-nav-grid">
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+          Planets
+        </button>
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          Dasha
+        </button>
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+          Predictions
+        </button>
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          KP
+        </button>
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+          Shodashvarga
+        </button>
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          Lal Kitab
+        </button>
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Varshphal
+        </button>
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+          Raj Yoga
+        </button>
+        <button class="ai-kundli-nav-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"></path></svg>
+          Transit
+        </button>
+      </div>
+
+      <div class="ai-kundli-footer-brand">
+        {% if block.settings.logo %}
+          <img 
+            src="{{ block.settings.logo | image_url: width: 120 }}" 
+            alt="AstroJap" 
+            class="ai-kundli-footer-logo"
+            width="80"
+            height="auto"
+            loading="lazy"
+          />
+        {% else %}
+          <span class="ai-kundli-footer-text">Powered by AstroJap</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</kundli-generator>
+
+<style>
+  .ai-kundli-generator {
+    display: block;
+    width: 100%;
+    padding: 60px 20px;
+    background: var(--bg-color);
+  }
+
+  .ai-kundli-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .ai-kundli-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .ai-kundli-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .ai-kundli-brand-logo {
+    max-height: 60px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .ai-kundli-brand-icon {
+    color: var(--accent-color);
+    flex-shrink: 0;
+  }
+
+  .ai-kundli-brand-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+    letter-spacing: 0.5px;
+  }
+
+  .ai-kundli-heading {
+    font-size: 42px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .ai-kundli-subheading {
+    font-size: 18px;
+    margin: 0;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .ai-kundli-form {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+  }
+
+  .ai-kundli-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .ai-kundli-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ai-kundli-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-kundli-icon {
+    color: var(--accent-color);
+    flex-shrink: 0;
+  }
+
+  .ai-kundli-input {
+    width: 100%;
+    padding: 16px 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 16px;
+    color: var(--text-color);
+    background: #ffffff;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .ai-kundli-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  }
+
+  .ai-kundli-submit-btn {
+    width: 100%;
+    padding: 18px 32px;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-kundli-submit-btn:active {
+    transform: scale(0.98);
+  }
+
+  .ai-kundli-btn-icon {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .ai-kundli-loading {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    margin-top: 32px;
+  }
+
+  .ai-kundli-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--accent-color);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .ai-kundli-loading-text {
+    font-size: 18px;
+    color: var(--text-color);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .ai-kundli-error {
+    background: #fee;
+    border: 2px solid #fcc;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .ai-kundli-error-icon {
+    color: #c00;
+    flex-shrink: 0;
+  }
+
+  .ai-kundli-error-text {
+    color: #c00;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .ai-kundli-result {
+    margin-top: 48px;
+  }
+
+  .ai-kundli-chart-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .ai-kundli-chart-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: var(--text-color);
+    line-height: 1.2;
+  }
+
+  .ai-kundli-user-info {
+    font-size: 16px;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin: 0;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .ai-kundli-chart-wrapper {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+  }
+
+  .ai-kundli-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    overflow-x: auto;
+  }
+
+  .ai-kundli-chart svg {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .ai-kundli-chart svg text {
+    fill: var(--text-color) !important;
+  }
+
+  .ai-kundli-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .ai-kundli-nav-btn {
+    padding: 20px 16px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ai-kundli-footer-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .ai-kundli-footer-logo {
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .ai-kundli-footer-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0.6;
+  }
+
+  @media (min-width: 768px) {
+    .ai-kundli-form-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .ai-kundli-form-grid {
+      grid-template-columns: 1fr;
+    }
+    .ai-kundli-nav-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<script>
+if (!customElements.get('kundli-generator')) {
+  class KundliGenerator extends HTMLElement {
+    constructor() {
+      super();
+      this.apiToken = this.getAttribute('data-api-token');
+      this.textColor = this.getAttribute('data-text-color');
+      this.borderColor = this.getAttribute('data-border-color');
+    }
+
+    connectedCallback() {
+      this.form = this.querySelector('.ai-kundli-form');
+      this.loading = this.querySelector('.kundli-loading-target');
+      this.error = this.querySelector('.kundli-error-target');
+      this.result = this.querySelector('.kundli-result-target');
+      this.chartContainer = this.querySelector('.kundli-chart-target');
+      this.userInfo = this.querySelector('.kundli-userinfo-target');
+
+      if(this.form) {
+        this.form.addEventListener('submit', this.handleSubmit.bind(this));
+      }
+    }
+
+    async handleSubmit(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this.form);
+      const fullName = formData.get('fullName');
+      const dob = formData.get('dob');
+      const tob = formData.get('tob');
+      const pob = formData.get('pob');
+
+      this.form.style.display = 'none';
+      this.error.style.display = 'none';
+      this.result.style.display = 'none';
+      this.loading.style.display = 'block';
+
+      try {
+        const geoData = await this.fetchGeoLocation(pob);
+        
+        if (!geoData || !geoData.geonames || geoData.geonames.length === 0) {
+          throw new Error('Location not found. Please enter a valid city name.');
+        }
+
+        const location = geoData.geonames[0];
+        const latitude = location.latitude;
+        const longitude = location.longitude;
+        const timezone = location.timezone;
+
+        const dobParts = dob.split('-');
+        const tobParts = tob.split(':');
+
+        const chartData = await this.fetchKundliChart({
+          day: parseInt(dobParts[2]),
+          month: parseInt(dobParts[1]),
+          year: parseInt(dobParts[0]),
+          hour: parseInt(tobParts[0]),
+          min: parseInt(tobParts[1]),
+          lat: latitude,
+          lon: longitude,
+          tzone: timezone
+        });
+
+        this.displayChart(chartData, fullName, dob, tob, pob);
+      } catch (err) {
+        this.showError(err.message);
+      }
+    }
+
+    async fetchGeoLocation(place) {
+      const response = await fetch('https://json.astrologyapi.com/v1/geo_details', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-astrologyapi-key': this.apiToken
+        },
+        body: JSON.stringify({
+          place: place,
+          maxRows: 1
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch location data. Please check your API token.');
+      }
+
+      return await response.json();
+    }
+
+    async fetchKundliChart(params) {
+      const response = await fetch('https://json.astrologyapi.com/v1/horo_chart_image/D1', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-astrologyapi-key': this.apiToken
+        },
+        body: JSON.stringify({
+          day: params.day,
+          month: params.month,
+          year: params.year,
+          hour: params.hour,
+          min: params.min,
+          lat: params.lat,
+          lon: params.lon,
+          tzone: params.tzone,
+          planetColor: this.textColor,
+          signColor: this.textColor,
+          lineColor: this.borderColor,
+          chartType: 'north',
+          image_type: 'svg',
+          language: 'en'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate Kundli chart. Please try again.');
+      }
+
+      return await response.json();
+    }
+
+    displayChart(chartData, name, dob, tob, pob) {
+      this.loading.style.display = 'none';
+      this.result.style.display = 'block';
+
+      this.chartContainer.innerHTML = chartData.svg;
+      this.userInfo.textContent = name + ' | ' + dob + ' | ' + tob + ' | ' + pob;
+
+      this.result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    showError(message) {
+      this.loading.style.display = 'none';
+      this.error.style.display = 'flex';
+      this.error.querySelector('.ai-kundli-error-text').textContent = message;
+      this.form.style.display = 'block';
+    }
+  }
+
+  customElements.define('kundli-generator', KundliGenerator);
+}
+</script>
+
+{% schema %}
+{
+  "name": "Kundli generator",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Branding"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo",
+      "info": "Upload your AstroJap logo. Recommended size: 200x60px"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Generate Free Kundli"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover your cosmic blueprint with accurate Vedic astrology"
+    },
+    {
+      "type": "header",
+      "content": "API settings"
+    },
+    {
+      "type": "text",
+      "id": "api_token",
+      "label": "API token",
+      "default": "ak-c423f2857c457981cb3278512131a948694aa134"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#6366f1"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Kundli generator"
+    }
+  ]
+}
+{% endschema %}

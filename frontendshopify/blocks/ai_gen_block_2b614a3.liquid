@@ -1,0 +1,200 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* ── GLOBAL HEADER WRAPPER ── */
+  .ai-astrojap-header-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    /* ── FIXED POSITION FOR ENTIRE SITE ── */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10000; /* Extremely high to stay above all elements */
+    background: transparent; /* Top and Strip handle backgrounds */
+    pointer-events: none; /* Allows scrolling through if needed */
+  }
+
+  /* ── STICKY TOP NAV SECTION ── */
+  .ai-astrojap-header__top-{{ ai_gen_id }} {
+    pointer-events: auto; /* Re-enable for buttons/links */
+    background-color: {{ block.settings.header_bg_color | default: '#ffffff' }};
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    position: relative;
+    max-width: 100%;
+    padding: {{ block.settings.header_padding }}px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+  }
+
+  .ai-top-inner-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  /* ── SCROLLING CATEGORY STRIP ── */
+  .ai-astrojap-header__category-strip-{{ ai_gen_id }} {
+    pointer-events: auto;
+    background-color: {{ block.settings.category_strip_bg_color | default: '#fafafa' }};
+    border-top: 1px solid {{ block.settings.category_strip_border_color | default: '#eee' }};
+    position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ── HIDE CATEGORY STRIP ON SCROLL (Optional but Premium) ──*/
+  .ai-astrojap-header-{{ ai_gen_id }}.scrolled .ai-astrojap-header__category-strip-{{ ai_gen_id }} {
+    transform: translateY(-100%);
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    opacity: 0;
+  }
+
+  /* ── THE CONTENT ── */
+  .ai-astrojap-header__logo-image-{{ ai_gen_id }} { display: block; max-width: {{ block.settings.logo_width }}px; height: auto; }
+  .ai-astrojap-header__menu-{{ ai_gen_id }} { list-style: none; margin: 0; padding: 0; display: flex; gap: {{ block.settings.menu_spacing }}px; align-items: center; }
+  .ai-astrojap-header__menu-link-{{ ai_gen_id }} { color: {{ block.settings.menu_text_color }}; text-decoration: none; font-size: {{ block.settings.menu_font_size }}px; font-weight: 500; }
+  .ai-astrojap-header__actions-{{ ai_gen_id }} { display: flex; align-items: center; gap: {{ block.settings.icon_spacing }}px; }
+  .ai-astrojap-header__icon-{{ ai_gen_id }} { width: {{ block.settings.icon_size }}px; color: {{ block.settings.icon_color }}; }
+
+  /* ── CATEGORY STRIP ELEMENTS ── */
+  .ai-astrojap-header__category-container-{{ ai_gen_id }} { max-width: {{ block.settings.container_width }}px; margin: 0 auto; padding: {{ block.settings.category_strip_padding }}px 20px; }
+  .ai-astrojap-header__category-list-{{ ai_gen_id }} { display: flex; gap: {{ block.settings.category_spacing }}px; list-style: none; margin: 0; padding: 0; justify-content: center; }
+  .ai-astrojap-header__category-link-{{ ai_gen_id }} { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; }
+  .ai-astrojap-header__category-image-wrapper-{{ ai_gen_id }} { width: {{ block.settings.category_image_size }}px; height: {{ block.settings.category_image_size }}px; border-radius: 50%; overflow: hidden; border: 1px solid #ddd; background: #fff; }
+  .ai-astrojap-header__category-label-{{ ai_gen_id }} { color: {{ block.settings.category_text_color }}; font-size: {{ block.settings.category_font_size }}px; font-weight: 500; white-space: nowrap; }
+
+  /* ── PUSH CONTENT DOWN SO HEADER DOESN'T HIDE IT ── */
+  body { padding-top: 160px; } /* Adjust this based on your header height */
+
+  @media screen and (max-width: 989px) {
+    .ai-astrojap-header__nav-{{ ai_gen_id }} { display: none; }
+    .ai-astrojap-header__category-list-{{ ai_gen_id }} { justify-content: flex-start; }
+    body { padding-top: 140px; }
+  }
+{% endstyle %}
+
+<div class="ai-astrojap-header-{{ ai_gen_id }}" id="site-header-{{ ai_gen_id }}">
+
+  <!-- TOP NAV -->
+  <div class="ai-astrojap-header__top-{{ ai_gen_id }}">
+    <div class="ai-top-inner-{{ ai_gen_id }}">
+      <div class="ai-astrojap-header__logo-{{ ai_gen_id }}">
+        {% if block.settings.logo != blank %}
+          <a href="{{ routes.root_url }}"><img src="{{ block.settings.logo | image_url: width: 400 }}" width="{{ block.settings.logo_width }}" height="auto" class="ai-astrojap-header__logo-image-{{ ai_gen_id }}"></a>
+        {% else %}
+          <a href="{{ routes.root_url }}" class="ai-astrojap-header__logo-text-{{ ai_gen_id }}">{{ block.settings.logo_text }}</a>
+        {% endif %}
+      </div>
+      <nav class="ai-astrojap-header__nav-{{ ai_gen_id }}">
+        <ul class="ai-astrojap-header__menu-{{ ai_gen_id }}">
+          {% for link in linklists[block.settings.menu].links %}
+            <li><a href="{{ link.url }}" class="ai-astrojap-header__menu-link-{{ ai_gen_id }}">{{ link.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+      <div class="ai-astrojap-header__actions-{{ ai_gen_id }}">
+        <button class="ai-astrojap-header__icon-{{ ai_gen_id }}" style="background:none; border:none; color:inherit;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
+        <a href="{{ routes.cart_url }}" class="ai-astrojap-header__icon-{{ ai_gen_id }}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY STRIP -->
+  <div class="ai-astrojap-header__category-strip-{{ ai_gen_id }}">
+    <div class="ai-astrojap-header__category-container-{{ ai_gen_id }}">
+      <ul class="ai-astrojap-header__category-list-{{ ai_gen_id }}">
+        {% for i in (1..8) %}
+          {% capture enabled %}category_{{ i }}_enabled{% endcapture %}
+          {% capture img %}category_{{ i }}_image{% endcapture %}
+          {% capture lbl %}category_{{ i }}_label{% endcapture %}
+          {% capture url %}category_{{ i }}_link{% endcapture %}
+          {% if block.settings[enabled] %}
+            <li><a href="{{ block.settings[url] }}" class="ai-astrojap-header__category-link-{{ ai_gen_id }}">
+              <div class="ai-astrojap-header__category-image-wrapper-{{ ai_gen_id }}">
+                <img src="{{ block.settings[img] | image_url: width: 200 }}" width="200" height="200" style="width:100%; height:100%; object-fit:cover;" loading="eager">
+              </div>
+              <span class="ai-astrojap-header__category-label-{{ ai_gen_id }}">{{ block.settings[lbl] }}</span>
+            </a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function() {
+    const header = document.getElementById('site-header-{{ ai_gen_id }}');
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const curScroll = window.pageYOffset;
+      if (curScroll > 150) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+      lastScroll = curScroll;
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Global Sticky Header",
+  "settings": [
+    { "type": "range", "id": "container_width", "min": 1000, "max": 1600, "step": 100, "unit": "px", "label": "Full Width", "default": 1400 },
+    { "type": "range", "id": "header_padding", "min": 5, "max": 40, "step": 5, "unit": "px", "label": "Top Nav Height", "default": 20 },
+    { "type": "color", "id": "header_bg_color", "label": "Nav BG", "default": "#ffffff" },
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "range", "id": "logo_width", "min": 50, "max": 300, "step": 10, "unit": "px", "label": "Logo Width", "default": 180 },
+    { "type": "text", "id": "logo_text", "label": "Logo Fallback", "default": "Astrojap" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "range", "id": "menu_font_size", "min": 12, "max": 20, "step": 1, "unit": "px", "label": "Menu Font", "default": 15 },
+    { "type": "range", "id": "menu_spacing", "min": 10, "max": 50, "step": 5, "unit": "px", "label": "Menu Gap", "default": 30 },
+    { "type": "color", "id": "menu_text_color", "label": "Menu Color", "default": "#121212" },
+    { "type": "color", "id": "icon_color", "label": "Icon Color", "default": "#121212" },
+    { "type": "range", "id": "icon_size", "min": 20, "max": 30, "step": 2, "unit": "px", "label": "Icon Size", "default": 24 },
+    { "type": "range", "id": "icon_spacing", "min": 10, "max": 40, "step": 5, "unit": "px", "label": "Icon Gap", "default": 20 },
+    { "type": "header", "content": "Category Strip" },
+    { "type": "color", "id": "category_strip_bg_color", "label": "Strip BG", "default": "#fafafa" },
+    { "type": "color", "id": "category_strip_border_color", "label": "Strip Border", "default": "#eeeeee" },
+    { "type": "range", "id": "category_strip_padding", "min": 5, "max": 30, "step": 5, "unit": "px", "label": "Strip Height", "default": 15 },
+    { "type": "range", "id": "category_spacing", "min": 10, "max": 60, "step": 10, "unit": "px", "label": "Circle Gap", "default": 30 },
+    { "type": "range", "id": "category_image_size", "min": 40, "max": 100, "step": 5, "unit": "px", "label": "Circle Size", "default": 70 },
+    { "type": "range", "id": "category_font_size", "min": 10, "max": 16, "step": 1, "unit": "px", "label": "Label Font", "default": 12 },
+    { "type": "color", "id": "category_text_color", "label": "Label Color", "default": "#111111" },
+    { "type": "checkbox", "id": "category_1_enabled", "label": "Cat 1", "default": true },
+    { "type": "image_picker", "id": "category_1_image", "label": "Img 1" },
+    { "type": "text", "id": "category_1_label", "label": "Lbl 1", "default": "Rudraksha" },
+    { "type": "url", "id": "category_1_link", "label": "Link 1" },
+    { "type": "checkbox", "id": "category_2_enabled", "label": "Cat 2", "default": true },
+    { "type": "image_picker", "id": "category_2_image", "label": "Img 2" },
+    { "type": "text", "id": "category_2_label", "label": "Lbl 2", "default": "Karungali" },
+    { "type": "url", "id": "category_2_link", "label": "Link 2" },
+    { "type": "checkbox", "id": "category_3_enabled", "label": "Cat 3", "default": true },
+    { "type": "image_picker", "id": "category_3_image", "label": "Img 3" },
+    { "type": "text", "id": "category_3_label", "label": "Lbl 3", "default": "Pyrite" },
+    { "type": "url", "id": "category_3_link", "label": "Link 3" },
+    { "type": "checkbox", "id": "category_4_enabled", "label": "Cat 4", "default": true },
+    { "type": "image_picker", "id": "category_4_image", "label": "Img 4" },
+    { "type": "text", "id": "category_4_label", "label": "Lbl 4", "default": "Sandalwood" },
+    { "type": "url", "id": "category_4_link", "label": "Link 4" },
+    { "type": "checkbox", "id": "category_5_enabled", "label": "Cat 5", "default": true },
+    { "type": "image_picker", "id": "category_5_image", "label": "Img 5" },
+    { "type": "text", "id": "category_5_label", "label": "Lbl 5", "default": "Sphatik" },
+    { "type": "url", "id": "category_5_link", "label": "Link 5" }
+  ]
+}
+{% endschema %}

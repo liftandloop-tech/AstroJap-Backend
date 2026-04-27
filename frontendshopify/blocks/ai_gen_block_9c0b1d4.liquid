@@ -1,0 +1,324 @@
+{% doc %}
+  @prompt
+    Create a Shopify custom section using Liquid, HTML, CSS, and schema.
+    
+    Design requirements:
+    
+    1. Section Layout:
+    - Full width section
+    - Center aligned content at top
+    - Clean, minimal, professional layout (similar to testimonial intro section)
+    
+    2. Top Content:
+    - Main Heading (e.g., "Astrotalk Reviews")
+    - Subheading below it (e.g., "Hear about us from our customers")
+    - Both centered
+    
+    3. Divider with Logo:
+    - Add a horizontal line across the section
+    - Place a circular logo/image EXACTLY in the center of the line
+    - Logo should overlap the line slightly
+    - Logo should have a background (white or section background)
+    - Logo should be customizable from theme settings (image picker)
+    
+    4. Below Content:
+    - Left aligned section
+    - Heading: "Client Testimonials"
+    - Paragraph text below (rich text editable from schema)
+    
+    5. Styling:
+    - Use spacing like:
+      padding-top: 60px
+      padding-bottom: 60px
+    - Keep typography clean and modern
+    - Ensure responsiveness (mobile friendly)
+    - Center elements properly on all screen sizes
+    
+    6. Schema Settings:
+    Include:
+    - Heading (text)
+    - Subheading (text)
+    - Logo image (image picker)
+    - Section text (rich text)
+    
+    7. Class Naming:
+    Use clean class names like:
+    .testimonial-section
+    .testimonial-header
+    .divider-with-logo
+    .client-content
+    
+    8. Make sure:
+    - No inline styles (use <style> tag inside section)
+    - Fully responsive
+    - Works in Shopify 2.0 (JSON templates compatible)
+    
+    Output complete code with:
+    - Liquid
+    - HTML
+    - CSS
+    - Schema, REMOVE LOGO 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .testimonial-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .testimonial-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .testimonial-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 12px 0;
+    font-weight: 600;
+  }
+
+  .testimonial-subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_size }}px;
+    color: {{ block.settings.subheading_color }};
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .divider-line-{{ ai_gen_id }} {
+    width: 100%;
+    height: {{ block.settings.divider_thickness }}px;
+    background-color: {{ block.settings.divider_color }};
+    margin: 40px 0;
+  }
+
+  .client-content-{{ ai_gen_id }} {
+    max-width: {{ block.settings.content_max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .client-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.client_heading_size }}px;
+    color: {{ block.settings.client_heading_color }};
+    margin: 0 0 16px 0;
+    font-weight: 600;
+  }
+
+  .client-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.client_text_size }}px;
+    color: {{ block.settings.client_text_color }};
+    line-height: 1.6;
+  }
+
+  .client-text-{{ ai_gen_id }} p {
+    margin: 0 0 12px 0;
+  }
+
+  .client-text-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .testimonial-section-{{ ai_gen_id }} {
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+
+    .testimonial-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.8);
+    }
+
+    .testimonial-subheading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subheading_size }}px * 0.9);
+    }
+
+    .client-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.client_heading_size }}px * 0.85);
+    }
+
+    .client-text-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.client_text_size }}px * 0.95);
+    }
+  }
+{% endstyle %}
+
+<div class="testimonial-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading != blank or block.settings.subheading != blank %}
+    <div class="testimonial-header-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h2 class="testimonial-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {% endif %}
+      {% if block.settings.subheading != blank %}
+        <p class="testimonial-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="divider-line-{{ ai_gen_id }}"></div>
+
+  <div class="client-content-{{ ai_gen_id }}">
+    {% if block.settings.client_heading != blank %}
+      <h3 class="client-heading-{{ ai_gen_id }}">{{ block.settings.client_heading }}</h3>
+    {% endif %}
+    {% if block.settings.client_text != blank %}
+      <div class="client-text-{{ ai_gen_id }}">
+        {{ block.settings.client_text }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonial intro",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Top section"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Astrotalk Reviews"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Hear about us from our customers"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Divider"
+    },
+    {
+      "type": "range",
+      "id": "divider_thickness",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "label": "Divider thickness",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "Client testimonials section"
+    },
+    {
+      "type": "text",
+      "id": "client_heading",
+      "label": "Heading",
+      "default": "Client Testimonials"
+    },
+    {
+      "type": "richtext",
+      "id": "client_text",
+      "label": "Text",
+      "default": "<p>Read what our valued clients have to say about their experience with our astrology services. Their stories inspire us to continue delivering exceptional guidance and support.</p>"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "client_heading_size",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "client_text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "client_heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "client_text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Section style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial intro"
+    }
+  ]
+}
+{% endschema %}

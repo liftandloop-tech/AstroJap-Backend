@@ -1,0 +1,395 @@
+{{ 'api.js' | asset_url | script_tag }}
+
+{%- style -%}
+  .astro-grid-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Outfit', sans-serif;
+  }
+  
+  .astro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+  }
+  
+  .astro-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    border: 1px solid #f1f5f9;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .astro-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    border-color: #f97316;
+  }
+  
+  .astro-card-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: #f8fafc;
+  }
+  
+  .status-indicator {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+  }
+  
+  .status-online { background: #dcfce7; color: #166534; }
+  .status-offline { background: #f1f5f9; color: #64748b; }
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .status-online .status-dot { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+  .status-offline .status-dot { background: #cbd5e1; }
+  
+  .astro-info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .astro-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 4px;
+    display: block;
+    text-decoration: none;
+  }
+  
+  .astro-expertise {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  
+  .astro-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+  }
+  
+  .astro-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    color: #f59e0b;
+    font-size: 14px;
+  }
+  
+  .astro-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e293b;
+  }
+  .astro-price span {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+  }
+  
+  .chat-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    background: #f97316;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    text-align: center;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: block;
+  }
+  
+  .chat-btn:hover {
+    background: #ea580c;
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+  }
+  
+  .chat-btn.disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  /* ── Modal Styling ── */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-card {
+    background: #fff;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 24px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+  }
+  .duration-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .duration-option:hover {
+    border-color: #f97316;
+    background: #fff7ed;
+  }
+  .duration-option.selected {
+    border-color: #f97316;
+    background: #fff7ed;
+  }
+  .option-label { font-weight: 700; color: #1e293b; }
+  .option-price { font-weight: 800; color: #f97316; }
+
+  .loading-state {
+    text-align: center;
+    padding: 100px 0;
+    color: #94a3b8;
+  }
+{%- endstyle -%}
+
+<div class="astro-grid-container" id="AstrologerGridContainer">
+  <div id="AstroGrid" class="astro-grid">
+    <div class="loading-state">Loading our expert astrologers...</div>
+  </div>
+</div>
+
+<!-- Duration Selection Modal -->
+<div id="DurationModal" class="modal-overlay" onclick="if(event.target === this) closeDurationModal()">
+  <div class="modal-card">
+    <h3 style="margin-bottom: 8px; font-weight:800;">Choose Session Duration</h3>
+    <p style="color: #64748b; font-size: 14px; margin-bottom: 24px;">Select how long you want to consult with <span id="modalAstroName" style="color:#1e293b; font-weight:700;">...</span></p>
+    
+    <div id="OptionsContainer"></div>
+
+    <div id="WalletStatus" style="margin: 20px 0; padding: 15px; background: #f8fafc; border-radius: 12px; display: none;">
+      <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">YOUR WALLET BALANCE</div>
+      <div id="CurrentBalance" style="font-size: 20px; font-weight: 800; color: #1e293b;">₹0.00</div>
+    </div>
+
+    <button id="ProceedToPayBtn" class="chat-btn" style="margin-top: 12px;" disabled onclick="handlePaymentAction()">
+      Confirm & Start Chat
+    </button>
+    <button onclick="closeDurationModal()" style="margin-top: 15px; color: #94a3b8; font-size: 13px; background:none; border:none; cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
+<script>
+  async function loadAstrologers() {
+    const grid = document.getElementById('AstroGrid');
+    try {
+      const astrologers = await AstroAPI.getAstrologers();
+      
+      if (!astrologers || !astrologers.length) {
+        grid.innerHTML = '<div class="loading-state">No astrologers are currently available. Check back soon!</div>';
+        return;
+      }
+      
+      grid.innerHTML = astrologers.map(astro => {
+        // Use is_accepting_bookings to determine online status
+        const isOnline = !!astro.is_accepting_bookings;
+        const profileImg = astro.profile_image || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+        const rating = astro.rating || 5.0;
+        const p20 = astro.price_20_min || 0;
+        const p60 = astro.price_60_min || 0;
+        
+        return `
+          <div class="astro-card">
+            <div class="status-indicator ${isOnline ? 'status-online' : 'status-offline'}">
+              <span class="status-dot"></span>
+              ${isOnline ? 'Online' : 'Offline'}
+            </div>
+            <div style="background: #f1f5f9; height: 220px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              <img src="${profileImg}" class="astro-card-image" style="width: ${astro.profile_image ? '100%' : '120px'}; height: ${astro.profile_image ? '100%' : '120px'}; object-fit: ${astro.profile_image ? 'cover' : 'contain'};" alt="${astro.name}">
+            </div>
+            <div class="astro-info">
+              <a href="/pages/astrologer-profile?id=${astro.id}" class="astro-name">${astro.name}</a>
+              <div class="astro-expertise">${astro.expertise ? (Array.isArray(astro.expertise) ? astro.expertise.join(', ') : astro.expertise) : 'Vedic Astrology'}</div>
+              
+              <div class="astro-meta" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                  <div class="astro-rating">
+                    <svg style="width:16px; height:16px;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    ${Number(rating).toFixed(1)}
+                  </div>
+                  <div style="font-size: 11px; color: #94a3b8;">450+ Consultations</div>
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-top: 5px;">
+                  <div class="astro-price">₹${p20 > 0 ? p20 : '—'} <span style="font-size:10px;">/ 20m</span></div>
+                  <div class="astro-price">₹${p60 > 0 ? p60 : '—'} <span style="font-size:10px;">/ 60m</span></div>
+                </div>
+              </div>
+              
+              <button 
+                onclick="openDurationModal('${astro.id}', '${astro.name}', ${p20}, ${p60})"
+                class="chat-btn ${!isOnline ? 'disabled' : ''}" 
+                ${!isOnline ? 'disabled' : ''}>
+                ${isOnline ? 'Chat Now' : 'Consult Later'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+    } catch (e) {
+      console.error('Error loading astrologers:', e);
+      grid.innerHTML = '<div class="loading-state" style="color:#ef4444;">Unable to load astrologers. Please try again later.</div>';
+    }
+  }
+
+  let selectedAstroId = null;
+  let selectedPrice = 0;
+  let userBalance = 0;
+
+  async function openDurationModal(id, name, p20, p60) {
+    const customerId = '{{ customer.id }}';
+    if (!customerId) {
+      window.location.href = `/account/login?checkout_url=${window.location.pathname}`;
+      return;
+    }
+
+    selectedAstroId = id;
+    document.getElementById('modalAstroName').textContent = name;
+    const container = document.getElementById('OptionsContainer');
+    
+    container.innerHTML = `
+      <div class="duration-option" onclick="selectOption(this, ${p20})">
+        <span class="option-label">20 Minutes Session</span>
+        <span class="option-price">₹${p20}</span>
+      </div>
+      <div class="duration-option" onclick="selectOption(this, ${p60})">
+        <span class="option-label">60 Minutes Session</span>
+        <span class="option-price">₹${p60}</span>
+      </div>
+    `;
+
+    // Fetch Balance
+    try {
+      const data = await AstroAPI.getWalletBalance(customerId);
+      userBalance = data.balance;
+      document.getElementById('CurrentBalance').textContent = `₹${userBalance.toFixed(2)}`;
+      document.getElementById('WalletStatus').style.display = 'block';
+    } catch (e) { console.error('Wallet fetch error:', e); }
+    
+    document.getElementById('DurationModal').style.display = 'flex';
+  }
+
+  function selectOption(el, price) {
+    document.querySelectorAll('.duration-option').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPrice = price;
+    
+    const btn = document.getElementById('ProceedToPayBtn');
+    btn.disabled = false;
+    
+    if (userBalance < price) {
+      btn.textContent = `Recharge Wallet (₹${(price - userBalance).toFixed(0)} short)`;
+      btn.style.background = '#64748b';
+    } else {
+      btn.textContent = 'Confirm & Start Chat';
+      btn.style.background = '#f97316';
+    }
+  }
+
+  function closeDurationModal() {
+    document.getElementById('DurationModal').style.display = 'none';
+  }
+
+  async function handlePaymentAction() {
+    const customerId = '{{ customer.id }}';
+    
+    if (userBalance < selectedPrice) {
+      // Redirect to recharge page
+      window.location.href = '/pages/recharge';
+      return;
+    }
+
+    const btn = document.getElementById('ProceedToPayBtn');
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+
+    try {
+      // Deduct from wallet
+      const res = await AstroAPI.debitWallet(
+        customerId, 
+        selectedPrice, 
+        `Consultation with ${document.getElementById('modalAstroName').textContent}`,
+        `session_${Date.now()}`
+      );
+
+      if (res.error === 'INSUFFICIENT_BALANCE') {
+        alert('Insufficient balance. Please recharge.');
+        window.location.href = '/pages/recharge';
+        return;
+      }
+
+      // Success -> Go to chat
+      window.location.href = `/pages/chat?id=${selectedAstroId}&price=${selectedPrice}`;
+    } catch (e) {
+      alert('Payment failed. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Confirm & Start Chat';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadAstrologers);
+</script>
+
+{% schema %}
+{
+  "name": "Astrologer Grid",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Astrologer Grid"
+    }
+  ]
+}
+{% endschema %}

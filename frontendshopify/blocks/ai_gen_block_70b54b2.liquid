@@ -1,0 +1,153 @@
+{% comment %}
+  Astrologer Purchased Sessions Section - Fixed Visibility
+{% endcomment %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.section_bg }};
+  }
+  .session-card-{{ section.id }} { background-color: {{ section.settings.card_bg }}; }
+  .session-btn-{{ section.id }} { background: {{ section.settings.button_bg }}; color: {{ section.settings.button_text_color }}; }
+{%- endstyle -%}
+
+<section class="purchased-sessions-section section-{{ section.id }}-padding" id="purchased-sessions-container">
+    <div class="section-container">
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+        <p class="section-subtitle">{{ section.settings.subtitle }}</p>
+        
+        <div class="sessions-grid" id="purchased-sessions-grid">
+            {% if request.design_mode %}
+                <!-- Preview items for Theme Editor -->
+                {% for i in (1..3) %}
+                <div class="session-item">
+                    <div class="session-card-wrapper">
+                        <div class="session-card session-card-{{ section.id }}">
+                            <div style="font-size: 40px; opacity: 0.3;">🌙</div>
+                        </div>
+                        <span class="session-name">Preview Expert {{ i }}</span>
+                        <div class="session-meta">20 Min Session</div>
+                        <button class="session-chat-btn session-btn-{{ section.id }}">Chat Now</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div id="cometchat-container" style="height: 600px; width: 100%; margin-top: 40px; border-radius: 20px; overflow: hidden; display: none;"></div>
+        
+        <div id="no-sessions-msg" style="display: none; color: #888; font-style: italic; margin-top: 30px;">
+            No active sessions found. <a href="/collections/all">Browse Astrologers</a>
+        </div>
+    </div>
+</section>
+
+<!-- Dependencies -->
+<script defer src="https://unpkg.com/@cometchat/chat-sdk-javascript@latest/CometChat.js"></script>
+<script defer src="https://unpkg.com/@cometchat/chat-uikit-javascript@latest/CometChatWidget.js"></script>
+<script defer src="{{ 'api.js' | asset_url }}"></script>
+<script defer src="{{ 'chat.js' | asset_url }}"></script>
+
+<script>
+async function handleSessionLoad() {
+    const container = document.getElementById('purchased-sessions-container');
+    const grid = document.getElementById('purchased-sessions-grid');
+    const noMsg = document.getElementById('no-sessions-msg');
+    const customerId = "{{ customer.id }}";
+
+    // 1. If not logged in and not in editor, hide the whole section
+    if (!customerId && !window.Shopify.designMode) {
+        container.style.display = 'none';
+        return;
+    }
+
+    if (!customerId) return;
+
+    try {
+        // Init chat system
+        if (window.AstroChat) await AstroChat.init();
+
+        {% comment %} const sessions = await AstroAPI.getCustomerSessions(customerId); {% endcomment %}
+        const sessions = await AstroAPI.getActiveSession(customerId);
+
+        if (sessions && sessions.length > 0) {
+            grid.innerHTML = ''; // Clear preview items
+            sessions.forEach(session => {
+                const astro = session.astrologers;
+                const div = document.createElement('div');
+                div.className = 'session-item';
+                div.innerHTML = `
+                    <div class="session-card-wrapper" onclick="startUserChat('${astro.cometchat_uid}', '${session.id}')">
+                        <div class="session-card session-card-{{ section.id }}">
+                            <img src="${astro.profile_image || 'https://via.placeholder.com/150'}" alt="${astro.name}">
+                        </div>
+                        <span class="session-name">${astro.name}</span>
+                        <div class="session-meta">${session.duration_minutes} Min Session</div>
+                        <button class="session-chat-btn session-btn-{{ section.id }}">
+                            {{ section.settings.button_label }}
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        } else if (!window.Shopify.designMode) {
+            container.style.display = 'none'; // Hide if no real data and not in editor
+        }
+    } catch (e) {
+        console.error("Purchased Sessions Error:", e);
+    }
+}
+
+async function startUserChat(astroUid, sessionId) {
+    const customerId = "{{ customer.id }}";
+    const btn = event.currentTarget.querySelector('.session-chat-btn');
+    btn.innerText = "Loading...";
+    
+    try {
+        await AstroAPI.startSession(sessionId);
+        await AstroChat.login(customerId);
+        document.getElementById('cometchat-container').style.display = 'block';
+        AstroChat.startConversation(astroUid);
+        document.getElementById('cometchat-container').scrollIntoView({ behavior: 'smooth' });
+    } catch (err) {
+        btn.innerText = "{{ section.settings.button_label }}";
+        alert("Session initialization failed.");
+    }
+}
+
+document.addEventListener('DOMContentLoaded', handleSessionLoad);
+</script>
+
+<style>
+.purchased-sessions-section { font-family: 'Outfit', sans-serif; background: #fff; }
+.section-container { max-width: 1200px; margin: 0 auto; text-align: center; padding: 0 20px; }
+.section-title { font-size: 2.8rem; font-weight: 700; margin-bottom: 10px; color: #1a1a1a; }
+.section-subtitle { font-size: 1.1rem; color: #777; margin-bottom: 50px; }
+.sessions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; }
+.session-item { width: 180px; transition: transform 0.3s ease; cursor: pointer; }
+.session-item:hover { transform: translateY(-5px); }
+.session-card { width: 100%; aspect-ratio: 1/1; border-radius: 30px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; padding: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+.session-card img { width: 100%; height: 100%; object-fit: contain; }
+.session-name { display: block; font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; }
+.session-meta { display: block; font-size: 0.9rem; color: #999; margin-bottom: 12px; }
+.session-chat-btn { border: none; padding: 8px 20px; border-radius: 50px; font-weight: 700; width: 100%; cursor: pointer; }
+</style>
+
+{% schema %}
+{
+  "name": "Astrologer Products List",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "My Purchased Sessions" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Your spiritual journey continues here." },
+    { "type": "color", "id": "section_bg", "label": "Section BG", "default": "#ffffff" },
+    { "type": "color", "id": "card_bg", "label": "Card BG", "default": "#fcf8f1" },
+    { "type": "text", "id": "button_label", "label": "Button Text", "default": "Join Chat" },
+    { "type": "color", "id": "button_bg", "label": "Button BG", "default": "#1a1a1a" },
+    { "type": "color", "id": "button_text_color", "label": "Button Text Color", "default": "#ffffff" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top Padding", "default": 60 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom Padding", "default": 60 }
+  ],
+  "presets": [{ "name": "Astrologer Products List" }]
+}
+{% endschema %}

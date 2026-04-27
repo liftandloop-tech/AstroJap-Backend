@@ -1,0 +1,1043 @@
+{% doc %}
+  @prompt
+    🚨 IMPORTANT (STRICT INSTRUCTION)
+    
+    DO NOT create a circle layout.
+    DO NOT create uneven grid.
+    DO NOT create large banners.
+    
+    Create a clean horizontal card layout with equal-sized square cards, exactly like a “Shop by Purpose” category section.
+    
+    🧾 SECTION TITLE
+    
+    Centered heading:
+    
+    Shop by Purpose
+    
+    Font: elegant / serif style
+    
+    Medium-large size
+    
+    Proper spacing below heading
+    
+    🧱 LAYOUT (MANDATORY)
+    
+    One single row of 7 cards
+    
+    Cards must be:
+    
+    Equal width and height (square)
+    
+    Proper spacing between each card
+    
+    On mobile:
+    
+    Horizontal scroll (swipe enabled)
+    
+    🧩 CARD DESIGN (VERY IMPORTANT)
+    
+    Each card must include:
+    
+    1. BACKGROUND
+    
+    Light beige background (#f5f1ea or similar)
+    
+    Subtle texture or soft gradient (optional)
+    
+    2. IMAGE
+    
+    Centered object image (PNG style look)
+    
+    Example: crystal, bracelet, evil eye, gemstone
+    
+    Image should NOT fill entire card
+    
+    Keep proper padding inside card
+    
+    3. TITLE
+    
+    Text below image
+    
+    Center aligned
+    
+    Medium font weight
+    
+    🎨 DESIGN STYLE
+    
+    Border radius: 12px–16px
+    
+    Clean minimal luxury UI
+    
+    Soft shadow (very light)
+    
+    Hover effect:
+    
+    Slight lift or zoom
+    
+    ⚙️ DYNAMIC & EDITABLE (VERY IMPORTANT)
+    
+    Use Shopify blocks (not static content)
+    
+    Each block should have:
+    
+    Image picker
+    
+    Title text
+    
+    Link (collection or page)
+    
+    Allow:
+    
+    Minimum: 4
+    
+    Maximum: 10
+    
+    Blocks must be:
+    ✅ Editable
+    ✅ Reorderable
+    ✅ Removable
+    
+    🧪 SAMPLE DATA (Astrojap)
+    
+    Create default items:
+    
+    Money
+    
+    Love
+    
+    Protection
+    
+    Career
+    
+    Evil Eye
+    
+    Health
+    
+    Gifting
+    
+    📱 MOBILE BEHAVIOR
+    
+    Horizontal scroll
+    
+    Show 2–3 cards per screen
+    
+    Maintain spacing and square shape
+    
+    ⚙️ TECHNICAL REQUIREMENTS
+    
+    Use Shopify Liquid + schema
+    
+    Use flexbox or grid
+    
+    Keep performance optimized
+    
+    Maintain consistent card size
+    
+    🚀 GOAL
+    
+    Create a clean, premium category navigation section that helps users quickly browse products based on purpose.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-shop-purpose-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 60px 20px;
+  }
+
+  .ai-shop-purpose-container-{{ ai_gen_id }} {
+    max-width: {{ settings.page_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-shop-purpose-heading-{{ ai_gen_id }} {
+    text-align: center;
+    font-family: {{ block.settings.heading_font.family }}, {{ block.settings.heading_font.fallback_families }};
+    font-weight: {{ block.settings.heading_font.weight }};
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 {{ block.settings.heading_spacing }}px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-shop-purpose-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.cards_per_row }}, 1fr);
+    gap: {{ block.settings.card_spacing }}px;
+    margin: 0 auto;
+  }
+
+  .ai-shop-purpose-card-{{ ai_gen_id }} {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.card_padding }}px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity }});
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-shop-purpose-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-{{ block.settings.hover_lift }}px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity | times: 1.5 }});
+  }
+
+  .ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .ai-shop-purpose-card-image-{{ ai_gen_id }} {
+    max-width: 70%;
+    max-height: 70%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .ai-shop-purpose-card-placeholder-{{ ai_gen_id }} {
+    width: 70%;
+    height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+
+  .ai-shop-purpose-card-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-shop-purpose-card-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_title_size }}px;
+    font-weight: {{ block.settings.card_title_weight }};
+    color: {{ block.settings.card_title_color }};
+    text-align: center;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-shop-purpose-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-shop-purpose-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-shop-purpose-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.cards_per_row_tablet }}, 1fr);
+      gap: {{ block.settings.card_spacing | times: 0.75 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-shop-purpose-{{ ai_gen_id }} {
+      padding: 32px 0;
+    }
+
+    .ai-shop-purpose-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.7 }}px;
+      padding: 0 16px;
+    }
+
+    .ai-shop-purpose-grid-{{ ai_gen_id }} {
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: {{ block.settings.card_spacing | times: 0.5 }}px;
+      padding: 0 16px;
+      grid-template-columns: none;
+    }
+
+    .ai-shop-purpose-grid-{{ ai_gen_id }}::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ai-shop-purpose-grid-{{ ai_gen_id }} {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .ai-shop-purpose-card-{{ ai_gen_id }} {
+      flex: 0 0 {{ block.settings.mobile_card_width }}px;
+      min-width: {{ block.settings.mobile_card_width }}px;
+      height: {{ block.settings.mobile_card_width }}px;
+      scroll-snap-align: start;
+    }
+
+    .ai-shop-purpose-card-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.card_title_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<shop-purpose-{{ ai_gen_id }} class="ai-shop-purpose-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-shop-purpose-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-shop-purpose-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-shop-purpose-grid-{{ ai_gen_id }}">
+      {% if block.settings.card_1_title != blank %}
+        {% if block.settings.card_1_link != blank %}
+          <a href="{{ block.settings.card_1_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_1_image != blank %}
+              <img
+                src="{{ block.settings.card_1_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_1_image.alt | default: block.settings.card_1_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_1_title }}</h3>
+        {% if block.settings.card_1_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_2_title != blank %}
+        {% if block.settings.card_2_link != blank %}
+          <a href="{{ block.settings.card_2_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_2_image != blank %}
+              <img
+                src="{{ block.settings.card_2_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_2_image.alt | default: block.settings.card_2_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_2_title }}</h3>
+        {% if block.settings.card_2_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_3_title != blank %}
+        {% if block.settings.card_3_link != blank %}
+          <a href="{{ block.settings.card_3_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_3_image != blank %}
+              <img
+                src="{{ block.settings.card_3_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_3_image.alt | default: block.settings.card_3_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_3_title }}</h3>
+        {% if block.settings.card_3_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_4_title != blank %}
+        {% if block.settings.card_4_link != blank %}
+          <a href="{{ block.settings.card_4_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_4_image != blank %}
+              <img
+                src="{{ block.settings.card_4_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_4_image.alt | default: block.settings.card_4_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_4_title }}</h3>
+        {% if block.settings.card_4_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_5_title != blank %}
+        {% if block.settings.card_5_link != blank %}
+          <a href="{{ block.settings.card_5_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_5_image != blank %}
+              <img
+                src="{{ block.settings.card_5_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_5_image.alt | default: block.settings.card_5_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_5_title }}</h3>
+        {% if block.settings.card_5_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_6_title != blank %}
+        {% if block.settings.card_6_link != blank %}
+          <a href="{{ block.settings.card_6_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_6_image != blank %}
+              <img
+                src="{{ block.settings.card_6_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_6_image.alt | default: block.settings.card_6_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_6_title }}</h3>
+        {% if block.settings.card_6_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_7_title != blank %}
+        {% if block.settings.card_7_link != blank %}
+          <a href="{{ block.settings.card_7_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_7_image != blank %}
+              <img
+                src="{{ block.settings.card_7_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_7_image.alt | default: block.settings.card_7_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_7_title }}</h3>
+        {% if block.settings.card_7_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_8_title != blank %}
+        {% if block.settings.card_8_link != blank %}
+          <a href="{{ block.settings.card_8_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_8_image != blank %}
+              <img
+                src="{{ block.settings.card_8_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_8_image.alt | default: block.settings.card_8_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_8_title }}</h3>
+        {% if block.settings.card_8_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_9_title != blank %}
+        {% if block.settings.card_9_link != blank %}
+          <a href="{{ block.settings.card_9_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_9_image != blank %}
+              <img
+                src="{{ block.settings.card_9_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_9_image.alt | default: block.settings.card_9_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_9_title }}</h3>
+        {% if block.settings.card_9_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if block.settings.card_10_title != blank %}
+        {% if block.settings.card_10_link != blank %}
+          <a href="{{ block.settings.card_10_link }}" class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% else %}
+          <div class="ai-shop-purpose-card-{{ ai_gen_id }}">
+        {% endif %}
+          <div class="ai-shop-purpose-card-image-wrapper-{{ ai_gen_id }}">
+            {% if block.settings.card_10_image != blank %}
+              <img
+                src="{{ block.settings.card_10_image | image_url: width: 400 }}"
+                alt="{{ block.settings.card_10_image.alt | default: block.settings.card_10_title | escape }}"
+                class="ai-shop-purpose-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="400"
+                height="400"
+              >
+            {% else %}
+              <div class="ai-shop-purpose-card-placeholder-{{ ai_gen_id }}">
+                {{ 'product-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <h3 class="ai-shop-purpose-card-title-{{ ai_gen_id }}">{{ block.settings.card_10_title }}</h3>
+        {% if block.settings.card_10_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</shop-purpose-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ShopPurpose{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        const grid = this.querySelector('.ai-shop-purpose-grid-{{ ai_gen_id }}');
+        if (!grid) return;
+
+        if (window.innerWidth <= 749) {
+          this.enableTouchScroll(grid);
+        }
+
+        window.addEventListener('resize', () => {
+          if (window.innerWidth <= 749) {
+            this.enableTouchScroll(grid);
+          }
+        });
+      }
+
+      enableTouchScroll(grid) {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        grid.addEventListener('mousedown', (e) => {
+          isDown = true;
+          startX = e.pageX - grid.offsetLeft;
+          scrollLeft = grid.scrollLeft;
+        });
+
+        grid.addEventListener('mouseleave', () => {
+          isDown = false;
+        });
+
+        grid.addEventListener('mouseup', () => {
+          isDown = false;
+        });
+
+        grid.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - grid.offsetLeft;
+          const walk = (x - startX) * 2;
+          grid.scrollLeft = scrollLeft - walk;
+        });
+      }
+    }
+
+    customElements.define('shop-purpose-{{ ai_gen_id }}', ShopPurpose{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Shop by purpose",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by Purpose"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "serif"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Spacing below heading",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "cards_per_row",
+      "min": 4,
+      "max": 10,
+      "step": 1,
+      "label": "Cards per row (desktop)",
+      "default": 7
+    },
+    {
+      "type": "range",
+      "id": "cards_per_row_tablet",
+      "min": 3,
+      "max": 6,
+      "step": 1,
+      "label": "Cards per row (tablet)",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Space between cards",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_width",
+      "min": 120,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Card width (mobile)",
+      "default": 140
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Background color",
+      "default": "#f5f1ea"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Inner padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "label": "Shadow opacity",
+      "default": 0.1
+    },
+    {
+      "type": "range",
+      "id": "hover_lift",
+      "min": 0,
+      "max": 12,
+      "step": 2,
+      "unit": "px",
+      "label": "Hover lift",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Card text"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Title size",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "card_title_weight",
+      "label": "Title weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Money"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Love"
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Protection"
+    },
+    {
+      "type": "url",
+      "id": "card_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title",
+      "default": "Career"
+    },
+    {
+      "type": "url",
+      "id": "card_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_5_title",
+      "label": "Title",
+      "default": "Evil Eye"
+    },
+    {
+      "type": "url",
+      "id": "card_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_6_title",
+      "label": "Title",
+      "default": "Health"
+    },
+    {
+      "type": "url",
+      "id": "card_6_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_7_title",
+      "label": "Title",
+      "default": "Gifting"
+    },
+    {
+      "type": "url",
+      "id": "card_7_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_8_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_8_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_8_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_9_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_9_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_9_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 10"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_10_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_10_title",
+      "label": "Title"
+    },
+    {
+      "type": "url",
+      "id": "card_10_link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop by purpose"
+    }
+  ]
+}
+{% endschema %}

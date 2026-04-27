@@ -1,0 +1,786 @@
+{% doc %}
+  @prompt
+    Create a responsive Shopify section using **Liquid, HTML, CSS, and minimal JavaScript**.
+    
+    Section Name: **chat-with-astrologer-static**
+    
+    Goal:
+    Design a **Chat With Astrologer listing page similar to the AstroTalk layout**, but all astrologer data should be **static inside the code** (not dynamic blocks, APIs, or Shopify data sources).
+    
+    Layout Requirements:
+    
+    1. Header Section
+    
+    * Title: **Chat With Astrologer**
+    * Add a yellow underline below the title.
+    * Add a search bar with placeholder **"Search name..."**.
+    * Add a filter button icon.
+    
+    2. Category Filter Pills
+       Create horizontal category buttons:
+    
+    All
+    Love
+    Education
+    Career
+    Marriage
+    Health
+    Finance
+    
+    Design:
+    
+    * Rounded pill buttons
+    * Light grey background
+    * Active pill should have **yellow background**
+    
+    3. Astrologer Card Grid
+    
+    Create a responsive grid layout:
+    
+    Desktop → 3 cards per row
+    Tablet → 2 cards per row
+    Mobile → 1 card per row
+    
+    4. Astrologer Card Design
+    
+    Each card should contain:
+    
+    Left Side
+    
+    * Circular astrologer image
+    * Yellow border around image
+    
+    Right Side Content
+    
+    Name
+    Example: Rudhran
+    
+    Specializations
+    Example: Vedic, Lal Kitab, Face Reading
+    
+    Languages
+    Example: English, Tamil
+    
+    Rating
+    Show 5 star icons
+    
+    Experience
+    Example: Exp: 5 Years
+    
+    Orders
+    Example: 25914 orders
+    
+    Price per minute
+    Example: ₹43/min
+    
+    Chat Button
+    Green outline button with text **Chat**
+    
+    5. Badge Support
+    
+    Some cards should display badges on top:
+    
+    Rising Star
+    Top Choice
+    Verified (green tick icon)
+    
+    6. Static Data Requirement
+    
+    All astrologer cards must be **hardcoded inside the HTML** with example data like:
+    
+    Rudhran
+    Arkes h
+    Sanatan
+    Devdat
+    Shravika
+    Neha09
+    Kavishri
+    Shivsagar
+    Mohanm
+    
+    Do NOT use Shopify blocks, APIs, or dynamic loops.
+    
+    7. Card Style
+    
+    White background
+    Rounded corners
+    Soft shadow
+    Padding
+    Hover lift effect
+    
+    8. Responsive Behavior
+    
+    Cards must adjust correctly for desktop, tablet, and mobile screens.
+    
+    Output the complete **Liquid section code** ready to paste into:
+    
+    sections/chat-with-astrologer-static.liquid
+    
+{% enddoc %}
+{% assign ai_gen_id = 'chatastrologer' %}
+
+{% style %}
+  .ai-chat-astrologer-{{ ai_gen_id }} {
+    display: block;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-chat-astrologer-header-{{ ai_gen_id }} {
+    margin-bottom: 30px;
+  }
+
+  .ai-chat-astrologer-title-{{ ai_gen_id }} {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #121212;
+    position: relative;
+    display: inline-block;
+  }
+
+  .ai-chat-astrologer-title-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #FFD700;
+  }
+
+  .ai-chat-astrologer-search-filter-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    align-items: center;
+  }
+
+  .ai-chat-astrologer-search-wrapper-{{ ai_gen_id }} {
+    flex: 1;
+    position: relative;
+  }
+
+  .ai-chat-astrologer-search-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .ai-chat-astrologer-filter-btn-{{ ai_gen_id }} {
+    padding: 12px 16px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-chat-astrologer-filter-btn-{{ ai_gen_id }}:hover {
+    background-color: #f9f9f9;
+  }
+
+  .ai-chat-astrologer-categories-{{ ai_gen_id }} {
+    display: flex;
+    gap: 10px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+
+  .ai-chat-astrologer-category-pill-{{ ai_gen_id }} {
+    padding: 8px 20px;
+    background-color: #f3f3f3;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #121212;
+  }
+
+  .ai-chat-astrologer-category-pill-{{ ai_gen_id }}:hover {
+    background-color: #e8e8e8;
+  }
+
+  .ai-chat-astrologer-category-pill-{{ ai_gen_id }}.active {
+    background-color: #FFD700;
+    color: #121212;
+  }
+
+  .ai-chat-astrologer-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .ai-chat-astrologer-card-{{ ai_gen_id }} {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+  }
+
+  .ai-chat-astrologer-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-chat-astrologer-badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    z-index: 1;
+  }
+
+  .ai-chat-astrologer-badge-{{ ai_gen_id }}.rising-star {
+    background-color: #FFE5B4;
+    color: #8B4513;
+  }
+
+  .ai-chat-astrologer-badge-{{ ai_gen_id }}.top-choice {
+    background-color: #FFD700;
+    color: #121212;
+  }
+
+  .ai-chat-astrologer-badge-{{ ai_gen_id }}.verified {
+    background-color: #4CAF50;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ai-chat-astrologer-card-content-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+  }
+
+  .ai-chat-astrologer-image-wrapper-{{ ai_gen_id }} {
+    flex-shrink: 0;
+  }
+
+  .ai-chat-astrologer-image-{{ ai_gen_id }} {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #FFD700;
+    object-fit: cover;
+  }
+
+  .ai-chat-astrologer-info-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ai-chat-astrologer-name-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    color: #121212;
+  }
+
+  .ai-chat-astrologer-specialization-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 4px 0;
+    line-height: 1.4;
+  }
+
+  .ai-chat-astrologer-languages-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 6px 0;
+  }
+
+  .ai-chat-astrologer-rating-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 6px;
+  }
+
+  .ai-chat-astrologer-star-{{ ai_gen_id }} {
+    color: #FFD700;
+    font-size: 14px;
+  }
+
+  .ai-chat-astrologer-details-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .ai-chat-astrologer-price-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 700;
+    color: #121212;
+    margin-bottom: 10px;
+  }
+
+  .ai-chat-astrologer-chat-btn-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 10px;
+    background-color: #fff;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    color: #4CAF50;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-chat-astrologer-chat-btn-{{ ai_gen_id }}:hover {
+    background-color: #4CAF50;
+    color: #fff;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-chat-astrologer-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-chat-astrologer-{{ ai_gen_id }} {
+      padding: 20px 16px;
+    }
+
+    .ai-chat-astrologer-title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-chat-astrologer-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-chat-astrologer-search-filter-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-chat-astrologer-search-wrapper-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-chat-astrologer-filter-btn-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<chat-astrologer-{{ ai_gen_id }} class="ai-chat-astrologer-{{ ai_gen_id }}">
+  <div class="ai-chat-astrologer-header-{{ ai_gen_id }}">
+    <h1 class="ai-chat-astrologer-title-{{ ai_gen_id }}">Chat With Astrologer</h1>
+    
+    <div class="ai-chat-astrologer-search-filter-{{ ai_gen_id }}">
+      <div class="ai-chat-astrologer-search-wrapper-{{ ai_gen_id }}">
+        <input 
+          type="text" 
+          class="ai-chat-astrologer-search-{{ ai_gen_id }}" 
+          placeholder="Search name..."
+          aria-label="Search astrologers by name"
+        >
+      </div>
+      <button class="ai-chat-astrologer-filter-btn-{{ ai_gen_id }}" aria-label="Filter options">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="ai-chat-astrologer-categories-{{ ai_gen_id }}">
+    <button class="ai-chat-astrologer-category-pill-{{ ai_gen_id }} active" data-category="all">All</button>
+    <button class="ai-chat-astrologer-category-pill-{{ ai_gen_id }}" data-category="love">Love</button>
+    <button class="ai-chat-astrologer-category-pill-{{ ai_gen_id }}" data-category="education">Education</button>
+    <button class="ai-chat-astrologer-category-pill-{{ ai_gen_id }}" data-category="career">Career</button>
+    <button class="ai-chat-astrologer-category-pill-{{ ai_gen_id }}" data-category="marriage">Marriage</button>
+    <button class="ai-chat-astrologer-category-pill-{{ ai_gen_id }}" data-category="health">Health</button>
+    <button class="ai-chat-astrologer-category-pill-{{ ai_gen_id }}" data-category="finance">Finance</button>
+  </div>
+
+  <div class="ai-chat-astrologer-grid-{{ ai_gen_id }}">
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="rudhran" data-category="love,career">
+      <div class="ai-chat-astrologer-badge-{{ ai_gen_id }} top-choice">Top Choice</div>
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Rudhran" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Rudhran</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">Vedic, Lal Kitab, Face Reading</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">English, Tamil</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 5 Years</span>
+            <span>25914 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹43/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="arkesh" data-category="marriage,love">
+      <div class="ai-chat-astrologer-badge-{{ ai_gen_id }} verified">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+        Verified
+      </div>
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Arkesh" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Arkesh</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">Numerology, Tarot, Palmistry</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">Hindi, English</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 8 Years</span>
+            <span>18542 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹38/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="sanatan" data-category="career,finance">
+      <div class="ai-chat-astrologer-badge-{{ ai_gen_id }} rising-star">Rising Star</div>
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Sanatan" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Sanatan</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">Vedic, KP System, Prashna</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">Hindi, Marathi</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 3 Years</span>
+            <span>9876 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹35/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="devdat" data-category="health,education">
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Devdat" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Devdat</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">Vedic, Vastu, Gemology</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">English, Bengali</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 12 Years</span>
+            <span>32145 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹50/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="shravika" data-category="love,marriage">
+      <div class="ai-chat-astrologer-badge-{{ ai_gen_id }} top-choice">Top Choice</div>
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Shravika" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Shravika</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">Tarot, Angel Reading, Reiki</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">English, Telugu</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 6 Years</span>
+            <span>21098 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹45/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="neha09" data-category="career,finance">
+      <div class="ai-chat-astrologer-badge-{{ ai_gen_id }} verified">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+        Verified
+      </div>
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Neha09" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Neha09</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">Numerology, Vastu, Palmistry</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">Hindi, Punjabi</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 4 Years</span>
+            <span>14523 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹40/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="kavishri" data-category="education,health">
+      <div class="ai-chat-astrologer-badge-{{ ai_gen_id }} rising-star">Rising Star</div>
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Kavishri" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Kavishri</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">Vedic, Prashna, Muhurta</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">English, Kannada</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 7 Years</span>
+            <span>19234 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹42/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="shivsagar" data-category="love,career">
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Shivsagar" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Shivsagar</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">KP System, Nadi, Jaimini</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">Hindi, Gujarati</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 10 Years</span>
+            <span>28765 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹48/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-chat-astrologer-card-{{ ai_gen_id }}" data-name="mohanm" data-category="marriage,finance">
+      <div class="ai-chat-astrologer-badge-{{ ai_gen_id }} top-choice">Top Choice</div>
+      <div class="ai-chat-astrologer-card-content-{{ ai_gen_id }}">
+        <div class="ai-chat-astrologer-image-wrapper-{{ ai_gen_id }}">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0070/7032/files/placeholder-images-image_large.png?v=1530129081" 
+            alt="Mohanm" 
+            class="ai-chat-astrologer-image-{{ ai_gen_id }}"
+          >
+        </div>
+        <div class="ai-chat-astrologer-info-{{ ai_gen_id }}">
+          <h3 class="ai-chat-astrologer-name-{{ ai_gen_id }}">Mohanm</h3>
+          <p class="ai-chat-astrologer-specialization-{{ ai_gen_id }}">Vedic, Lal Kitab, Remedies</p>
+          <p class="ai-chat-astrologer-languages-{{ ai_gen_id }}">English, Malayalam</p>
+          <div class="ai-chat-astrologer-rating-{{ ai_gen_id }}">
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+            <span class="ai-chat-astrologer-star-{{ ai_gen_id }}">★</span>
+          </div>
+          <div class="ai-chat-astrologer-details-{{ ai_gen_id }}">
+            <span>Exp: 9 Years</span>
+            <span>24567 orders</span>
+          </div>
+          <div class="ai-chat-astrologer-price-{{ ai_gen_id }}">₹46/min</div>
+          <button class="ai-chat-astrologer-chat-btn-{{ ai_gen_id }}">Chat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</chat-astrologer-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ChatAstrologerchatastrologer extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.searchInput = this.querySelector('.ai-chat-astrologer-search-chatastrologer');
+        this.categoryPills = this.querySelectorAll('.ai-chat-astrologer-category-pill-chatastrologer');
+        this.cards = this.querySelectorAll('.ai-chat-astrologer-card-chatastrologer');
+        
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.searchInput.addEventListener('input', (e) => {
+          this.filterCards(e.target.value.toLowerCase());
+        });
+
+        this.categoryPills.forEach(pill => {
+          pill.addEventListener('click', () => {
+            this.categoryPills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            
+            const category = pill.getAttribute('data-category');
+            this.filterByCategory(category);
+          });
+        });
+      }
+
+      filterCards(searchTerm) {
+        this.cards.forEach(card => {
+          const name = card.getAttribute('data-name').toLowerCase();
+          if (name.includes(searchTerm)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      filterByCategory(category) {
+        this.cards.forEach(card => {
+          if (category === 'all') {
+            card.style.display = 'block';
+          } else {
+            const cardCategories = card.getAttribute('data-category');
+            if (cardCategories && cardCategories.includes(category)) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          }
+        });
+      }
+    }
+
+    customElements.define('chat-astrologer-chatastrologer', ChatAstrologerchatastrologer);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Chat with astrologer",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A static astrologer listing section with search and category filters. All data is hardcoded."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Chat with astrologer"
+    }
+  ]
+}
+{% endschema %}

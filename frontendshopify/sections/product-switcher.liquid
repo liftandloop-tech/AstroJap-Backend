@@ -1,0 +1,36 @@
+{% comment %}
+  DYNAMIC PRODUCT SWITCHER (Traffic Controller)
+  Loads different snippets based on Product Type.
+{% endcomment %}
+
+{% assign p_type = product.type | downcase %}
+
+{% if p_type == 'rudraksha' %}
+  {% render 'main-product-layout', category: 'rudraksha' %}
+{% elsif p_type == 'bracelet' %}
+  {% render 'main-product-layout', category: 'bracelet' %}
+{% elsif p_type == 'pyrite' %}
+  {% render 'main-product-layout', category: 'pyrite' %}
+{% else %}
+  {% comment %} Fallback to default premium layout {% endcomment %}
+  {% render 'main-product-layout', category: 'general' %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product Switcher",
+  "settings": [
+    { "type": "header", "content": "Layout Settings" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 100, "step": 4, "default": 24, "unit": "px" },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 100, "step": 4, "default": 24, "unit": "px" }
+  ],
+  "blocks": [
+    { "type": "@app" },
+    { "type": "title", "name": "Title", "limit": 1 },
+    { "type": "price", "name": "Price", "limit": 1 },
+    { "type": "description", "name": "Description", "limit": 1 },
+    { "type": "buy_buttons", "name": "Buy Buttons", "limit": 1 }
+  ],
+  "presets": [{ "name": "Product Switcher" }]
+}
+{% endschema %}

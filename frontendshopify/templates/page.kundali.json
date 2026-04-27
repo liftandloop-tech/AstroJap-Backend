@@ -1,0 +1,162 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "177331704623e604ee": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_0f1e61a_w8pH7K": {
+          "type": "ai_gen_block_0f1e61a",
+          "name": "Shop by purpose",
+          "settings": {
+            "heading": "Shop by Purpose",
+            "heading_font": "serif",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 48,
+            "cards_per_row": 5,
+            "cards_per_row_tablet": 4,
+            "card_spacing": 16,
+            "mobile_card_width": 140,
+            "card_background": "#f5f1ea",
+            "card_border_radius": 14,
+            "card_padding": 20,
+            "card_shadow_opacity": 0.1,
+            "hover_lift": 4,
+            "card_title_size": 15,
+            "card_title_weight": "500",
+            "card_title_color": "#121212",
+            "card_1_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.33.20_AM.png",
+            "card_1_title": "Money",
+            "card_1_link": "https://astrojap.com/pages/money",
+            "card_2_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.31.44_AM.png",
+            "card_2_title": "Love",
+            "card_2_link": "https://astrojap.com/pages/love",
+            "card_3_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.41.12_AM.png",
+            "card_3_title": "Protection",
+            "card_3_link": "https://astrojap.com/pages/protection",
+            "card_4_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.47.58_AM.png",
+            "card_4_title": "Career",
+            "card_4_link": "https://astrojap.com/pages/evil-eye",
+            "card_5_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.45.11_AM.png",
+            "card_5_title": "Evil Eye",
+            "card_5_link": "https://astrojap.com/pages/health",
+            "card_6_title": "",
+            "card_6_link": "",
+            "card_7_title": "",
+            "card_7_link": "",
+            "card_8_title": "",
+            "card_8_link": "",
+            "card_9_title": "",
+            "card_9_link": "",
+            "card_10_title": "",
+            "card_10_link": ""
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_b26394d_feiWa9": {
+          "type": "ai_gen_block_b26394d",
+          "settings": {
+            "bg_color": "#ffffff",
+            "line_color": "#ffc107",
+            "btn_bg": "#6b46c1"
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_36516fa_Q9xrtz": {
+          "type": "ai_gen_block_36516fa",
+          "settings": {
+            "cta_text": "<p>Connect with an Astrologer on Call or Chat for more personalised detailed predictions.</p>",
+            "talk_button_label": "Talk to Astrologer",
+            "talk_button_link": "",
+            "chat_button_label": "Chat with Astrologer",
+            "chat_button_link": "https://astrojap.com/pages/astrologer",
+            "section_background_color": "#f3f3f3",
+            "card_background_color": "#ffffff",
+            "text_color": "#121212",
+            "button_background_color": "#6b46c1",
+            "button_hover_background_color": "#5a3aa3",
+            "button_text_color": "#ffffff",
+            "icon_color": "#ffc107",
+            "card_border_radius": 20,
+            "text_size": 18,
+            "button_text_size": 16
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_0f1e61a_w8pH7K",
+        "ai_gen_block_b26394d_feiWa9",
+        "ai_gen_block_36516fa_Q9xrtz"
+      ],
+      "settings": {}
+    },
+    "1773626845ffb7432c": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_85bb8d6_kr8dhW": {
+          "type": "ai_gen_block_85bb8d6",
+          "settings": {
+            "intro_paragraph_1": "<p>Create your <strong>Janam Kundli online instantly with Astrojap</strong> in just a few simple steps. Our advanced kundli generator uses accurate Vedic astrology calculations to generate your detailed birth chart based on your date, time, and place of birth.</p>",
+            "intro_paragraph_2": "<p>Discover deep insights about your life path, personality traits, and future possibilities with <strong>Astrojap’s free online kundli service</strong>. Simply enter your birth details to generate your kundli and begin exploring the powerful guidance of Vedic astrology.</p>",
+            "main_heading": "Free Kundli Online - Get Your Detailed Birth Chart with Predictions",
+            "paragraph_1": "<p>Astrojap’s online kundli generator uses advanced Vedic astrology principles to calculate the exact positions of planets at the time of your birth. Your Janam Kundli acts as a personal blueprint that helps reveal important insights about your personality, strengths, challenges, and life opportunities.</p>",
+            "paragraph_2": "<p>By analyzing planetary placements and astrological houses, Astrojap provides meaningful predictions related to important areas of life such as career growth, marriage compatibility, financial success, and health. These insights help you better understand your life journey and make informed decisions.</p>",
+            "paragraph_3": "<p>Our <strong>free kundli generator</strong> is designed to make astrology accessible for everyone. Within seconds, you can generate your birth chart and explore detailed interpretations based on traditional Vedic astrology methods combined with modern technology.</p>",
+            "paragraph_4": "<p>Thousands of users trust <strong>Astrojap</strong> for accurate and reliable kundli analysis. Whether you want to explore your destiny, understand your strengths, or prepare for future opportunities, your birth chart provides valuable guidance.</p>",
+            "paragraph_5": "<p>Accurate predictions and life guidance based on your kundli can help you understand your true potential and life purpose. Discover favorable periods for important decisions and learn how to align your actions with cosmic energies for success and fulfillment.</p>",
+            "subheading": "Online Free Kundli For Future Predictions",
+            "subheading_text": "<p>Your birth chart is a powerful guide that helps you understand upcoming opportunities and challenges. With <strong>Astrojap’s free online kundli</strong>, you can explore predictions related to love, career, marriage, finances, and personal growth. By understanding planetary influences in your life, you gain clarity and direction for the future.</p>",
+            "container_width": 900,
+            "desktop_width_percent": 100,
+            "padding_top": 60,
+            "padding_bottom": 60,
+            "heading_font_size": 36,
+            "subheading_font_size": 24,
+            "paragraph_font_size": 17,
+            "line_height": 1.7,
+            "background_color": "#ffffff",
+            "heading_color": "#121212",
+            "text_color": "#333333"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_85bb8d6_kr8dhW"
+      ],
+      "settings": {}
+    },
+    "1774684355e390d7de": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "17753983576063db09": {
+      "type": "_blocks",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "177331704623e604ee",
+    "1773626845ffb7432c",
+    "1774684355e390d7de",
+    "17753983576063db09"
+  ]
+}

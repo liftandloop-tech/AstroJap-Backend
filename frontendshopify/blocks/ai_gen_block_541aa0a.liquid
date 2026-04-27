@@ -1,0 +1,907 @@
+{% doc %}
+  @prompt
+    Create a fully responsive and modern Shopify section named "Kundli Generator".
+    
+    UI Layout:
+    - Two column layout (desktop), single column (mobile)
+    - Left side: "New Kundli" form
+    - Right side: "Saved Kundli" card with login prompt
+    
+    Top Content:
+    - Add a short paragraph describing kundli benefits (editable in settings)
+    
+    LEFT SIDE (Form):
+    Fields required:
+    - Name (text input)
+    - Gender (dropdown: Male, Female, Other)
+    - Birth Date (date picker)
+    - Birth Time (time picker)
+    - Birth Place (text input)
+    
+    Button:
+    - "Generate Horoscope"
+    
+    Design:
+    - Clean UI with soft shadow
+    - Rounded inputs
+    - Proper spacing
+    - Highlight required fields (*)
+    - Button with gradient or dark theme
+    
+    RIGHT SIDE:
+    - Title: "Saved Kundli"
+    - Show message: "Please login to check your saved horoscope!"
+    - Login button (link editable in settings)
+    
+    ---
+    
+    FUNCTIONALITY (IMPORTANT):
+    
+    1. On clicking "Generate Horoscope":
+       - Prevent default form submission
+       - Open a modal popup
+    
+    2. Popup Modal:
+       - Centered modal with overlay
+       - Show loading state initially ("Generating your Kundli...")
+       - After API response, show kundli result
+    
+    3. API Integration:
+       - Add a setting for API endpoint URL
+       - Send POST request with:
+         {
+           name,
+           gender,
+           birth_date,
+           birth_time,
+           birth_place
+         }
+    
+    4. Display Response:
+       - Show formatted kundli result inside popup
+       - If error → show error message
+    
+    ---
+    
+    SHOPIFY CUSTOMIZATION (VERY IMPORTANT):
+    
+    Section settings:
+    - Heading text
+    - Description text
+    - Login button link
+    - API URL (text field)
+    
+    ---
+    
+    TECH REQUIREMENTS:
+    
+    - Use Liquid + HTML + CSS + Vanilla JS
+    - No external libraries
+    - Use fetch() for API call
+    - Proper error handling
+    - Accessible modal (close button + overlay click)
+    - Fully responsive
+    
+    ---
+    
+    BONUS FEATURES (if possible):
+    
+    - Add loading spinner animation
+    - Add validation (required fields)
+    - Smooth modal animation
+    - Save last input in localStorage
+    
+    ---
+    
+    OUTPUT REQUIRED:
+    - Full Shopify section code
+    - Complete schema
+    - Clean and production-ready code
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-kundli-generator-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+    background-color: {{ block.settings.section_bg_color }};
+  }
+
+  .ai-kundli-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-kundli-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-kundli-heading-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-kundli-description-{{ ai_gen_id }} {
+    font-size: 16px;
+    line-height: 1.6;
+    color: {{ block.settings.text_color }};
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .ai-kundli-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 40px;
+  }
+
+  .ai-kundli-card-{{ ai_gen_id }} {
+    background: {{ block.settings.card_bg_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-kundli-card-title-{{ ai_gen_id }} {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 24px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-kundli-form-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ai-kundli-form-group-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-kundli-label-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 500;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-kundli-required-{{ ai_gen_id }} {
+    color: #d82c0d;
+    margin-left: 4px;
+  }
+
+  .ai-kundli-input-{{ ai_gen_id }},
+  .ai-kundli-select-{{ ai_gen_id }} {
+    padding: 12px 16px;
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    font-size: 15px;
+    background: #ffffff;
+    color: #121212;
+    transition: border-color 0.2s ease;
+  }
+
+  .ai-kundli-input-{{ ai_gen_id }}:focus,
+  .ai-kundli-select-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: {{ block.settings.button_bg_color }};
+  }
+
+  .ai-kundli-button-{{ ai_gen_id }} {
+    padding: 14px 28px;
+    background: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+
+  .ai-kundli-button-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-kundli-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .ai-kundli-saved-content-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .ai-kundli-saved-message-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .ai-kundli-login-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 12px 24px;
+    background: {{ block.settings.login_button_bg_color }};
+    color: {{ block.settings.login_button_text_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .ai-kundli-login-button-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.login_button_hover_bg_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-kundli-modal-overlay-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+
+  .ai-kundli-modal-overlay-{{ ai_gen_id }}.active {
+    display: flex;
+  }
+
+  .ai-kundli-modal-{{ ai_gen_id }} {
+    background: #ffffff;
+    border-radius: {{ block.settings.card_border_radius }}px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .ai-kundli-modal-header-{{ ai_gen_id }} {
+    padding: 24px;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ai-kundli-modal-title-{{ ai_gen_id }} {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: #121212;
+  }
+
+  .ai-kundli-modal-close-{{ ai_gen_id }} {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+
+  .ai-kundli-modal-close-{{ ai_gen_id }}:hover {
+    background: #f0f0f0;
+  }
+
+  .ai-kundli-modal-body-{{ ai_gen_id }} {
+    padding: 24px;
+  }
+
+  .ai-kundli-loading-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .ai-kundli-spinner-{{ ai_gen_id }} {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid {{ block.settings.button_bg_color }};
+    border-radius: 50%;
+    margin: 0 auto 20px;
+  }
+
+  .ai-kundli-loading-text-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: #666;
+  }
+
+  .ai-kundli-result-{{ ai_gen_id }} {
+    line-height: 1.8;
+    color: #333;
+  }
+
+  .ai-kundli-error-{{ ai_gen_id }} {
+    padding: 16px;
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    color: #c00;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-kundli-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .ai-kundli-heading-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-kundli-card-{{ ai_gen_id }} {
+      padding: 20px;
+    }
+
+    .ai-kundli-modal-{{ ai_gen_id }} {
+      max-height: 85vh;
+    }
+  }
+{% endstyle %}
+
+<kundli-generator-{{ ai_gen_id }}
+  class="ai-kundli-generator-{{ ai_gen_id }}"
+  data-api-url="{{ block.settings.api_url }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-kundli-container-{{ ai_gen_id }}">
+    <div class="ai-kundli-header-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-kundli-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {% endif %}
+      {% if block.settings.description != blank %}
+        <div class="ai-kundli-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+      {% endif %}
+    </div>
+
+    <div class="ai-kundli-grid-{{ ai_gen_id }}">
+      <div class="ai-kundli-card-{{ ai_gen_id }}">
+        <h3 class="ai-kundli-card-title-{{ ai_gen_id }}">{{ block.settings.form_title }}</h3>
+        <form class="ai-kundli-form-{{ ai_gen_id }}" id="kundli-form-{{ ai_gen_id }}">
+          <div class="ai-kundli-form-group-{{ ai_gen_id }}">
+            <label class="ai-kundli-label-{{ ai_gen_id }}" for="name-{{ ai_gen_id }}">
+              Name<span class="ai-kundli-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <input
+              type="text"
+              id="name-{{ ai_gen_id }}"
+              name="name"
+              class="ai-kundli-input-{{ ai_gen_id }}"
+              required
+              placeholder="Enter your full name"
+            >
+          </div>
+
+          <div class="ai-kundli-form-group-{{ ai_gen_id }}">
+            <label class="ai-kundli-label-{{ ai_gen_id }}" for="gender-{{ ai_gen_id }}">
+              Gender<span class="ai-kundli-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <select
+              id="gender-{{ ai_gen_id }}"
+              name="gender"
+              class="ai-kundli-select-{{ ai_gen_id }}"
+              required
+            >
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="ai-kundli-form-group-{{ ai_gen_id }}">
+            <label class="ai-kundli-label-{{ ai_gen_id }}" for="birth-date-{{ ai_gen_id }}">
+              Birth date<span class="ai-kundli-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <input
+              type="date"
+              id="birth-date-{{ ai_gen_id }}"
+              name="birth_date"
+              class="ai-kundli-input-{{ ai_gen_id }}"
+              required
+            >
+          </div>
+
+          <div class="ai-kundli-form-group-{{ ai_gen_id }}">
+            <label class="ai-kundli-label-{{ ai_gen_id }}" for="birth-time-{{ ai_gen_id }}">
+              Birth time<span class="ai-kundli-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <input
+              type="time"
+              id="birth-time-{{ ai_gen_id }}"
+              name="birth_time"
+              class="ai-kundli-input-{{ ai_gen_id }}"
+              required
+            >
+          </div>
+
+          <div class="ai-kundli-form-group-{{ ai_gen_id }}">
+            <label class="ai-kundli-label-{{ ai_gen_id }}" for="birth-place-{{ ai_gen_id }}">
+              Birth place<span class="ai-kundli-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <input
+              type="text"
+              id="birth-place-{{ ai_gen_id }}"
+              name="birth_place"
+              class="ai-kundli-input-{{ ai_gen_id }}"
+              required
+              placeholder="Enter city, state, country"
+            >
+          </div>
+
+          <button type="submit" class="ai-kundli-button-{{ ai_gen_id }}">
+            {{ block.settings.button_text }}
+          </button>
+        </form>
+      </div>
+
+      <div class="ai-kundli-card-{{ ai_gen_id }}">
+        <h3 class="ai-kundli-card-title-{{ ai_gen_id }}">{{ block.settings.saved_title }}</h3>
+        <div class="ai-kundli-saved-content-{{ ai_gen_id }}">
+          <p class="ai-kundli-saved-message-{{ ai_gen_id }}">{{ block.settings.saved_message }}</p>
+          {% if block.settings.login_link != blank %}
+            <a href="{{ block.settings.login_link }}" class="ai-kundli-login-button-{{ ai_gen_id }}">
+              {{ block.settings.login_button_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-kundli-modal-overlay-{{ ai_gen_id }}" id="modal-overlay-{{ ai_gen_id }}">
+    <div class="ai-kundli-modal-{{ ai_gen_id }}">
+      <div class="ai-kundli-modal-header-{{ ai_gen_id }}">
+        <h3 class="ai-kundli-modal-title-{{ ai_gen_id }}">Your Kundli</h3>
+        <button class="ai-kundli-modal-close-{{ ai_gen_id }}" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="ai-kundli-modal-body-{{ ai_gen_id }}" id="modal-body-{{ ai_gen_id }}">
+        <div class="ai-kundli-loading-{{ ai_gen_id }}">
+          <div class="ai-kundli-spinner-{{ ai_gen_id }}"></div>
+          <p class="ai-kundli-loading-text-{{ ai_gen_id }}">Generating your Kundli...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</kundli-generator-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class KundliGenerator{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.form = null;
+        this.modal = null;
+        this.modalBody = null;
+        this.closeButton = null;
+        this.apiUrl = '';
+      }
+
+      connectedCallback() {
+        this.form = this.querySelector('#kundli-form-{{ ai_gen_id }}');
+        this.modal = this.querySelector('#modal-overlay-{{ ai_gen_id }}');
+        this.modalBody = this.querySelector('#modal-body-{{ ai_gen_id }}');
+        this.closeButton = this.querySelector('.ai-kundli-modal-close-{{ ai_gen_id }}');
+        this.apiUrl = this.dataset.apiUrl || '';
+
+        this.loadSavedData();
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        if (this.form) {
+          this.form.addEventListener('submit', this.handleSubmit.bind(this));
+        }
+
+        if (this.closeButton) {
+          this.closeButton.addEventListener('click', this.closeModal.bind(this));
+        }
+
+        if (this.modal) {
+          this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) {
+              this.closeModal();
+            }
+          });
+        }
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            this.closeModal();
+          }
+        });
+      }
+
+      loadSavedData() {
+        try {
+          const savedData = localStorage.getItem('kundli_form_data_{{ ai_gen_id }}');
+          if (savedData) {
+            const data = JSON.parse(savedData);
+            const nameInput = this.querySelector('#name-{{ ai_gen_id }}');
+            const genderInput = this.querySelector('#gender-{{ ai_gen_id }}');
+            const birthDateInput = this.querySelector('#birth-date-{{ ai_gen_id }}');
+            const birthTimeInput = this.querySelector('#birth-time-{{ ai_gen_id }}');
+            const birthPlaceInput = this.querySelector('#birth-place-{{ ai_gen_id }}');
+
+            if (nameInput && data.name) nameInput.value = data.name;
+            if (genderInput && data.gender) genderInput.value = data.gender;
+            if (birthDateInput && data.birth_date) birthDateInput.value = data.birth_date;
+            if (birthTimeInput && data.birth_time) birthTimeInput.value = data.birth_time;
+            if (birthPlaceInput && data.birth_place) birthPlaceInput.value = data.birth_place;
+          }
+        } catch (error) {
+          console.error('Error loading saved data:', error);
+        }
+      }
+
+      saveFormData(formData) {
+        try {
+          const data = {
+            name: formData.get('name'),
+            gender: formData.get('gender'),
+            birth_date: formData.get('birth_date'),
+            birth_time: formData.get('birth_time'),
+            birth_place: formData.get('birth_place')
+          };
+          localStorage.setItem('kundli_form_data_{{ ai_gen_id }}', JSON.stringify(data));
+        } catch (error) {
+          console.error('Error saving form data:', error);
+        }
+      }
+
+      handleSubmit(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this.form);
+        this.saveFormData(formData);
+
+        this.openModal();
+        this.showLoading();
+
+        const data = {
+          name: formData.get('name'),
+          gender: formData.get('gender'),
+          birth_date: formData.get('birth_date'),
+          birth_time: formData.get('birth_time'),
+          birth_place: formData.get('birth_place')
+        };
+
+        if (!this.apiUrl) {
+          setTimeout(() => {
+            this.showError('API URL is not configured. Please add the API endpoint in section settings.');
+          }, 1000);
+          return;
+        }
+
+        fetch(this.apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(result => {
+          this.showResult(result);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          this.showError('Failed to generate Kundli. Please check your API configuration and try again.');
+        });
+      }
+
+      openModal() {
+        if (this.modal) {
+          this.modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      }
+
+      closeModal() {
+        if (this.modal) {
+          this.modal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }
+
+      showLoading() {
+        if (this.modalBody) {
+          this.modalBody.innerHTML = `
+            <div class="ai-kundli-loading-{{ ai_gen_id }}">
+              <div class="ai-kundli-spinner-{{ ai_gen_id }}"></div>
+              <p class="ai-kundli-loading-text-{{ ai_gen_id }}">Generating your Kundli...</p>
+            </div>
+          `;
+        }
+      }
+
+      showResult(data) {
+        if (this.modalBody) {
+          let resultHtml = '<div class="ai-kundli-result-{{ ai_gen_id }}">';
+          
+          if (typeof data === 'object') {
+            resultHtml += this.formatObject(data);
+          } else if (typeof data === 'string') {
+            resultHtml += `<p>${data}</p>`;
+          } else {
+            resultHtml += '<p>Kundli generated successfully!</p>';
+          }
+          
+          resultHtml += '</div>';
+          this.modalBody.innerHTML = resultHtml;
+        }
+      }
+
+      formatObject(obj, level = 0) {
+        let html = '';
+        const indent = level * 20;
+        
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            const value = obj[key];
+            const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+              html += `<p style="margin-left: ${indent}px; font-weight: 600; margin-top: 12px;">${formattedKey}:</p>`;
+              html += this.formatObject(value, level + 1);
+            } else if (Array.isArray(value)) {
+              html += `<p style="margin-left: ${indent}px; font-weight: 600; margin-top: 12px;">${formattedKey}:</p>`;
+              value.forEach((item, index) => {
+                if (typeof item === 'object') {
+                  html += `<p style="margin-left: ${indent + 20}px; font-weight: 500; margin-top: 8px;">${index + 1}.</p>`;
+                  html += this.formatObject(item, level + 2);
+                } else {
+                  html += `<p style="margin-left: ${indent + 20}px;">• ${item}</p>`;
+                }
+              });
+            } else {
+              html += `<p style="margin-left: ${indent}px;"><strong>${formattedKey}:</strong> ${value}</p>`;
+            }
+          }
+        }
+        
+        return html;
+      }
+
+      showError(message) {
+        if (this.modalBody) {
+          this.modalBody.innerHTML = `
+            <div class="ai-kundli-error-{{ ai_gen_id }}">
+              <p>${message}</p>
+            </div>
+          `;
+        }
+      }
+    }
+
+    customElements.define('kundli-generator-{{ ai_gen_id }}', KundliGenerator{{ ai_gen_id }});
+  })();
+</script>
+
+<style>
+  @keyframes spin-{{ ai_gen_id }} {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .ai-kundli-spinner-{{ ai_gen_id }} {
+    animation: spin-{{ ai_gen_id }} 1s linear infinite;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Kundli generator",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Kundli Generator"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Discover your cosmic blueprint with our advanced Kundli generator. Get personalized insights into your life path, relationships, career, and spiritual journey based on Vedic astrology.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Form settings"
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Form title",
+      "default": "New Kundli"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Generate Horoscope"
+    },
+    {
+      "type": "text",
+      "id": "api_url",
+      "label": "API endpoint URL",
+      "info": "Enter the full URL of your Kundli API endpoint"
+    },
+    {
+      "type": "header",
+      "content": "Saved Kundli card"
+    },
+    {
+      "type": "text",
+      "id": "saved_title",
+      "label": "Card title",
+      "default": "Saved Kundli"
+    },
+    {
+      "type": "textarea",
+      "id": "saved_message",
+      "label": "Message",
+      "default": "Please login to check your saved horoscope!"
+    },
+    {
+      "type": "url",
+      "id": "login_link",
+      "label": "Login button link"
+    },
+    {
+      "type": "text",
+      "id": "login_button_text",
+      "label": "Login button text",
+      "default": "Login"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border",
+      "default": "#dddddd"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#334fb4"
+    },
+    {
+      "type": "color",
+      "id": "login_button_bg_color",
+      "label": "Login button background",
+      "default": "#334fb4"
+    },
+    {
+      "type": "color",
+      "id": "login_button_text_color",
+      "label": "Login button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "login_button_hover_bg_color",
+      "label": "Login button hover background",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Input border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Kundli generator"
+    }
+  ]
+}
+{% endschema %}

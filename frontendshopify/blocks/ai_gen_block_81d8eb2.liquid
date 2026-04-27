@@ -1,0 +1,681 @@
+{% doc %}
+  @prompt
+    Create a responsive **Shopify Hero Banner Slider section** for the **product page** using Liquid, HTML, CSS and minimal JavaScript.
+    
+    Section Name: **product-hero-slider**
+    
+    SECTION PURPOSE
+    
+    This section will display promotional banners for product collections such as:
+    
+    New Arrivals
+    Divine Idols
+    Rudraksha Collection
+    Gemstone Collection
+    
+    The slider should appear at the **top of the product page**.
+    
+    SLIDER LAYOUT
+    
+    Create a full-width banner slider.
+    
+    Each slide should contain:
+    
+    Left Side
+    Product or spiritual image (idol, rudraksha, gemstone etc.)
+    
+    Right Side Content
+    Text overlay with:
+    
+    Small badge label (example: "10X More Powerful")
+    
+    Large heading
+    Example: **NEW ARRIVAL**
+    
+    Sub heading
+    Example: **Divine Idols Collection**
+    
+    Description text
+    Example:
+    "Bring Home Faith, Peace & Positivity"
+    
+    CTA Button
+    
+    Button text:
+    **SHOP NOW**
+    
+    Button should link to a Shopify col
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-slider-{{ ai_gen_id }} {
+    display: block;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-hero-slider__container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.slider_height_desktop }}px;
+  }
+
+  .ai-hero-slider__slides-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-hero-slider__slide-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+  }
+
+  .ai-hero-slider__slide-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+  }
+
+  .ai-hero-slider__slide-content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ai-hero-slider__image-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .ai-hero-slider__overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+  }
+
+  .ai-hero-slider__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.15);
+    transition: transform 0.6s ease-in-out;
+  }
+
+  .ai-hero-slider__slide-{{ ai_gen_id }}.active .ai-hero-slider__image-{{ ai_gen_id }} {
+    animation: zoomOutEffect 8s ease-out forwards;
+  }
+
+  @keyframes zoomOutEffect {
+    0% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .ai-hero-slider__text-content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 20px;
+    max-width: 800px;
+    text-align: center;
+    align-items: center;
+    color: #ffffff;
+    z-index: 2;
+  }
+
+  .ai-hero-slider__badge-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: {{ block.settings.badge_bg_color }};
+    color: #ffffff;
+    font-size: {{ block.settings.badge_font_size }}px;
+    font-weight: 600;
+    border-radius: {{ block.settings.badge_border_radius }}px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .ai-hero-slider__heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_font_size }}px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  .ai-hero-slider__subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_font_size }}px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.3;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  .ai-hero-slider__description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_font_size }}px;
+    color: #ffffff;
+    line-height: 1.6;
+    max-width: 600px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  .ai-hero-slider__button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 16px 40px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+  }
+
+  .ai-hero-slider__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    color: {{ block.settings.button_hover_text_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-hero-slider__navigation-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 3; /* Fixed: Prevents overlap with header */
+  }
+
+  .ai-hero-slider__dot-{{ ai_gen_id }} {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: {{ block.settings.dot_color }};
+    opacity: 0.5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+  }
+
+  .ai-hero-slider__dot-{{ ai_gen_id }}.active {
+    opacity: 1;
+    background-color: {{ block.settings.dot_active_color }};
+    transform: scale(1.2);
+  }
+
+  .ai-hero-slider__arrow-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: {{ block.settings.arrow_bg_color }};
+    color: {{ block.settings.arrow_color }};
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3; /* Fixed: Prevents overlap with header */
+    transition: all 0.3s ease;
+    opacity: 0.8;
+  }
+
+  .ai-hero-slider__arrow-{{ ai_gen_id }}:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .ai-hero-slider__arrow-{{ ai_gen_id }}--prev {
+    left: 20px;
+  }
+
+  .ai-hero-slider__arrow-{{ ai_gen_id }}--next {
+    right: 20px;
+  }
+
+  .ai-hero-slider__arrow-{{ ai_gen_id }} svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-hero-slider__container-{{ ai_gen_id }} {
+      height: auto;
+      min-height: {{ block.settings.slider_height_mobile }}px;
+    }
+
+    .ai-hero-slider__slide-content-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 30px;
+      padding: 40px 20px;
+    }
+
+    .ai-hero-slider__image-wrapper-{{ ai_gen_id }} {
+      order: {% if block.settings.mobile_image_position == 'top' %}1{% else %}2{% endif %};
+      height: 300px;
+    }
+
+    .ai-hero-slider__text-content-{{ ai_gen_id }} {
+      order: {% if block.settings.mobile_image_position == 'top' %}2{% else %}1{% endif %};
+      text-align: center;
+      align-items: center;
+    }
+
+    .ai-hero-slider__heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_font_size }}px * 0.7);
+    }
+
+    .ai-hero-slider__subheading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subheading_font_size }}px * 0.8);
+    }
+
+    .ai-hero-slider__description-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.description_font_size }}px * 0.9);
+    }
+
+    .ai-hero-slider__arrow-{{ ai_gen_id }} {
+      width: 40px;
+      height: 40px;
+    }
+
+    .ai-hero-slider__arrow-{{ ai_gen_id }}--prev {
+      left: 10px;
+    }
+
+    .ai-hero-slider__arrow-{{ ai_gen_id }}--next {
+      right: 10px;
+    }
+  }
+{% endstyle %}
+
+<product-hero-slider-{{ ai_gen_id }}
+  class="ai-hero-slider-{{ ai_gen_id }}"
+  data-autoplay="{{ block.settings.autoplay }}"
+  data-autoplay-speed="{{ block.settings.autoplay_speed }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-hero-slider__container-{{ ai_gen_id }}">
+    <div class="ai-hero-slider__slides-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign slide_enabled_key = 'slide_' | append: i | append: '_enabled'
+          assign slide_image_key = 'slide_' | append: i | append: '_image'
+          assign slide_badge_key = 'slide_' | append: i | append: '_badge'
+          assign slide_heading_key = 'slide_' | append: i | append: '_heading'
+          assign slide_subheading_key = 'slide_' | append: i | append: '_subheading'
+          assign slide_description_key = 'slide_' | append: i | append: '_description'
+          assign slide_button_text_key = 'slide_' | append: i | append: '_button_text'
+          assign slide_button_link_key = 'slide_' | append: i | append: '_button_link'
+
+          assign slide_enabled = block.settings[slide_enabled_key]
+          assign slide_image = block.settings[slide_image_key]
+          assign slide_badge = block.settings[slide_badge_key]
+          assign slide_heading = block.settings[slide_heading_key]
+          assign slide_subheading = block.settings[slide_subheading_key]
+          assign slide_description = block.settings[slide_description_key]
+          assign slide_button_text = block.settings[slide_button_text_key]
+          assign slide_button_link = block.settings[slide_button_link_key]
+        %}
+
+        {% if slide_enabled %}
+          <div class="ai-hero-slider__slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.index }}">
+            <div class="ai-hero-slider__slide-content-{{ ai_gen_id }}">
+              <div class="ai-hero-slider__image-wrapper-{{ ai_gen_id }}">
+                {% if slide_image %}
+                  <img
+                    src="{{ slide_image | image_url: width: 2000 }}"
+                    alt="{{ slide_image.alt | escape }}"
+                    loading="lazy"
+                    width="{{ slide_image.width }}"
+                    height="{{ slide_image.height }}"
+                    class="ai-hero-slider__image-{{ ai_gen_id }}"
+                  >
+                {% else %}
+                  <div class="ai-hero-slider__image-placeholder-{{ ai_gen_id }}">
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+                <div class="ai-hero-slider__overlay-{{ ai_gen_id }}"></div>
+              </div>
+
+              <div class="ai-hero-slider__text-content-{{ ai_gen_id }}">
+                {% if slide_badge != blank %}
+                  <span class="ai-hero-slider__badge-{{ ai_gen_id }}">{{ slide_badge }}</span>
+                {% endif %}
+
+                {% if slide_heading != blank %}
+                  <h2 class="ai-hero-slider__heading-{{ ai_gen_id }}">{{ slide_heading }}</h2>
+                {% endif %}
+
+                {% if slide_subheading != blank %}
+                  <h3 class="ai-hero-slider__subheading-{{ ai_gen_id }}">{{ slide_subheading }}</h3>
+                {% endif %}
+
+                {% if slide_description != blank %}
+                  <div class="ai-hero-slider__description-{{ ai_gen_id }}">{{ slide_description }}</div>
+                {% endif %}
+
+                {% if slide_button_text != blank %}
+                  <a
+                    href="{{ slide_button_link | default: '#' }}"
+                    class="ai-hero-slider__button-{{ ai_gen_id }}"
+                  >
+                    {{ slide_button_text }}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if block.settings.show_arrows %}
+      <button
+        class="ai-hero-slider__arrow-{{ ai_gen_id }} ai-hero-slider__arrow-{{ ai_gen_id }}--prev"
+        aria-label="Previous slide"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <button
+        class="ai-hero-slider__arrow-{{ ai_gen_id }} ai-hero-slider__arrow-{{ ai_gen_id }}--next"
+        aria-label="Next slide"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    {% endif %}
+
+    {% if block.settings.show_dots %}
+      <div class="ai-hero-slider__navigation-{{ ai_gen_id }}">
+        {% for i in (1..3) %}
+          {% liquid
+            assign slide_enabled_key = 'slide_' | append: i | append: '_enabled'
+            assign slide_enabled = block.settings[slide_enabled_key]
+          %}
+          {% if slide_enabled %}
+            <button
+              class="ai-hero-slider__dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+              data-slide="{{ forloop.index }}"
+              aria-label="Go to slide {{ forloop.index }}"
+            ></button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</product-hero-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ProductHeroSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 1;
+        this.autoplayInterval = null;
+      }
+
+      connectedCallback() {
+        this.slides = this.querySelectorAll('.ai-hero-slider__slide-{{ ai_gen_id }}');
+        this.dots = this.querySelectorAll('.ai-hero-slider__dot-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-hero-slider__arrow-{{ ai_gen_id }}--prev');
+        this.nextButton = this.querySelector('.ai-hero-slider__arrow-{{ ai_gen_id }}--next');
+        this.autoplay = this.dataset.autoplay === 'true';
+        
+        const speedInSeconds = parseFloat(this.dataset.autoplaySpeed) || 5;
+        this.autoplaySpeed = speedInSeconds * 1000;
+
+        this.setupEventListeners();
+        
+        if (this.autoplay && this.slides.length > 1) {
+          this.startAutoplay();
+        }
+      }
+
+      setupEventListeners() {
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => {
+            this.goToPrevSlide();
+            this.resetAutoplay();
+          });
+        }
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => {
+            this.goToNextSlide();
+            this.resetAutoplay();
+          });
+        }
+
+        this.dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            this.goToSlide(index + 1);
+            this.resetAutoplay();
+          });
+        });
+      }
+
+      goToSlide(slideNumber) {
+        this.slides.forEach((slide) => {
+          slide.classList.remove('active');
+        });
+
+        this.dots.forEach((dot) => {
+          dot.classList.remove('active');
+        });
+
+        const targetSlide = this.querySelector(`[data-slide="${slideNumber}"]`);
+        if (targetSlide && targetSlide.classList.contains('ai-hero-slider__slide-{{ ai_gen_id }}')) {
+          targetSlide.classList.add('active');
+        }
+
+        const targetDot = Array.from(this.dots).find(dot => dot.dataset.slide == slideNumber);
+        if (targetDot) {
+          targetDot.classList.add('active');
+        }
+
+        this.currentSlide = slideNumber;
+      }
+
+      goToNextSlide() {
+        let nextSlide = this.currentSlide + 1;
+        if (nextSlide > this.slides.length) {
+          nextSlide = 1;
+        }
+        this.goToSlide(nextSlide);
+      }
+
+      goToPrevSlide() {
+        let prevSlide = this.currentSlide - 1;
+        if (prevSlide < 1) {
+          prevSlide = this.slides.length;
+        }
+        this.goToSlide(prevSlide);
+      }
+
+      startAutoplay() {
+        this.autoplayInterval = setInterval(() => {
+          this.goToNextSlide();
+        }, this.autoplaySpeed);
+      }
+
+      stopAutoplay() {
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoplayInterval = null;
+        }
+      }
+
+      resetAutoplay() {
+        if (this.autoplay) {
+          this.stopAutoplay();
+          this.startAutoplay();
+        }
+      }
+
+      disconnectedCallback() {
+        this.stopAutoplay();
+      }
+    }
+
+    customElements.define('product-hero-slider-{{ ai_gen_id }}', ProductHeroSlider{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product hero slider",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Slider settings"
+    },
+    {
+      "type": "range",
+      "id": "slider_height_desktop",
+      "label": "Desktop height",
+      "min": 400,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "slider_height_mobile",
+      "label": "Mobile minimum height",
+      "min": 400,
+      "max": 700,
+      "step": 50,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_position",
+      "label": "Mobile image position",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "top"
+    },
+    { "type": "checkbox", "id": "autoplay", "label": "Enable autoplay", "default": true },
+    { "type": "range", "id": "autoplay_speed", "label": "Autoplay speed", "min": 3, "max": 10, "step": 0.5, "unit": "s", "default": 5 },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show navigation arrows", "default": true },
+    { "type": "checkbox", "id": "show_dots", "label": "Show navigation dots", "default": true },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "arrow_bg_color", "label": "Arrow background", "default": "#ffffff" },
+    { "type": "color", "id": "arrow_color", "label": "Arrow icon", "default": "#121212" },
+    { "type": "color", "id": "dot_color", "label": "Dot", "default": "#121212" },
+    { "type": "color", "id": "dot_active_color", "label": "Active dot", "default": "#121212" },
+    { "type": "header", "content": "Text style" },
+    { "type": "select", "id": "text_alignment", "label": "Text alignment", "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    { "type": "color", "id": "badge_bg_color", "label": "Badge background", "default": "#334fb4" },
+    { "type": "color", "id": "badge_text_color", "label": "Badge text", "default": "#ffffff" },
+    { "type": "range", "id": "badge_font_size", "label": "Badge font size", "min": 10, "max": 20, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "badge_border_radius", "label": "Badge border radius", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 20 },
+    { "type": "color", "id": "heading_color", "label": "Heading", "default": "#121212" },
+    { "type": "range", "id": "heading_font_size", "label": "Heading font size", "min": 30, "max": 80, "step": 5, "unit": "px", "default": 50 },
+    { "type": "color", "id": "subheading_color", "label": "Subheading", "default": "#121212" },
+    { "type": "range", "id": "subheading_font_size", "label": "Subheading font size", "min": 20, "max": 50, "step": 2, "unit": "px", "default": 28 },
+    { "type": "color", "id": "description_color", "label": "Description", "default": "#121212" },
+    { "type": "range", "id": "description_font_size", "label": "Description font size", "min": 14, "max": 24, "step": 1, "unit": "px", "default": 16 },
+    { "type": "header", "content": "Button style" },
+    { "type": "color", "id": "button_bg_color", "label": "Background", "default": "#121212" },
+    { "type": "color", "id": "button_text_color", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "button_hover_bg_color", "label": "Hover background", "default": "#334fb4" },
+    { "type": "color", "id": "button_hover_text_color", "label": "Hover text", "default": "#ffffff" },
+    { "type": "range", "id": "button_font_size", "label": "Font size", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "button_border_radius", "label": "Border radius", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 4 },
+    { "type": "range", "id": "button_border_width", "label": "Border width", "min": 0, "max": 4, "step": 1, "unit": "px", "default": 0 },
+    { "type": "color", "id": "button_border_color", "label": "Border color", "default": "#121212" },
+    { "type": "header", "content": "Slide 1" },
+    { "type": "checkbox", "id": "slide_1_enabled", "label": "Enable slide 1", "default": true },
+    { "type": "image_picker", "id": "slide_1_image", "label": "Image" },
+    { "type": "text", "id": "slide_1_badge", "label": "Badge text", "default": "10X More Powerful" },
+    { "type": "text", "id": "slide_1_heading", "label": "Heading", "default": "NEW ARRIVAL" },
+    { "type": "text", "id": "slide_1_subheading", "label": "Subheading", "default": "Divine Idols Collection" },
+    { "type": "richtext", "id": "slide_1_description", "label": "Description", "default": "<p>Bring Home Faith, Peace & Positivity</p>" },
+    { "type": "text", "id": "slide_1_button_text", "label": "Button text", "default": "SHOP NOW" },
+    { "type": "url", "id": "slide_1_button_link", "label": "Button link" },
+    { "type": "header", "content": "Slide 2" },
+    { "type": "checkbox", "id": "slide_2_enabled", "label": "Enable slide 2", "default": true },
+    { "type": "image_picker", "id": "slide_2_image", "label": "Image" },
+    { "type": "text", "id": "slide_2_badge", "label": "Badge text", "default": "Sacred Energy" },
+    { "type": "text", "id": "slide_2_heading", "label": "Heading", "default": "RUDRAKSHA" },
+    { "type": "text", "id": "slide_2_subheading", "label": "Subheading", "default": "Authentic Rudraksha Collection" },
+    { "type": "richtext", "id": "slide_2_description", "label": "Description", "default": "<p>Experience Divine Protection & Spiritual Growth</p>" },
+    { "type": "text", "id": "slide_2_button_text", "label": "Button text", "default": "SHOP NOW" },
+    { "type": "url", "id": "slide_2_button_link", "label": "Button link" },
+    { "type": "header", "content": "Slide 3" },
+    { "type": "checkbox", "id": "slide_3_enabled", "label": "Enable slide 3", "default": true },
+    { "type": "image_picker", "id": "slide_3_image", "label": "Image" },
+    { "type": "text", "id": "slide_3_badge", "label": "Badge text", "default": "Natural Healing" },
+    { "type": "text", "id": "slide_3_heading", "label": "Heading", "default": "GEMSTONES" },
+    { "type": "text", "id": "slide_3_subheading", "label": "Subheading", "default": "Premium Gemstone Collection" },
+    { "type": "richtext", "id": "slide_3_description", "label": "Description", "default": "<p>Harness the Power of Natural Crystals</p>" },
+    { "type": "text", "id": "slide_3_button_text", "label": "Button text", "default": "SHOP NOW" },
+    { "type": "url", "id": "slide_3_button_link", "label": "Button link" }
+  ],
+  "presets": [
+    { "name": "Product hero slider" }
+  ]
+}
+{% endschema %}

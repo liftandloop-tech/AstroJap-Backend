@@ -1,0 +1,234 @@
+<section class="wallet-recharge-section" id="recharge-section">
+  <div class="recharge-container">
+    <div class="header-card">
+      <div class="balance-info">
+        <p>Available Balance</p>
+        <h2 id="wallet-display-balance">₹--</h2>
+      </div>
+      <div class="wallet-icon">💳</div>
+    </div>
+
+    <div class="recharge-options">
+      <h3>Add Money to Wallet</h3>
+      <p class="subtitle">Quickly top-up your balance for instant consultations</p>
+
+      <!-- Custom Amount Input -->
+      <div class="custom-amount-box">
+        <span class="currency-symbol">₹</span>
+        <input type="number" id="custom-recharge-input" placeholder="Enter custom amount (e.g. 11)" min="1">
+        <button class="add-btn" onclick="rechargeCustom()">Add Money</button>
+      </div>
+
+      <!-- Quick Packs Grid -->
+      <div class="packs-grid">
+        <div class="pack-card" onclick="rechargePack(100)">
+          <div class="amount">₹100</div>
+          <div class="label">Starter Pack</div>
+        </div>
+        <div class="pack-card recommended" onclick="rechargePack(500)">
+          <div class="badge">Popular</div>
+          <div class="amount">₹500</div>
+          <div class="label">Best Value</div>
+        </div>
+        <div class="pack-card" onclick="rechargePack(2000)">
+          <div class="amount">₹2000</div>
+          <div class="label">Expert Pack</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{ 'api.js' | asset_url | script_tag }}
+
+<script>
+const customerId = "{{ customer.id }}";
+const masterVariantId = "{{ section.settings.master_variant_id }}";
+
+document.addEventListener('DOMContentLoaded', async () => {
+    if (!customerId) {
+        document.getElementById('recharge-section').innerHTML = `
+          <div class="login-required">
+            <h3>Login Required</h3>
+            <p>Please log in to your account to recharge your wallet.</p>
+            <a href="/account/login" class="login-btn">Log In Now</a>
+          </div>
+        `;
+        return;
+    }
+
+    try {
+        const { balance } = await AstroAPI.getWalletBalance(customerId);
+        document.getElementById('wallet-display-balance').innerText = `₹${balance}`;
+    } catch (e) {
+        console.error("Failed to load balance", e);
+    }
+});
+
+function rechargePack(amount) {
+    addToCart(amount);
+}
+
+function rechargeCustom() {
+    const amount = document.getElementById('custom-recharge-input').value;
+    if (!amount || amount < 1) {
+        alert("Please enter a valid amount.");
+        return;
+    }
+    addToCart(parseInt(amount));
+}
+
+async function addToCart(amount) {
+    const btn = event.target.closest('button') || event.target;
+    const originalText = btn.innerText;
+    btn.innerText = "Adding...";
+    btn.disabled = true;
+
+    try {
+        // Use the Manual Recharge API for instant testing
+        const res = await AstroAPI.manualRecharge(customerId, amount);
+        
+        if (res.success) {
+            alert(`₹${amount} added to your wallet!`);
+            location.reload(); // Refresh to show new balance
+        } else {
+            alert(`Recharge failed: ${res.error}`);
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        console.error('Recharge failed:', error);
+        alert('Recharge failed. Please check backend connection.');
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+}
+</script>
+
+<style>
+.wallet-recharge-section {
+  padding: 60px 20px;
+  font-family: 'Outfit', sans-serif;
+  background: #f8f9fa;
+  min-height: 80vh;
+}
+.recharge-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.header-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 25px;
+  padding: 40px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+.balance-info p { margin: 0; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; font-size: 0.8rem; }
+.balance-info h2 { margin: 10px 0 0; font-size: 3rem; font-weight: 700; color: #ff9800; }
+.wallet-icon { font-size: 3.5rem; opacity: 0.2; }
+
+.recharge-options {
+  background: #fff;
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+.recharge-options h3 { margin: 0 0 10px; font-size: 1.5rem; color: #222; }
+.subtitle { margin: 0 0 30px; color: #666; font-size: 0.95rem; }
+
+.custom-amount-box {
+  display: flex;
+  background: #f1f3f5;
+  border-radius: 15px;
+  padding: 10px;
+  margin-bottom: 40px;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+.custom-amount-box:focus-within { border-color: #ff9800; background: #fff; }
+.currency-symbol { padding: 10px 15px; font-size: 1.5rem; font-weight: 700; color: #222; }
+.custom-amount-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  font-weight: 700;
+  outline: none;
+  padding: 10px;
+}
+.add-btn {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  padding: 0 30px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.packs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.pack-card {
+  background: #fff;
+  border: 2px solid #eee;
+  border-radius: 18px;
+  padding: 25px 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+.pack-card:hover { border-color: #ff9800; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+.pack-card .amount { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; margin-bottom: 5px; }
+.pack-card .label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.pack-card.recommended { border-color: #ff9800; background: #fffbf2; }
+.badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ff9800;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+.login-required { text-align: center; padding: 100px 20px; }
+.login-btn { display: inline-block; background: #1a1a2e; color: #fff; padding: 15px 40px; border-radius: 50px; text-decoration: none; margin-top: 20px; font-weight: bold; }
+
+@media (max-width: 480px) {
+  .packs-grid { grid-template-columns: 1fr; }
+  .header-card { padding: 30px; }
+  .balance-info h2 { font-size: 2.2rem; }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Wallet Recharge",
+  "settings": [
+    {
+      "type": "text",
+      "id": "master_variant_id",
+      "label": "Master Variant ID (₹1 Product)",
+      "info": "The variant ID of your ₹1 Wallet Recharge product."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wallet Recharge"
+    }
+  ]
+}
+{% endschema %}

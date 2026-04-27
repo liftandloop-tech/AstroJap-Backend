@@ -1,0 +1,114 @@
+{% comment %} 
+  PREMIUM RELATED SECTION - v2.1 (Ribbon Z-Index Fix)
+{% endcomment %}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'section-related-products.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap');
+
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  .ai-related-heading {
+    text-align: center;
+    font-family: 'Cinzel', serif !important;
+    font-size: clamp(24px, 4vw, 32px);
+    margin-bottom: 40px;
+    color: #1a1a1a;
+  }
+  .ai-premium-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  @media screen and (min-width: 750px) {
+    .ai-premium-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  }
+
+  .ai-rel-card { text-decoration: none; color: inherit; text-align: center; }
+  
+  .ai-rel-media { 
+    position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1 / 1; 
+    background: #f9f9f9; isolation: isolate; z-index: 1; 
+  }
+  .ai-rel-media img { width: 100%; height: 100%; object-fit: cover; }
+  
+  .ai-mini-ribbon {
+    position: absolute; top: 0; left: 10px; background: linear-gradient(180deg, #ffd700 0%, #ffcc00 100%);
+    width: 35px; padding: 8px 2px 12px; z-index: 2 !important; 
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 85%, 0% 100%);
+    pointer-events: none;
+  }
+  .ai-mini-ribbon span { display: block; font-size: 8px; font-weight: 900; line-height: 1; color: #000; }
+
+  .ai-rel-info { padding: 12px 5px; }
+  .ai-rel-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; color: #333; }
+  .ai-rel-price { font-size: 13px; font-weight: 800; display: flex; justify-content: center; gap: 8px; align-items: center; }
+  .ai-rel-compare { text-decoration: line-through; color: #999; font-weight: 400; font-size: 11px; }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    <h2 class="ai-related-heading">{{ section.settings.heading }}</h2>
+
+    {% if section.settings.manual_collection != blank %}
+      <div class="ai-premium-grid">
+        {% for prod in section.settings.manual_collection.products limit: section.settings.products_to_show %}
+          <a href="{{ prod.url }}" class="ai-rel-card">
+            <div class="ai-rel-media">
+              <div class="ai-mini-ribbon"><span>₹500</span><span style="font-size:4px; margin-top:2px;">CASHBACK</span></div>
+              <img src="{{ prod.featured_image | image_url: width: 500 }}" width="400" height="400" loading="lazy" alt="{{ prod.title }}">
+            </div>
+            <div class="ai-rel-info">
+              <h3 class="ai-rel-title">{{ prod.title | truncate: 50 }}</h3>
+              <div class="ai-rel-price">
+                <span>{{ prod.price | money }}</span>
+                {% if prod.compare_at_price > prod.price %}<span class="ai-rel-compare">{{ prod.compare_at_price | money }}</span>{% endif %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <product-recommendations data-url="{{ routes.product_recommendations_url }}?limit={{ section.settings.products_to_show }}" data-section-id="{{ section.id }}" data-product-id="{{ product.id }}">
+        {% if recommendations.performed and recommendations.products_count > 0 %}
+          <div class="ai-premium-grid">
+            {% for recommendation in recommendations.products %}
+              <a href="{{ recommendation.url }}" class="ai-rel-card">
+                <div class="ai-rel-media">
+                  <div class="ai-mini-ribbon"><span>₹500</span><span style="font-size:4px; margin-top:2px;">CASHBACK</span></div>
+                  <img src="{{ recommendation.featured_image | image_url: width: 500 }}" width="400" height="400" loading="lazy" alt="{{ recommendation.title }}">
+                </div>
+                <div class="ai-rel-info">
+                  <h3 class="ai-rel-title">{{ recommendation.title | truncate: 50 }}</h3>
+                  <div class="ai-rel-price">
+                    <span>{{ recommendation.price | money }}</span>
+                    {% if recommendation.compare_at_price > recommendation.price %}<span class="ai-rel-compare">{{ recommendation.compare_at_price | money }}</span>{% endif %}
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </product-recommendations>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Premium Related Section",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "default": "You May Also Like", "label": "Section Heading" },
+    { "type": "collection", "id": "manual_collection", "label": "Select Collection (Manual)" },
+    { "type": "range", "id": "products_to_show", "min": 2, "max": 12, "step": 1, "default": 4, "label": "Count" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color Scheme", "default": "scheme-1" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top Padding", "default": 36 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom Padding", "default": 36 }
+  ],
+  "presets": [ { "name": "Premium Related Section" } ]
+}
+{% endschema %}

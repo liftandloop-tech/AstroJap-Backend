@@ -1,0 +1,1308 @@
+{% doc %}
+  @prompt
+    🚨 IMPORTANT (STRICT INSTRUCTION)
+    
+    DO NOT create a simple contact form.
+    DO NOT create a basic booking UI.
+    
+    Create a premium appointment booking section with a clean UI and working interactive form elements.
+    
+    🧾 SECTION TITLE
+    Heading:
+    
+    Book Your Appointment with an Astrologer
+    
+    Subheading:
+    
+    Schedule a personalized astrology consultation and get expert guidance for your life.
+    
+    🧱 LAYOUT (MANDATORY)
+    
+    Centered card layout
+    
+    Max width: 700–900px
+    
+    Clean spacing
+    
+    Light background
+    
+    🧩 FORM STRUCTURE (VERY IMPORTANT)
+    
+    Create a complete booking form with the following fields:
+    
+    1. Personal Details
+    
+    Full Name (text input)
+    
+    Phone Number
+    
+    Email
+    
+    2. Appointment Details
+    
+    Select Astrologer (dropdown OR dynamic list)
+    
+    Select Service Type:
+    
+    Love
+    
+    Career
+    
+    Marriage
+    
+    Health
+    
+    Finance
+    
+    Date Picker (calendar input)
+    
+    Time Slot Selector (dropdown or buttons)
+    
+    3. Message Field
+    
+    Optional note / question textarea
+    
+    🔘 CTA BUTTON
+    
+    Button text:
+    
+    Book Appointment
+    
+    Style:
+    
+    Full width
+    
+    Rounded
+    
+    Premium color (dark / gradient)
+    
+    ⚙️ FUNCTIONALITY (IMPORTANT)
+    
+    Since Shopify has no backend:
+    
+    Use JavaScript to:
+    
+    Validate all required fields
+    
+    Show success message after submission
+    
+    Store data temporarily (optional)
+    
+    OR redirect to:
+    
+    Thank you page
+    
+    WhatsApp
+    
+    Email trigger
+    
+    🎨 DESIGN STYLE
+    
+    Premium clean UI
+    
+    Rounded inputs (10–14px)
+    
+    Soft shadows
+    
+    Proper spacing
+    
+    Label above input fields
+    
+    ⚙️ FULLY EDITABLE (VERY IMPORTANT)
+    
+    All fields must be editable from Shopify customizer:
+    
+    Heading
+    
+    Subheading
+    
+    Field labels
+    
+    Dropdown options
+    
+    Button text
+    
+    Redirect link
+    
+    📱 RESPONSIVE BEHAVIOR
+    
+    Stack all inputs on mobile
+    
+    Full width fields
+    
+    Easy tap UI
+    
+    ⚙️ TECHNICAL REQUIREMENTS
+    
+    Use Liquid + schema + JavaScript
+    
+    Use:
+    
+    input, select, textarea
+    
+    date input type
+    
+    Add form validation
+    
+    🚀 GOAL
+    
+    Create a professional appointment booking experience that:
+    
+    Builds trust
+    
+    Encourages bookings
+    
+    Is easy to use
+    
+    ❗ FINAL INSTRUCTION
+    
+    Focus on:
+    
+    Clean layout
+    
+    Smooth UX
+    
+    Proper spacing
+    
+    Do NOT make it look basic.
+    
+    💡 PRO TIP (VERY IMPORTANT)
+    
+    After generating, click “Ask for changes” and say:
+    
+    "Add calendar UI for better date selection"
+    
+    "Improve spacing between fields"
+    
+    "Make button more prominent"
+    
+    "Add success popup after booking"
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-booking-wrapper-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 60px 20px;
+    background-color: {{ block.settings.section_background }};
+  }
+
+  .ai-booking-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_radius }}px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, {{ block.settings.shadow_opacity }});
+    padding: 50px;
+  }
+
+  .ai-booking-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-booking-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 12px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .ai-booking-subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_size }}px;
+    color: {{ block.settings.subheading_color }};
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .ai-booking-form-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .ai-booking-section-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ai-booking-section-title-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 600;
+    color: {{ block.settings.section_title_color }};
+    margin: 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid {{ block.settings.divider_color }};
+  }
+
+  .ai-booking-row-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .ai-booking-field-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-booking-field-full-{{ ai_gen_id }} {
+    grid-column: 1 / -1;
+  }
+
+  .ai-booking-label-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 500;
+    color: {{ block.settings.label_color }};
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ai-booking-required-{{ ai_gen_id }} {
+    color: {{ block.settings.required_color }};
+  }
+
+  .ai-booking-input-{{ ai_gen_id }},
+  .ai-booking-select-{{ ai_gen_id }},
+  .ai-booking-textarea-{{ ai_gen_id }} {
+    padding: 14px 16px;
+    border: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_radius }}px;
+    font-size: 15px;
+    color: {{ block.settings.input_text_color }};
+    background-color: {{ block.settings.input_background }};
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+
+  .ai-booking-input-{{ ai_gen_id }}:focus,
+  .ai-booking-select-{{ ai_gen_id }}:focus,
+  .ai-booking-textarea-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: {{ block.settings.input_focus_color }};
+    box-shadow: 0 0 0 3px {{ block.settings.input_focus_color }}33;
+  }
+
+  .ai-booking-input-{{ ai_gen_id }}::placeholder,
+  .ai-booking-textarea-{{ ai_gen_id }}::placeholder {
+    color: {{ block.settings.placeholder_color }};
+  }
+
+  .ai-booking-select-{{ ai_gen_id }} {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+
+  .ai-booking-textarea-{{ ai_gen_id }} {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .ai-booking-time-slots-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  .ai-booking-time-slot-{{ ai_gen_id }} {
+    padding: 12px 16px;
+    border: 2px solid {{ block.settings.time_slot_border }};
+    border-radius: {{ block.settings.input_radius }}px;
+    background-color: {{ block.settings.time_slot_background }};
+    color: {{ block.settings.time_slot_text }};
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .ai-booking-time-slot-{{ ai_gen_id }}:hover {
+    border-color: {{ block.settings.time_slot_hover_border }};
+    background-color: {{ block.settings.time_slot_hover_background }};
+  }
+
+  .ai-booking-time-slot-{{ ai_gen_id }}.active {
+    border-color: {{ block.settings.time_slot_active_border }};
+    background-color: {{ block.settings.time_slot_active_background }};
+    color: {{ block.settings.time_slot_active_text }};
+  }
+
+  .ai-booking-time-slot-input-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-booking-submit-{{ ai_gen_id }} {
+    padding: 18px 40px;
+    background: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_radius }}px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 16px;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-booking-submit-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.button_hover_background }};
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-booking-submit-{{ ai_gen_id }}:active {
+    transform: translateY(0);
+  }
+
+  .ai-booking-error-{{ ai_gen_id }} {
+    color: {{ block.settings.error_color }};
+    font-size: 13px;
+    margin-top: 4px;
+    display: none;
+  }
+
+  .ai-booking-error-{{ ai_gen_id }}.show {
+    display: block;
+  }
+
+  .ai-booking-success-modal-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+
+  .ai-booking-success-modal-{{ ai_gen_id }}.show {
+    display: flex;
+  }
+
+  .ai-booking-success-content-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_radius }}px;
+    padding: 50px 40px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+
+  .ai-booking-success-icon-{{ ai_gen_id }} {
+    width: 80px;
+    height: 80px;
+    background-color: {{ block.settings.success_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+
+  .ai-booking-success-icon-{{ ai_gen_id }} svg {
+    width: 40px;
+    height: 40px;
+    stroke: white;
+    stroke-width: 3;
+  }
+
+  .ai-booking-success-title-{{ ai_gen_id }} {
+    font-size: 28px;
+    font-weight: 600;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 12px;
+  }
+
+  .ai-booking-success-message-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ block.settings.subheading_color }};
+    margin: 0 0 30px;
+    line-height: 1.6;
+  }
+
+  .ai-booking-success-close-{{ ai_gen_id }} {
+    padding: 14px 32px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_radius }}px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-booking-success-close-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-booking-container-{{ ai_gen_id }} {
+      padding: 30px 20px;
+    }
+
+    .ai-booking-row-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-booking-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-booking-time-slots-{{ ai_gen_id }} {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+  }
+{% endstyle %}
+
+<astro-booking-{{ ai_gen_id }} class="ai-booking-wrapper-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-booking-container-{{ ai_gen_id }}">
+    <div class="ai-booking-header-{{ ai_gen_id }}">
+      <h2 class="ai-booking-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      <p class="ai-booking-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+    </div>
+
+    <form class="ai-booking-form-{{ ai_gen_id }}" id="booking-form-{{ ai_gen_id }}" novalidate>
+      <div class="ai-booking-section-{{ ai_gen_id }}">
+        <h3 class="ai-booking-section-title-{{ ai_gen_id }}">{{ block.settings.personal_section_title }}</h3>
+        
+        <div class="ai-booking-row-{{ ai_gen_id }}">
+          <div class="ai-booking-field-{{ ai_gen_id }}">
+            <label class="ai-booking-label-{{ ai_gen_id }}" for="name-{{ ai_gen_id }}">
+              {{ block.settings.name_label }}
+              <span class="ai-booking-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <input
+              type="text"
+              id="name-{{ ai_gen_id }}"
+              name="name"
+              class="ai-booking-input-{{ ai_gen_id }}"
+              placeholder="{{ block.settings.name_placeholder }}"
+              required
+            >
+            <span class="ai-booking-error-{{ ai_gen_id }}" data-error="name">Please enter your full name</span>
+          </div>
+
+          <div class="ai-booking-field-{{ ai_gen_id }}">
+            <label class="ai-booking-label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
+              {{ block.settings.phone_label }}
+              <span class="ai-booking-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <input
+              type="tel"
+              id="phone-{{ ai_gen_id }}"
+              name="phone"
+              class="ai-booking-input-{{ ai_gen_id }}"
+              placeholder="{{ block.settings.phone_placeholder }}"
+              required
+            >
+            <span class="ai-booking-error-{{ ai_gen_id }}" data-error="phone">Please enter a valid phone number</span>
+          </div>
+        </div>
+
+        <div class="ai-booking-field-{{ ai_gen_id }}">
+          <label class="ai-booking-label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
+            {{ block.settings.email_label }}
+            <span class="ai-booking-required-{{ ai_gen_id }}">*</span>
+          </label>
+          <input
+            type="email"
+            id="email-{{ ai_gen_id }}"
+            name="email"
+            class="ai-booking-input-{{ ai_gen_id }}"
+            placeholder="{{ block.settings.email_placeholder }}"
+            required
+          >
+          <span class="ai-booking-error-{{ ai_gen_id }}" data-error="email">Please enter a valid email address</span>
+        </div>
+      </div>
+
+      <div class="ai-booking-section-{{ ai_gen_id }}">
+        <h3 class="ai-booking-section-title-{{ ai_gen_id }}">{{ block.settings.appointment_section_title }}</h3>
+        
+        <div class="ai-booking-row-{{ ai_gen_id }}">
+          <div class="ai-booking-field-{{ ai_gen_id }}">
+            <label class="ai-booking-label-{{ ai_gen_id }}" for="astrologer-{{ ai_gen_id }}">
+              {{ block.settings.astrologer_label }}
+              <span class="ai-booking-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <select
+              id="astrologer-{{ ai_gen_id }}"
+              name="astrologer"
+              class="ai-booking-select-{{ ai_gen_id }}"
+              required
+            >
+              <option value="">{{ block.settings.astrologer_placeholder }}</option>
+              {% assign astrologers = block.settings.astrologer_options | split: ',' %}
+              {% for astrologer in astrologers %}
+                {% assign trimmed = astrologer | strip %}
+                {% if trimmed != blank %}
+                  <option value="{{ trimmed }}">{{ trimmed }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <span class="ai-booking-error-{{ ai_gen_id }}" data-error="astrologer">Please select an astrologer</span>
+          </div>
+
+          <div class="ai-booking-field-{{ ai_gen_id }}">
+            <label class="ai-booking-label-{{ ai_gen_id }}" for="service-{{ ai_gen_id }}">
+              {{ block.settings.service_label }}
+              <span class="ai-booking-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <select
+              id="service-{{ ai_gen_id }}"
+              name="service"
+              class="ai-booking-select-{{ ai_gen_id }}"
+              required
+            >
+              <option value="">{{ block.settings.service_placeholder }}</option>
+              {% assign services = block.settings.service_options | split: ',' %}
+              {% for service in services %}
+                {% assign trimmed = service | strip %}
+                {% if trimmed != blank %}
+                  <option value="{{ trimmed }}">{{ trimmed }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <span class="ai-booking-error-{{ ai_gen_id }}" data-error="service">Please select a service type</span>
+          </div>
+        </div>
+
+        <div class="ai-booking-row-{{ ai_gen_id }}">
+          <div class="ai-booking-field-{{ ai_gen_id }}">
+            <label class="ai-booking-label-{{ ai_gen_id }}" for="date-{{ ai_gen_id }}">
+              {{ block.settings.date_label }}
+              <span class="ai-booking-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <input
+              type="date"
+              id="date-{{ ai_gen_id }}"
+              name="date"
+              class="ai-booking-input-{{ ai_gen_id }}"
+              required
+            >
+            <span class="ai-booking-error-{{ ai_gen_id }}" data-error="date">Please select a date</span>
+          </div>
+
+          <div class="ai-booking-field-{{ ai_gen_id }}">
+            <label class="ai-booking-label-{{ ai_gen_id }}">
+              {{ block.settings.time_label }}
+              <span class="ai-booking-required-{{ ai_gen_id }}">*</span>
+            </label>
+            <div class="ai-booking-time-slots-{{ ai_gen_id }}">
+              {% assign time_slots = block.settings.time_slots | split: ',' %}
+              {% for slot in time_slots %}
+                {% assign trimmed = slot | strip %}
+                {% if trimmed != blank %}
+                  <label class="ai-booking-time-slot-{{ ai_gen_id }}">
+                    <input
+                      type="radio"
+                      name="time"
+                      value="{{ trimmed }}"
+                      class="ai-booking-time-slot-input-{{ ai_gen_id }}"
+                      required
+                    >
+                    {{ trimmed }}
+                  </label>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <span class="ai-booking-error-{{ ai_gen_id }}" data-error="time">Please select a time slot</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-booking-section-{{ ai_gen_id }}">
+        <div class="ai-booking-field-{{ ai_gen_id }}">
+          <label class="ai-booking-label-{{ ai_gen_id }}" for="message-{{ ai_gen_id }}">
+            {{ block.settings.message_label }}
+          </label>
+          <textarea
+            id="message-{{ ai_gen_id }}"
+            name="message"
+            class="ai-booking-textarea-{{ ai_gen_id }}"
+            placeholder="{{ block.settings.message_placeholder }}"
+          ></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="ai-booking-submit-{{ ai_gen_id }}">
+        {{ block.settings.button_text }}
+      </button>
+    </form>
+  </div>
+
+  <div class="ai-booking-success-modal-{{ ai_gen_id }}" id="success-modal-{{ ai_gen_id }}">
+    <div class="ai-booking-success-content-{{ ai_gen_id }}">
+      <div class="ai-booking-success-icon-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h3 class="ai-booking-success-title-{{ ai_gen_id }}">{{ block.settings.success_title }}</h3>
+      <p class="ai-booking-success-message-{{ ai_gen_id }}">{{ block.settings.success_message }}</p>
+      <button type="button" class="ai-booking-success-close-{{ ai_gen_id }}">
+        {{ block.settings.success_button_text }}
+      </button>
+    </div>
+  </div>
+</astro-booking-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstroBooking{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.form = null;
+        this.modal = null;
+        this.timeSlots = [];
+      }
+
+      connectedCallback() {
+        this.form = this.querySelector('#booking-form-{{ ai_gen_id }}');
+        this.modal = this.querySelector('#success-modal-{{ ai_gen_id }}');
+        this.timeSlots = this.querySelectorAll('.ai-booking-time-slot-{{ ai_gen_id }}');
+        
+        this.setupEventListeners();
+        this.setMinDate();
+      }
+
+      setupEventListeners() {
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        
+        this.timeSlots.forEach(slot => {
+          slot.addEventListener('click', () => this.selectTimeSlot(slot));
+        });
+
+        const closeButton = this.querySelector('.ai-booking-success-close-{{ ai_gen_id }}');
+        closeButton.addEventListener('click', () => this.closeModal());
+
+        this.modal.addEventListener('click', (e) => {
+          if (e.target === this.modal) {
+            this.closeModal();
+          }
+        });
+      }
+
+      setMinDate() {
+        const dateInput = this.querySelector('#date-{{ ai_gen_id }}');
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const minDate = tomorrow.toISOString().split('T')[0];
+        dateInput.setAttribute('min', minDate);
+      }
+
+      selectTimeSlot(selectedSlot) {
+        this.timeSlots.forEach(slot => slot.classList.remove('active'));
+        selectedSlot.classList.add('active');
+        const input = selectedSlot.querySelector('input');
+        input.checked = true;
+        this.hideError('time');
+      }
+
+      validateForm() {
+        let isValid = true;
+        const formData = new FormData(this.form);
+
+        const name = formData.get('name');
+        if (!name || name.trim().length < 2) {
+          this.showError('name');
+          isValid = false;
+        } else {
+          this.hideError('name');
+        }
+
+        const phone = formData.get('phone');
+        const phoneRegex = /^[\d\s\-\+\(\)]{10,}$/;
+        if (!phone || !phoneRegex.test(phone)) {
+          this.showError('phone');
+          isValid = false;
+        } else {
+          this.hideError('phone');
+        }
+
+        const email = formData.get('email');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          this.showError('email');
+          isValid = false;
+        } else {
+          this.hideError('email');
+        }
+
+        const astrologer = formData.get('astrologer');
+        if (!astrologer) {
+          this.showError('astrologer');
+          isValid = false;
+        } else {
+          this.hideError('astrologer');
+        }
+
+        const service = formData.get('service');
+        if (!service) {
+          this.showError('service');
+          isValid = false;
+        } else {
+          this.hideError('service');
+        }
+
+        const date = formData.get('date');
+        if (!date) {
+          this.showError('date');
+          isValid = false;
+        } else {
+          this.hideError('date');
+        }
+
+        const time = formData.get('time');
+        if (!time) {
+          this.showError('time');
+          isValid = false;
+        } else {
+          this.hideError('time');
+        }
+
+        return isValid;
+      }
+
+      showError(field) {
+        const errorElement = this.querySelector(`[data-error="${field}"]`);
+        if (errorElement) {
+          errorElement.classList.add('show');
+        }
+      }
+
+      hideError(field) {
+        const errorElement = this.querySelector(`[data-error="${field}"]`);
+        if (errorElement) {
+          errorElement.classList.remove('show');
+        }
+      }
+
+      handleSubmit(e) {
+        e.preventDefault();
+
+        if (!this.validateForm()) {
+          return;
+        }
+
+        const formData = new FormData(this.form);
+        const bookingData = {
+          name: formData.get('name'),
+          phone: formData.get('phone'),
+          email: formData.get('email'),
+          astrologer: formData.get('astrologer'),
+          service: formData.get('service'),
+          date: formData.get('date'),
+          time: formData.get('time'),
+          message: formData.get('message') || 'No message provided'
+        };
+
+        console.log('Booking Data:', bookingData);
+
+        {% if block.settings.redirect_url != blank %}
+          const redirectUrl = '{{ block.settings.redirect_url }}';
+          if (redirectUrl.includes('wa.me') || redirectUrl.includes('whatsapp')) {
+            const message = `New Appointment Booking:\n\nName: ${bookingData.name}\nPhone: ${bookingData.phone}\nEmail: ${bookingData.email}\nAstrologer: ${bookingData.astrologer}\nService: ${bookingData.service}\nDate: ${bookingData.date}\nTime: ${bookingData.time}\nMessage: ${bookingData.message}`;
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`${redirectUrl}?text=${encodedMessage}`, '_blank');
+          } else {
+            window.location.href = redirectUrl;
+          }
+        {% else %}
+          this.showSuccessModal();
+        {% endif %}
+
+        this.form.reset();
+        this.timeSlots.forEach(slot => slot.classList.remove('active'));
+      }
+
+      showSuccessModal() {
+        this.modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+
+      closeModal() {
+        this.modal.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    }
+
+    customElements.define('astro-booking-{{ ai_gen_id }}', AstroBooking{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Astrologer booking",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Book Your Appointment with an Astrologer"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Schedule a personalized astrology consultation and get expert guidance for your life."
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Personal details section"
+    },
+    {
+      "type": "text",
+      "id": "personal_section_title",
+      "label": "Section title",
+      "default": "Personal Details"
+    },
+    {
+      "type": "text",
+      "id": "name_label",
+      "label": "Name label",
+      "default": "Full Name"
+    },
+    {
+      "type": "text",
+      "id": "name_placeholder",
+      "label": "Name placeholder",
+      "default": "Enter your full name"
+    },
+    {
+      "type": "text",
+      "id": "phone_label",
+      "label": "Phone label",
+      "default": "Phone Number"
+    },
+    {
+      "type": "text",
+      "id": "phone_placeholder",
+      "label": "Phone placeholder",
+      "default": "+91 XXXXX XXXXX"
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email label",
+      "default": "Email Address"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Email placeholder",
+      "default": "your.email@example.com"
+    },
+    {
+      "type": "header",
+      "content": "Appointment details section"
+    },
+    {
+      "type": "text",
+      "id": "appointment_section_title",
+      "label": "Section title",
+      "default": "Appointment Details"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_label",
+      "label": "Astrologer label",
+      "default": "Select Astrologer"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_placeholder",
+      "label": "Astrologer placeholder",
+      "default": "Choose an astrologer"
+    },
+    {
+      "type": "textarea",
+      "id": "astrologer_options",
+      "label": "Astrologer options",
+      "default": "Dr. Rajesh Kumar, Pandit Sharma, Astrologer Priya, Guruji Anil",
+      "info": "Separate each option with a comma"
+    },
+    {
+      "type": "text",
+      "id": "service_label",
+      "label": "Service label",
+      "default": "Service Type"
+    },
+    {
+      "type": "text",
+      "id": "service_placeholder",
+      "label": "Service placeholder",
+      "default": "Select a service"
+    },
+    {
+      "type": "textarea",
+      "id": "service_options",
+      "label": "Service options",
+      "default": "Love & Relationships, Career Guidance, Marriage Consultation, Health & Wellness, Financial Astrology",
+      "info": "Separate each option with a comma"
+    },
+    {
+      "type": "text",
+      "id": "date_label",
+      "label": "Date label",
+      "default": "Preferred Date"
+    },
+    {
+      "type": "text",
+      "id": "time_label",
+      "label": "Time label",
+      "default": "Preferred Time"
+    },
+    {
+      "type": "textarea",
+      "id": "time_slots",
+      "label": "Time slots",
+      "default": "9:00 AM, 10:00 AM, 11:00 AM, 12:00 PM, 2:00 PM, 3:00 PM, 4:00 PM, 5:00 PM",
+      "info": "Separate each time slot with a comma"
+    },
+    {
+      "type": "header",
+      "content": "Message section"
+    },
+    {
+      "type": "text",
+      "id": "message_label",
+      "label": "Message label",
+      "default": "Additional Message (Optional)"
+    },
+    {
+      "type": "text",
+      "id": "message_placeholder",
+      "label": "Message placeholder",
+      "default": "Any specific questions or concerns you'd like to discuss?"
+    },
+    {
+      "type": "header",
+      "content": "Submit button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Book Appointment"
+    },
+    {
+      "type": "header",
+      "content": "Success message"
+    },
+    {
+      "type": "text",
+      "id": "success_title",
+      "label": "Success title",
+      "default": "Booking Confirmed!"
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you for booking an appointment. We will contact you shortly to confirm your consultation details."
+    },
+    {
+      "type": "text",
+      "id": "success_button_text",
+      "label": "Success button text",
+      "default": "Close"
+    },
+    {
+      "type": "header",
+      "content": "Redirect settings"
+    },
+    {
+      "type": "url",
+      "id": "redirect_url",
+      "label": "Redirect URL",
+      "info": "Leave empty to show success popup. Add WhatsApp link (e.g., https://wa.me/919876543210) or thank you page URL"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 600,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "default": 0.1
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#f9fafb"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "section_title_color",
+      "label": "Section title color",
+      "default": "#2d3748"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#4a5568"
+    },
+    {
+      "type": "color",
+      "id": "required_color",
+      "label": "Required asterisk color",
+      "default": "#e53e3e"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#e2e8f0"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error color",
+      "default": "#e53e3e"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success color",
+      "default": "#38a169"
+    },
+    {
+      "type": "header",
+      "content": "Input fields"
+    },
+    {
+      "type": "range",
+      "id": "input_radius",
+      "label": "Input border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "input_border_width",
+      "label": "Input border width",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Input background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Input text color",
+      "default": "#2d3748"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border color",
+      "default": "#cbd5e0"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_color",
+      "label": "Input focus color",
+      "default": "#4299e1"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder color",
+      "default": "#a0aec0"
+    },
+    {
+      "type": "header",
+      "content": "Time slots"
+    },
+    {
+      "type": "color",
+      "id": "time_slot_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "time_slot_text",
+      "label": "Text color",
+      "default": "#4a5568"
+    },
+    {
+      "type": "color",
+      "id": "time_slot_border",
+      "label": "Border color",
+      "default": "#cbd5e0"
+    },
+    {
+      "type": "color",
+      "id": "time_slot_hover_background",
+      "label": "Hover background",
+      "default": "#f7fafc"
+    },
+    {
+      "type": "color",
+      "id": "time_slot_hover_border",
+      "label": "Hover border",
+      "default": "#4299e1"
+    },
+    {
+      "type": "color",
+      "id": "time_slot_active_background",
+      "label": "Active background",
+      "default": "#4299e1"
+    },
+    {
+      "type": "color",
+      "id": "time_slot_active_text",
+      "label": "Active text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "time_slot_active_border",
+      "label": "Active border",
+      "default": "#4299e1"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#2d3748"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#1a202c"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrologer booking"
+    }
+  ]
+}
+{% endschema %}

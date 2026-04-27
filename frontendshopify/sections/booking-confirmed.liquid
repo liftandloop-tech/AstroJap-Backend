@@ -1,0 +1,292 @@
+{%- style -%}
+  .bc-page {
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    padding: 60px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bc-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    animation: bc-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  @keyframes bc-pop {
+    from { opacity: 0; transform: scale(0.88) translateY(30px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .bc-card { padding: 32px 20px; }
+  }
+
+  .bc-icon    { font-size: 4rem; margin-bottom: 12px; display: block; }
+  .bc-title   { font-size: 1.75rem; font-weight: 900; color: #1a1a1a; margin: 0 0 6px; }
+  .bc-sub     { color: #888; font-size: 0.95rem; margin: 0 0 32px; }
+
+  .bc-astro   {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  .bc-astro-img {
+    width: 56px; height: 56px; border-radius: 50%;
+    object-fit: cover;
+    background: linear-gradient(135deg, #4361ee, #7209b7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; color: #fff; font-weight: 800; flex-shrink: 0;
+  }
+  .bc-astro-name { font-weight: 800; font-size: 1.05rem; margin: 0; }
+  .bc-astro-desc { font-size: 0.82rem; color: #888; margin: 2px 0 0; }
+
+  .bc-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .bc-detail-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: left;
+  }
+  .bc-detail-label { font-size: 0.72rem; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.04em; }
+  .bc-detail-val   { font-size: 1rem; font-weight: 800; color: #1a1a1a; margin-top: 4px; }
+
+  .bc-countdown {
+    background: linear-gradient(135deg, #302b63, #24243e);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 28px;
+    color: #fff;
+  }
+  .bc-countdown-label { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
+  .bc-countdown-time  { font-size: 2rem; font-weight: 900; letter-spacing: 0.05em; color: #f3e05c; font-variant-numeric: tabular-nums; }
+  .bc-countdown-sub   { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+  .bc-actions { display: flex; flex-direction: column; gap: 10px; }
+  .bc-btn-primary {
+    background: #f97316; color: #fff; border: none;
+    padding: 16px; border-radius: 12px; font-size: 1rem;
+    font-weight: 700; cursor: pointer; text-decoration: none;
+    display: block; transition: background 0.2s;
+  }
+  .bc-btn-primary:hover { background: #ea580c; color: #fff; }
+  .bc-btn-ghost {
+    background: transparent; border: 1.5px solid #e0e0e0;
+    padding: 14px; border-radius: 12px; font-size: 0.95rem;
+    font-weight: 600; cursor: pointer; color: #666; text-decoration: none;
+    display: block; transition: border-color 0.2s;
+  }
+  .bc-btn-ghost:hover { border-color: #f97316; color: #f97316; }
+
+  .bc-error {
+    text-align: center; padding: 60px 20px;
+    background: #fff; border-radius: 24px; max-width: 420px; width: 100%;
+  }
+  .bc-error h2 { font-size: 1.4rem; font-weight: 800; color: #e74c3c; margin: 0 0 10px; }
+  .bc-error p  { color: #888; margin: 0 0 24px; }
+{%- endstyle -%}
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<div class="bc-page">
+  <div id="bc-loading" style="color:#fff; font-family:'Outfit',sans-serif; font-size:1.1rem;">
+    Loading your booking…
+  </div>
+
+  <div id="bc-content" style="display:none; width:100%; max-width:520px;">
+    <!-- Filled by JS -->
+  </div>
+
+  <div id="bc-error" class="bc-error" style="display:none;">
+    <div style="font-size:3rem;">😕</div>
+    <h2>Booking Not Found</h2>
+    <p>We couldn't load your booking details. The link may be invalid.</p>
+    <a href="/" class="bc-btn-primary">Back to Home</a>
+  </div>
+</div>
+
+<script>
+(async function () {
+  const API         = window.AstroAPIBase || 'https://astro-jap-backend.vercel.app/api';
+  const params      = new URLSearchParams(window.location.search);
+  const SESSION_ID  = params.get('session_id');
+
+  const loadingEl   = document.getElementById('bc-loading');
+  const contentEl   = document.getElementById('bc-content');
+  const errorEl     = document.getElementById('bc-error');
+
+  function fmt(d) {
+    return new Date(d).toLocaleString('en-IN', {
+      weekday: 'long', day: 'numeric', month: 'long',
+      hour: '2-digit', minute: '2-digit', hour12: true
+    });
+  }
+  function fmtPrice(n) { return '₹' + Number(n).toLocaleString('en-IN'); }
+
+  function showError() {
+    loadingEl.style.display = 'none';
+    errorEl.style.display   = 'block';
+  }
+
+  if (!SESSION_ID) { showError(); return; }
+
+  try {
+    const res  = await fetch(`${API}/sessions/get-session-by-id`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ session_id: SESSION_ID })
+    });
+
+    if (!res.ok) { showError(); return; }
+    const { session } = await res.json();
+    if (!session)     { showError(); return; }
+
+    const astroName  = session.astrologer?.name     || 'Your Astrologer';
+    const astroImg   = session.astrologer?.profile_image;
+    const scheduledAt = session.scheduled_at || session.created_at;
+    const duration    = session.duration_minutes;
+    const price       = session.amount || '—';
+
+    loadingEl.style.display = 'none';
+    contentEl.style.display = 'block';
+
+    // ── Render card ──────────────────────────────────────────────────────────
+    contentEl.innerHTML = `
+      <div class="bc-card">
+        <span class="bc-icon">✅</span>
+        <h1 class="bc-title">Booking Confirmed!</h1>
+        <p class="bc-sub">Your session has been scheduled and payment deducted from your wallet.</p>
+
+        <div class="bc-astro">
+          ${astroImg
+            ? `<img src="${astroImg}" class="bc-astro-img" style="font-size:0;" alt="${astroName}">`
+            : `<div class="bc-astro-img">${astroName.charAt(0)}</div>`}
+          <div>
+            <p class="bc-astro-name">${astroName}</p>
+            <p class="bc-astro-desc">Certified Astrologer</p>
+          </div>
+        </div>
+
+        <div class="bc-details">
+          <div class="bc-detail-item">
+            <div class="bc-detail-label">📅 Scheduled For</div>
+            <div class="bc-detail-val" style="font-size:0.85rem;">${fmt(scheduledAt)}</div>
+          </div>
+          <div class="bc-detail-item">
+            <div class="bc-detail-label">⏱ Duration</div>
+            <div class="bc-detail-val">${duration} minutes</div>
+          </div>
+          <div class="bc-detail-item">
+            <div class="bc-detail-label">💰 Amount Paid</div>
+            <div class="bc-detail-val">${typeof price === 'number' ? fmtPrice(price) : price}</div>
+          </div>
+          <div class="bc-detail-item">
+            <div class="bc-detail-label">🎫 Session ID</div>
+            <div class="bc-detail-val" style="font-size:0.7rem;color:#aaa;word-break:break-all;">${SESSION_ID.slice(0,8)}…</div>
+          </div>
+        </div>
+
+        <div class="bc-countdown">
+          <div class="bc-countdown-label">SESSION STARTS IN</div>
+          <div class="bc-countdown-time" id="bc-timer">Calculating…</div>
+          <div class="bc-countdown-sub" id="bc-timer-sub"></div>
+        </div>
+
+        <div class="bc-actions">
+          <button class="bc-btn-primary" onclick="downloadICS()">📆 Add to Calendar</button>
+          <a href="/pages/purchased-sessions" class="bc-btn-ghost">View All My Sessions →</a>
+        </div>
+      </div>
+    `;
+
+    // ── Countdown ────────────────────────────────────────────────────────────
+    const targetMs = new Date(scheduledAt).getTime();
+    const timerEl  = document.getElementById('bc-timer');
+    const subEl    = document.getElementById('bc-timer-sub');
+
+    function updateCountdown() {
+      const diff = targetMs - Date.now();
+      if (diff <= 0) {
+        timerEl.textContent = 'NOW!';
+        subEl.textContent   = 'Your session is starting. Join the chat!';
+        return;
+      }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+
+      if (d > 0) {
+        timerEl.textContent = `${d}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m`;
+      } else {
+        timerEl.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+
+      const when = new Date(scheduledAt).toLocaleString('en-IN', { weekday:'long', hour:'2-digit', minute:'2-digit', hour12:true });
+      subEl.textContent = `${when}`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ── .ics Calendar Download ───────────────────────────────────────────────
+    window.downloadICS = function () {
+      const start  = new Date(scheduledAt);
+      const end    = new Date(start.getTime() + duration * 60000);
+      const toICS  = d => d.toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//AstroJap//Booking//EN',
+        'BEGIN:VEVENT',
+        `UID:${SESSION_ID}@astrojap`,
+        `DTSTART:${toICS(start)}`,
+        `DTEND:${toICS(end)}`,
+        `SUMMARY:Astrology Session with ${astroName}`,
+        `DESCRIPTION:Your ${duration}-min astrology consultation on AstroJap.`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const a    = Object.assign(document.createElement('a'), {
+        href:     URL.createObjectURL(blob),
+        download: `astrojap-session-${SESSION_ID.slice(0,8)}.ics`
+      });
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    };
+
+  } catch (e) {
+    console.error(e);
+    showError();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Booking Confirmed",
+  "settings": [],
+  "presets": [{ "name": "Booking Confirmed" }]
+}
+{% endschema %}

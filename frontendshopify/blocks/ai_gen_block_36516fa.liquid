@@ -1,0 +1,364 @@
+{% doc %}
+  @prompt
+    Create a responsive **Shopify Call-To-Action Section** using Liquid, HTML and CSS.
+    
+    Section Name: **astrojap-astrologer-cta**
+    
+    SECTION PURPOSE
+    
+    This section promotes connecting with astrologers via **call or chat**.
+    
+    SECTION LAYOUT
+    
+    Create a full-width section with a **yellow background**.
+    
+    Inside the section add a **rounded white card container**.
+    
+    The layout should have **two columns**.
+    
+    LEFT SIDE
+    
+    Display promotional text.
+    
+    Default text:
+    
+    "Connect with an Astrologer on Call or Chat for more personalised detailed predictions."
+    
+    Allow this text to be editable from Shopify theme settings.
+    
+    RIGHT SIDE
+    
+    Display two large rounded buttons stacked vertically.
+    
+    Button 1
+    
+    Icon: Phone
+    Text: **Talk to Astrologer**
+    
+    Button style:
+    Dark background
+    Rounded pill button
+    Yellow icon
+    
+    Button link should be editable.
+    
+    Button 2
+    
+    Icon: Chat bubble
+    Text: **Chat with Astrologer**
+    
+    Button style:
+    Dark background
+    Rounded pill button
+    Yellow icon
+    
+    Button link should be editable.
+    
+    BUTTON DESIGN
+    
+    • Large pill shaped buttons
+    • Dark background
+    • Yellow icon color
+    • Hover effect (slight glow or brightness change)
+    
+    SECTION DESIGN
+    
+    • Bright yellow section background
+    • White rounded content card
+    • Soft shadow
+    • Clean modern astrology theme
+    
+    RESPONSIVE DESIGN
+    
+    Desktop:
+    Text on left and buttons on right.
+    
+    Mobile:
+    Text on top and buttons stacked below.
+    
+    SHOPIFY SETTINGS
+    
+    Allow editing in theme customizer:
+    
+    CTA text
+    Talk to astrologer button label
+    Talk button link
+    Chat with astrologer button label
+    Chat button link
+    Section background color
+    
+    OUTPUT
+    
+    Generate complete Shopify Liquid section code ready to paste into:
+    
+    sections/astrojap-astrologer-cta.liquid
+    , chat button and talk button to be added
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .astrojap-astrologer-cta-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.section_background_color }};
+    padding: 40px 20px;
+  }
+
+  .astrojap-astrologer-cta__container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: {{ block.settings.card_background_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .astrojap-astrologer-cta__content-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .astrojap-astrologer-cta__text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.6;
+  }
+
+  .astrojap-astrologer-cta__buttons-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .astrojap-astrologer-cta__button-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px 32px;
+    background-color: {{ block.settings.button_background_color }};
+    color: {{ block.settings.button_text_color }};
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: {{ block.settings.button_text_size }}px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .astrojap-astrologer-cta__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .astrojap-astrologer-cta__button-icon-{{ ai_gen_id }} {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .astrojap-astrologer-cta__button-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: {{ block.settings.icon_color }};
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media screen and (max-width: 768px) {
+    .astrojap-astrologer-cta__container-{{ ai_gen_id }} {
+      padding: 30px 20px;
+    }
+
+    .astrojap-astrologer-cta__content-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .astrojap-astrologer-cta__text-{{ ai_gen_id }} {
+      text-align: center;
+      font-size: {{ block.settings.text_size | times: 0.9 }}px;
+    }
+
+    .astrojap-astrologer-cta__button-{{ ai_gen_id }} {
+      font-size: {{ block.settings.button_text_size | times: 0.9 }}px;
+      padding: 16px 28px;
+    }
+  }
+{% endstyle %}
+
+<div class="astrojap-astrologer-cta-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="astrojap-astrologer-cta__container-{{ ai_gen_id }}">
+    <div class="astrojap-astrologer-cta__content-{{ ai_gen_id }}">
+      <div class="astrojap-astrologer-cta__text-{{ ai_gen_id }}">
+        {{ block.settings.cta_text }}
+      </div>
+
+      <div class="astrojap-astrologer-cta__buttons-{{ ai_gen_id }}">
+        <a 
+          href="{% if block.settings.talk_button_link != blank %}{{ block.settings.talk_button_link }}{% else %}#{% endif %}" 
+          class="astrojap-astrologer-cta__button-{{ ai_gen_id }}"
+        >
+          <span class="astrojap-astrologer-cta__button-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </span>
+          <span>{{ block.settings.talk_button_label }}</span>
+        </a>
+
+        <a 
+          href="{% if block.settings.chat_button_link != blank %}{{ block.settings.chat_button_link }}{% else %}#{% endif %}" 
+          class="astrojap-astrologer-cta__button-{{ ai_gen_id }}"
+        >
+          <span class="astrojap-astrologer-cta__button-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </span>
+          <span>{{ block.settings.chat_button_label }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Astrologer CTA",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "cta_text",
+      "label": "CTA text",
+      "default": "<p>Connect with an Astrologer on Call or Chat for more personalised detailed predictions.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Talk button"
+    },
+    {
+      "type": "text",
+      "id": "talk_button_label",
+      "label": "Button label",
+      "default": "Talk to Astrologer"
+    },
+    {
+      "type": "url",
+      "id": "talk_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Chat button"
+    },
+    {
+      "type": "text",
+      "id": "chat_button_label",
+      "label": "Button label",
+      "default": "Chat with Astrologer"
+    },
+    {
+      "type": "url",
+      "id": "chat_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Section background",
+      "default": "#FFC107"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Button background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background_color",
+      "label": "Button hover background",
+      "default": "#242833"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#FFC107"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Button text size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrologer CTA"
+    }
+  ]
+}
+{% endschema %}

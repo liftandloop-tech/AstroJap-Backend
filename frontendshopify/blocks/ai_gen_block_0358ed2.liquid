@@ -1,0 +1,90 @@
+<div class="astro-section">
+  <div class="astro-container">
+    <h2 class="astro-title">Consult with Astrologers</h2>
+    <div class="astro-grid">
+      {%- for block in section.blocks -%}
+        {%- assign p = block.settings.user_product -%}
+        {%- if p != blank -%}
+          <div class="astro-item" {{ block.shopify_attributes }}>
+            <div class="astro-top">
+              <img src="{{ p.featured_image | image_url: width: 200 }}" width="80" height="80">
+              <div class="astro-details">
+                <h3>{{ p.title }}</h3>
+                <p>{{ p.price | money }}/min</p>
+              </div>
+            </div>
+            <button class="astro-btn" onclick="openAstroModal('{{ p.title | escape }}', '{{ p.handle }}', [
+              {% for v in p.variants %}
+                { id: '{{ v.id }}', title: '{{ v.title | escape }}', price: '{{ v.price | money }}' }{% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            ])">Chat Now</button>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<div id="astroModal" class="a-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000; align-items:center; justify-content:center;">
+  <div class="a-modal-box" style="background:#fff; padding:30px; border-radius:15px; width:300px; text-align:center;">
+    <h2 id="a-name"></h2>
+    <div id="v-list" style="margin:20px 0;"></div>
+    <button onclick="goPay()" style="width:100%; padding:12px; background:#4caf50; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Pay & Start Chat</button>
+    <button onclick="closeAstroModal()" style="width:100%; background:none; border:none; margin-top:10px; color:#999; cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
+<style>
+  .astro-section { padding: 50px 10px; text-align: center; font-family: sans-serif; }
+  .astro-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+  .astro-item { border: 1px solid #eee; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  .astro-top { display: flex; align-items: center; gap: 15px; text-align: left; margin-bottom: 15px; }
+  .astro-top img { border-radius: 50%; border: 2px solid #ffcc00; }
+  .astro-btn { width: 100%; padding: 10px; background: #4caf50; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  .v-radio { display:block; padding:10px; border:1px solid #eee; margin-bottom:10px; border-radius:8px; cursor:pointer; text-align:left; }
+  .v-radio.active { border-color:#4caf50; background:#f0fff0; }
+</style>
+
+<script>
+let curVarId = null;
+let curAstro = null;
+function openAstroModal(name, handle, variants) {
+  curAstro = handle;
+  document.getElementById('a-name').innerText = name;
+  const list = document.getElementById('v-list');
+  list.innerHTML = '';
+  variants.forEach((v, index) => {
+    const d = document.createElement('div');
+    d.className = 'v-radio' + (index === 0 ? ' active' : '');
+    if(index === 0) curVarId = v.id;
+    d.innerHTML = `<b>${v.title}</b> - ${v.price}`;
+    d.onclick = () => {
+      document.querySelectorAll('.v-radio').forEach(r => r.classList.remove('active'));
+      d.classList.add('active');
+      curVarId = v.id;
+    };
+    list.appendChild(d);
+  });
+  document.getElementById('astroModal').style.display = 'flex';
+}
+function closeAstroModal() { document.getElementById('astroModal').style.display = 'none'; }
+function goPay() {
+  fetch('/cart/add.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ items: [{ id: curVarId, quantity: 1, properties: { '_astro_uid': curAstro } }] })
+  }).then(() => { window.location.href = '/checkout'; });
+}
+</script>
+
+{% schema %}
+{
+  "name": "Astrologers",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Astrologers"
+    }
+  ]
+}
+{% endschema %}

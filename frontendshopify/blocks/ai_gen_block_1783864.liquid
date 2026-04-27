@@ -1,0 +1,1089 @@
+{% doc %}
+  @prompt
+    Create a Shopify section using Liquid, CSS, and JavaScript for a "Testimonial Video Section".
+    
+    🔷 Core Requirements:
+    - Section should display multiple testimonial videos in a clean grid or slider layout
+    - Fully responsive (desktop, tablet, mobile)
+    
+    🔷 Video Sources (VERY IMPORTANT):
+    The section must support:
+    1. YouTube video links
+    2. Instagram video/reel embed links
+    3. Direct video upload (MP4)
+    
+    Each video block should allow:
+    - Video URL input (YouTube or Instagram)
+    - OR direct video file upload
+    
+    🔷 Video Behavior:
+    - Videos should autoplay when visible
+    - Videos must be muted by default (autoplay policy)
+    - Provide a visible mute/unmute button on each video
+    - Clicking the video should toggle play/pause
+    - Only one video should play at a time (pause others automatically)
+    
+    🔷 UI Design:
+    - Clean modern testimonial layout
+    - Rounded video cards (border-radius: 12–16px)
+    - Soft shadow
+    - Proper spacing between videos
+    - Optional overlay play icon
+    
+    🔷 Layout:
+    - Grid: 3 videos per row (desktop)
+    - 2 per row (tablet)
+    - 1 per row (mobile)
+    - OR slider with swipe support on mobile
+    
+    🔷 Controls:
+    - Mute/Unmute button
+    - Play/Pause toggle
+    - Optional progress bar
+    
+    🔷 Shopify Functionality:
+    - Use section blocks
+    - Each block includes:
+      - Video URL (YouTube/Instagram)
+      - Video file upload (optional)
+      - Title / name (optional)
+      - Subtitle / review text (optional)
+    
+    🔷 Technical Requirements:
+    - Use Liquid + CSS + JavaScript
+    - No external heavy libraries
+    - Use iframe for YouTube/Instagram
+    - Use <video> tag for uploaded videos
+    - Ensure autoplay works (muted required)
+    
+    🔷 Responsive:
+    - Videos maintain aspect ratio (16:9)
+    - No layout breaking
+    - Smooth scaling
+    
+    🔷 Performance:
+    - Lazy load videos
+    - Load iframe only when needed
+    
+    🔷 Output:
+    Provide full Shopify section code including:
+    - Liquid markup
+    - CSS styling
+    - JavaScript functionality (play, mute, autoplay)
+    - Schema JSON
+    
+    🎯 Goal:
+    Create a premium testimonial video section similar to modern ecommerce brands where users can watch multiple videos seamlessly with autoplay, mute control, and support for YouTube, Instagram, and uploaded videos., create a grid, the video is not playing and must be in 9:16 formate
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-video-grid-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-video-grid__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    width: 100%;
+  }
+
+  .ai-video-grid__item-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .ai-video-grid__video-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 177.78%;
+    background-color: #000000;
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, {{ block.settings.shadow_opacity }});
+  }
+
+  .ai-video-grid__iframe-{{ ai_gen_id }},
+  .ai-video-grid__video-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: cover;
+  }
+
+  .ai-video-grid__placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+  }
+
+  .ai-video-grid__placeholder-{{ ai_gen_id }} svg {
+    width: 60px;
+    height: 60px;
+    opacity: 0.3;
+  }
+
+  .ai-video-grid__empty-state-{{ ai_gen_id }} {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  .ai-video-grid__controls-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+  }
+
+  .ai-video-grid__control-btn-{{ ai_gen_id }} {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: {{ block.settings.control_bg_color }};
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: {{ block.settings.control_opacity }};
+  }
+
+  .ai-video-grid__control-btn-{{ ai_gen_id }}:hover {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  .ai-video-grid__control-btn-{{ ai_gen_id }} svg {
+    width: 18px;
+    height: 18px;
+    fill: {{ block.settings.control_icon_color }};
+  }
+
+  .ai-video-grid__play-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: {{ block.settings.play_button_bg }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: {{ block.settings.play_button_opacity }};
+    z-index: 5;
+  }
+
+  .ai-video-grid__play-overlay-{{ ai_gen_id }}:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
+
+  .ai-video-grid__play-overlay-{{ ai_gen_id }} svg {
+    width: 28px;
+    height: 28px;
+    fill: {{ block.settings.play_button_icon_color }};
+    margin-left: 3px;
+  }
+
+  .ai-video-grid__play-overlay-{{ ai_gen_id }}.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ai-video-grid__info-{{ ai_gen_id }} {
+    margin-top: {{ block.settings.info_spacing }}px;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-video-grid__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 6px 0;
+  }
+
+  .ai-video-grid__subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-video-grid__container-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_tablet }}, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-video-grid__container-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+    }
+
+    .ai-video-grid__control-btn-{{ ai_gen_id }} {
+      width: 32px;
+      height: 32px;
+    }
+
+    .ai-video-grid__control-btn-{{ ai_gen_id }} svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .ai-video-grid__play-overlay-{{ ai_gen_id }} {
+      width: 56px;
+      height: 56px;
+    }
+
+    .ai-video-grid__play-overlay-{{ ai_gen_id }} svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+{% endstyle %}
+
+<video-grid-{{ ai_gen_id }}
+  class="ai-video-grid-{{ ai_gen_id }}"
+  data-autoplay="{{ block.settings.autoplay_enabled }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-video-grid__container-{{ ai_gen_id }}">
+    {% for i in (1..6) %}
+      {% liquid
+        assign video_url_key = 'video_url_' | append: i
+        assign video_file_key = 'video_file_' | append: i
+        assign title_key = 'title_' | append: i
+        assign subtitle_key = 'subtitle_' | append: i
+
+        assign video_url = block.settings[video_url_key]
+        assign video_file = block.settings[video_file_key]
+        assign title = block.settings[title_key]
+        assign subtitle = block.settings[subtitle_key]
+
+        assign has_video_url = false
+        assign has_video_file = false
+        assign video_type = 'none'
+        assign video_id = ''
+
+        if video_url != blank
+          assign has_video_url = true
+          if video_url contains 'youtube.com' or video_url contains 'youtu.be'
+            assign video_type = 'youtube'
+            if video_url contains 'youtu.be/'
+              assign video_id = video_url | split: 'youtu.be/' | last | split: '?' | first
+            elsif video_url contains 'watch?v='
+              assign video_id = video_url | split: 'watch?v=' | last | split: '&' | first
+            elsif video_url contains 'embed/'
+              assign video_id = video_url | split: 'embed/' | last | split: '?' | first
+            elsif video_url contains 'shorts/'
+              assign video_id = video_url | split: 'shorts/' | last | split: '?' | first
+            endif
+          elsif video_url contains 'instagram.com'
+            assign video_type = 'instagram'
+          endif
+        endif
+
+        if video_file != blank
+          assign has_video_file = true
+        endif
+      %}
+
+      <div class="ai-video-grid__item-{{ ai_gen_id }}" data-video-index="{{ i }}">
+        <div class="ai-video-grid__video-wrapper-{{ ai_gen_id }}">
+          {% if has_video_url and video_type == 'youtube' and video_id != blank %}
+            <div
+              class="ai-video-grid__iframe-{{ ai_gen_id }}"
+              data-video-type="youtube"
+              data-video-id="{{ video_id }}"
+              data-video-index="{{ i }}"
+            ></div>
+
+          {% elsif has_video_url and video_type == 'instagram' %}
+            <iframe
+              class="ai-video-grid__iframe-{{ ai_gen_id }}"
+              data-video-type="instagram"
+              data-video-index="{{ i }}"
+              src="{{ video_url }}embed"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+
+          {% elsif has_video_file %}
+            <video
+              class="ai-video-grid__video-{{ ai_gen_id }}"
+              data-video-type="upload"
+              data-video-index="{{ i }}"
+              muted
+              playsinline
+              loop
+              preload="metadata"
+            >
+              <source src="{{ video_file }}" type="video/mp4">
+            </video>
+
+          {% else %}
+            <div class="ai-video-grid__placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-video-grid__empty-state-{{ ai_gen_id }}">
+                Add video {{ i }}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if has_video_url or has_video_file %}
+            {% if block.settings.show_play_button %}
+              <div class="ai-video-grid__play-overlay-{{ ai_gen_id }}" data-video-index="{{ i }}">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+            {% endif %}
+
+            <div class="ai-video-grid__controls-{{ ai_gen_id }}">
+              {% if block.settings.show_mute_button %}
+                <button
+                  class="ai-video-grid__control-btn-{{ ai_gen_id }} ai-video-grid__mute-btn-{{ ai_gen_id }}"
+                  data-video-index="{{ i }}"
+                  aria-label="Toggle mute"
+                  type="button"
+                >
+                  <svg class="ai-video-grid__mute-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                  </svg>
+                  <svg class="ai-video-grid__unmute-icon-{{ ai_gen_id }}" style="display: none;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                  </svg>
+                </button>
+              {% endif %}
+
+              {% if block.settings.show_play_pause_button %}
+                <button
+                  class="ai-video-grid__control-btn-{{ ai_gen_id }} ai-video-grid__play-pause-btn-{{ ai_gen_id }}"
+                  data-video-index="{{ i }}"
+                  aria-label="Toggle play"
+                  type="button"
+                >
+                  <svg class="ai-video-grid__pause-icon-{{ ai_gen_id }}" style="display: none;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                  </svg>
+                  <svg class="ai-video-grid__play-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </button>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if title != blank or subtitle != blank %}
+          <div class="ai-video-grid__info-{{ ai_gen_id }}">
+            {% if title != blank %}
+              <h3 class="ai-video-grid__title-{{ ai_gen_id }}">{{ title }}</h3>
+            {% endif %}
+            {% if subtitle != blank %}
+              <p class="ai-video-grid__subtitle-{{ ai_gen_id }}">{{ subtitle }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</video-grid-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VideoGrid{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.videos = [];
+        this.youtubePlayers = {};
+        this.observers = [];
+        this.youtubeAPIReady = false;
+      }
+
+      connectedCallback() {
+        this.loadYouTubeAPI();
+        this.initVideos();
+        this.setupEventListeners();
+        this.setupIntersectionObservers();
+      }
+
+      loadYouTubeAPI() {
+        if (window.YT && window.YT.Player) {
+          this.youtubeAPIReady = true;
+          return;
+        }
+
+        if (!window.onYouTubeIframeAPIReady) {
+          const tag = document.createElement('script');
+          tag.src = 'https://www.youtube.com/iframe_api';
+          const firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+          window.onYouTubeIframeAPIReady = () => {
+            this.youtubeAPIReady = true;
+            this.initYouTubePlayers();
+          };
+        }
+      }
+
+      initVideos() {
+        const videoElements = this.querySelectorAll('.ai-video-grid__video-{{ ai_gen_id }}');
+        const iframeElements = this.querySelectorAll('.ai-video-grid__iframe-{{ ai_gen_id }}');
+
+        videoElements.forEach(video => {
+          const index = video.getAttribute('data-video-index');
+          this.videos[index] = {
+            element: video,
+            type: 'upload',
+            isMuted: true,
+            isPlaying: false
+          };
+
+          video.addEventListener('play', () => {
+            this.videos[index].isPlaying = true;
+            this.updatePlayPauseButton(index);
+            this.hidePlayOverlay(index);
+            this.pauseOtherVideos(index);
+          });
+
+          video.addEventListener('pause', () => {
+            this.videos[index].isPlaying = false;
+            this.updatePlayPauseButton(index);
+          });
+
+          video.addEventListener('ended', () => {
+            this.videos[index].isPlaying = false;
+            this.updatePlayPauseButton(index);
+          });
+        });
+
+        iframeElements.forEach(iframe => {
+          const index = iframe.getAttribute('data-video-index');
+          const videoType = iframe.getAttribute('data-video-type');
+
+          this.videos[index] = {
+            element: iframe,
+            type: videoType,
+            isMuted: true,
+            isPlaying: false
+          };
+
+          if (videoType === 'youtube') {
+            if (this.youtubeAPIReady) {
+              this.createYouTubePlayer(iframe, index);
+            }
+          }
+        });
+      }
+
+      initYouTubePlayers() {
+        const youtubeIframes = this.querySelectorAll('.ai-video-grid__iframe-{{ ai_gen_id }}[data-video-type="youtube"]');
+        youtubeIframes.forEach(iframe => {
+          const index = iframe.getAttribute('data-video-index');
+          this.createYouTubePlayer(iframe, index);
+        });
+      }
+
+      createYouTubePlayer(iframe, index) {
+        const videoId = iframe.getAttribute('data-video-id');
+        
+        this.youtubePlayers[index] = new YT.Player(iframe, {
+          videoId: videoId,
+          playerVars: {
+            autoplay: 0,
+            mute: 1,
+            controls: 0,
+            modestbranding: 1,
+            rel: 0,
+            loop: 1,
+            playlist: videoId,
+            playsinline: 1
+          },
+          events: {
+            onReady: (event) => {
+              this.videos[index].player = event.target;
+            },
+            onStateChange: (event) => {
+              if (event.data === YT.PlayerState.PLAYING) {
+                this.videos[index].isPlaying = true;
+                this.updatePlayPauseButton(index);
+                this.hidePlayOverlay(index);
+                this.pauseOtherVideos(index);
+              } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                this.videos[index].isPlaying = false;
+                this.updatePlayPauseButton(index);
+              }
+            }
+          }
+        });
+      }
+
+      setupEventListeners() {
+        const playOverlays = this.querySelectorAll('.ai-video-grid__play-overlay-{{ ai_gen_id }}');
+        playOverlays.forEach(overlay => {
+          const index = overlay.getAttribute('data-video-index');
+          overlay.addEventListener('click', () => {
+            this.togglePlayPause(index);
+          });
+        });
+
+        const muteBtns = this.querySelectorAll('.ai-video-grid__mute-btn-{{ ai_gen_id }}');
+        muteBtns.forEach(btn => {
+          const index = btn.getAttribute('data-video-index');
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleMute(index);
+          });
+        });
+
+        const playPauseBtns = this.querySelectorAll('.ai-video-grid__play-pause-btn-{{ ai_gen_id }}');
+        playPauseBtns.forEach(btn => {
+          const index = btn.getAttribute('data-video-index');
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.togglePlayPause(index);
+          });
+        });
+
+        const videoElements = this.querySelectorAll('.ai-video-grid__video-{{ ai_gen_id }}');
+        videoElements.forEach(video => {
+          const index = video.getAttribute('data-video-index');
+          video.addEventListener('click', () => {
+            this.togglePlayPause(index);
+          });
+        });
+      }
+
+      setupIntersectionObservers() {
+        if (!this.dataset.autoplay || this.dataset.autoplay !== 'true') return;
+
+        const items = this.querySelectorAll('.ai-video-grid__item-{{ ai_gen_id }}');
+        items.forEach(item => {
+          const index = item.getAttribute('data-video-index');
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                setTimeout(() => {
+                  this.playVideo(index);
+                }, 300);
+              } else {
+                this.pauseVideo(index);
+              }
+            });
+          }, { threshold: 0.5 });
+
+          observer.observe(item);
+          this.observers.push(observer);
+        });
+      }
+
+      playVideo(index) {
+        if (!this.videos[index]) return;
+
+        if (this.videos[index].type === 'youtube') {
+          if (this.youtubePlayers[index] && this.youtubePlayers[index].playVideo) {
+            this.youtubePlayers[index].playVideo();
+          }
+        } else if (this.videos[index].type === 'upload') {
+          const playPromise = this.videos[index].element.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(() => {});
+          }
+        }
+      }
+
+      pauseVideo(index) {
+        if (!this.videos[index]) return;
+
+        if (this.videos[index].type === 'youtube') {
+          if (this.youtubePlayers[index] && this.youtubePlayers[index].pauseVideo) {
+            this.youtubePlayers[index].pauseVideo();
+          }
+        } else if (this.videos[index].type === 'upload') {
+          this.videos[index].element.pause();
+        }
+      }
+
+      togglePlayPause(index) {
+        if (!this.videos[index]) return;
+
+        if (this.videos[index].isPlaying) {
+          this.pauseVideo(index);
+        } else {
+          this.playVideo(index);
+        }
+      }
+
+      toggleMute(index) {
+        if (!this.videos[index]) return;
+
+        this.videos[index].isMuted = !this.videos[index].isMuted;
+
+        if (this.videos[index].type === 'youtube') {
+          if (this.youtubePlayers[index]) {
+            if (this.videos[index].isMuted) {
+              this.youtubePlayers[index].mute();
+            } else {
+              this.youtubePlayers[index].unMute();
+            }
+          }
+        } else if (this.videos[index].type === 'upload') {
+          this.videos[index].element.muted = this.videos[index].isMuted;
+        }
+
+        this.updateMuteButton(index);
+      }
+
+      updateMuteButton(index) {
+        const item = this.querySelector(`.ai-video-grid__item-{{ ai_gen_id }}[data-video-index="${index}"]`);
+        if (!item) return;
+
+        const muteIcon = item.querySelector('.ai-video-grid__mute-icon-{{ ai_gen_id }}');
+        const unmuteIcon = item.querySelector('.ai-video-grid__unmute-icon-{{ ai_gen_id }}');
+
+        if (!muteIcon || !unmuteIcon) return;
+
+        if (this.videos[index].isMuted) {
+          muteIcon.style.display = 'block';
+          unmuteIcon.style.display = 'none';
+        } else {
+          muteIcon.style.display = 'none';
+          unmuteIcon.style.display = 'block';
+        }
+      }
+
+      updatePlayPauseButton(index) {
+        const item = this.querySelector(`.ai-video-grid__item-{{ ai_gen_id }}[data-video-index="${index}"]`);
+        if (!item) return;
+
+        const pauseIcon = item.querySelector('.ai-video-grid__pause-icon-{{ ai_gen_id }}');
+        const playIcon = item.querySelector('.ai-video-grid__play-icon-{{ ai_gen_id }}');
+
+        if (!pauseIcon || !playIcon) return;
+
+        if (this.videos[index].isPlaying) {
+          pauseIcon.style.display = 'block';
+          playIcon.style.display = 'none';
+        } else {
+          pauseIcon.style.display = 'none';
+          playIcon.style.display = 'block';
+        }
+      }
+
+      hidePlayOverlay(index) {
+        const overlay = this.querySelector(`.ai-video-grid__play-overlay-{{ ai_gen_id }}[data-video-index="${index}"]`);
+        if (overlay) {
+          overlay.classList.add('hidden');
+        }
+      }
+
+      pauseOtherVideos(currentIndex) {
+        Object.keys(this.videos).forEach(index => {
+          if (index !== currentIndex) {
+            this.pauseVideo(index);
+          }
+        });
+      }
+
+      disconnectedCallback() {
+        this.observers.forEach(observer => observer.disconnect());
+      }
+    }
+
+    customElements.define('video-grid-{{ ai_gen_id }}', VideoGrid{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Testimonial video grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Grid layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Columns on tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Gap between videos",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Video 1"
+    },
+    {
+      "type": "url",
+      "id": "video_url_1",
+      "label": "Video URL"
+    },
+    {
+      "type": "video",
+      "id": "video_file_1",
+      "label": "Upload video"
+    },
+    {
+      "type": "text",
+      "id": "title_1",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle_1",
+      "label": "Review text"
+    },
+    {
+      "type": "header",
+      "content": "Video 2"
+    },
+    {
+      "type": "url",
+      "id": "video_url_2",
+      "label": "Video URL"
+    },
+    {
+      "type": "video",
+      "id": "video_file_2",
+      "label": "Upload video"
+    },
+    {
+      "type": "text",
+      "id": "title_2",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle_2",
+      "label": "Review text"
+    },
+    {
+      "type": "header",
+      "content": "Video 3"
+    },
+    {
+      "type": "url",
+      "id": "video_url_3",
+      "label": "Video URL"
+    },
+    {
+      "type": "video",
+      "id": "video_file_3",
+      "label": "Upload video"
+    },
+    {
+      "type": "text",
+      "id": "title_3",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle_3",
+      "label": "Review text"
+    },
+    {
+      "type": "header",
+      "content": "Video 4"
+    },
+    {
+      "type": "url",
+      "id": "video_url_4",
+      "label": "Video URL"
+    },
+    {
+      "type": "video",
+      "id": "video_file_4",
+      "label": "Upload video"
+    },
+    {
+      "type": "text",
+      "id": "title_4",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle_4",
+      "label": "Review text"
+    },
+    {
+      "type": "header",
+      "content": "Video 5"
+    },
+    {
+      "type": "url",
+      "id": "video_url_5",
+      "label": "Video URL"
+    },
+    {
+      "type": "video",
+      "id": "video_file_5",
+      "label": "Upload video"
+    },
+    {
+      "type": "text",
+      "id": "title_5",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle_5",
+      "label": "Review text"
+    },
+    {
+      "type": "header",
+      "content": "Video 6"
+    },
+    {
+      "type": "url",
+      "id": "video_url_6",
+      "label": "Video URL"
+    },
+    {
+      "type": "video",
+      "id": "video_file_6",
+      "label": "Upload video"
+    },
+    {
+      "type": "text",
+      "id": "title_6",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle_6",
+      "label": "Review text"
+    },
+    {
+      "type": "header",
+      "content": "Video settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_enabled",
+      "label": "Autoplay when visible",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_play_button",
+      "label": "Show play overlay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mute_button",
+      "label": "Show mute button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_play_pause_button",
+      "label": "Show play/pause button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.2
+    },
+    {
+      "type": "range",
+      "id": "info_spacing",
+      "label": "Content spacing",
+      "min": 0,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Play button"
+    },
+    {
+      "type": "color",
+      "id": "play_button_bg",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "play_button_icon_color",
+      "label": "Icon color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "play_button_opacity",
+      "label": "Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.9
+    },
+    {
+      "type": "header",
+      "content": "Control buttons"
+    },
+    {
+      "type": "color",
+      "id": "control_bg_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "control_icon_color",
+      "label": "Icon color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "control_opacity",
+      "label": "Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.8
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Review text size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Review text color",
+      "default": "#666666"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial video grid"
+    }
+  ]
+}
+{% endschema %}

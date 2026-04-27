@@ -1,0 +1,179 @@
+{% comment %}
+  Astrologer Purchased Sessions Section
+  Displays sessions bought by the customer in a "Shop by Purpose" style grid.
+{% endcomment %}
+
+{% if customer %}
+<div class="purchased-sessions-section" id="purchased-sessions-container" style="display: none;">
+    <div class="section-container">
+        <h2 class="section-title">My Purchased Sessions</h2>
+        <p class="section-subtitle">Continuing your spiritual journey with expert guidance</p>
+        
+        <div class="sessions-grid" id="purchased-sessions-grid">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+</div>
+
+<script src="{{ 'api.js' | asset_url }}" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const container = document.getElementById('purchased-sessions-container');
+    const grid = document.getElementById('purchased-sessions-grid');
+    const customerId = "{{ customer.id }}";
+
+    try {
+        {% comment %} const sessions = await AstroAPI.getCustomerSessions(customerId); {% endcomment %}
+        const sessions = await AstroAPI.getActiveSession(customerId);
+
+        if (sessions && sessions.length > 0) {
+            container.style.display = 'block';
+            grid.innerHTML = '';
+
+            sessions.forEach(session => {
+                const astro = session.astrologers;
+                const card = document.createElement('div');
+                card.className = 'session-item';
+                card.innerHTML = `
+                    <div class="session-card-wrapper">
+                        <div class="session-card">
+                            <img src="${astro.profile_image || 'https://via.placeholder.com/100'}" alt="${astro.name}">
+                        </div>
+                        <span class="session-name">${astro.name}</span>
+                        <div class="session-meta">${session.duration_minutes} Min Session</div>
+                        <button class="session-chat-btn" onclick="goToChat()">
+                            Chat Now
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching sessions:', error);
+    }
+});
+
+function goToChat() {
+    window.location.href = '/pages/chat';
+}
+</script>
+
+<style>
+.purchased-sessions-section {
+    padding: 60px 20px;
+    background-color: #fff;
+    font-family: 'Outfit', sans-serif;
+}
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+.section-title {
+    font-size: 2.2rem;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.section-subtitle {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 40px;
+}
+.sessions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+}
+.session-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 160px;
+    transition: transform 0.3s ease;
+}
+.session-item:hover {
+    transform: translateY(-5px);
+}
+.session-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.session-card {
+    width: 140px;
+    height: 140px;
+    background-color: #fcf8f1; /* Light cream background similar to image */
+    border-radius: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    overflow: hidden;
+}
+.session-card img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    mix-blend-mode: multiply; /* Helps with transparent images on cream bg */
+}
+.session-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+.session-meta {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 12px;
+}
+.session-chat-btn {
+    background: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(255, 152, 0, 0.2);
+}
+.session-chat-btn:hover {
+    background: #e68a00;
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .sessions-grid {
+        gap: 20px;
+    }
+    .session-item {
+        width: 140px;
+    }
+    .session-card {
+        width: 120px;
+        height: 120px;
+    }
+}
+</style>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Astrologer Products List",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Astrologer Products List"
+    }
+  ]
+}
+{% endschema %}

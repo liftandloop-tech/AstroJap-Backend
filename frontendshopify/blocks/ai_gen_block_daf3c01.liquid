@@ -1,0 +1,673 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .astrojap-appointment-booking-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+  }
+
+  .astrojap-booking-card-{{ ai_gen_id }} {
+    background-color: {{ section.settings.card_background }};
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .astrojap-booking-title-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    margin: 0 0 16px;
+    text-align: center;
+  }
+
+  .astrojap-booking-description-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ section.settings.description_color }};
+    margin: 0 0 32px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .astrojap-service-buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .astrojap-service-btn-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 150px;
+    padding: 16px 24px;
+    background-color: {{ section.settings.service_button_bg }};
+    color: {{ section.settings.service_button_text }};
+    border: 2px solid {{ section.settings.service_button_border }};
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .astrojap-service-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ section.settings.service_button_hover_bg }};
+    color: {{ section.settings.service_button_hover_text }};
+    transform: translateY(-2px);
+  }
+
+  .astrojap-service-btn-{{ ai_gen_id }}.active {
+    background-color: {{ section.settings.service_button_active_bg }};
+    color: {{ section.settings.service_button_active_text }};
+    border-color: {{ section.settings.service_button_active_bg }};
+  }
+
+  .astrojap-book-btn-wrapper-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .astrojap-book-btn-{{ ai_gen_id }} {
+    padding: 18px 48px;
+    background-color: {{ section.settings.book_button_bg }};
+    color: {{ section.settings.book_button_text_color }};
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .astrojap-book-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ section.settings.book_button_hover_bg }};
+    transform: scale(1.05);
+  }
+
+  .astrojap-modal-overlay-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .astrojap-modal-overlay-{{ ai_gen_id }}.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .astrojap-modal-{{ ai_gen_id }} {
+    background-color: {{ section.settings.modal_background }};
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+  }
+
+  .astrojap-modal-overlay-{{ ai_gen_id }}.active .astrojap-modal-{{ ai_gen_id }} {
+    transform: scale(1);
+  }
+
+  .astrojap-modal-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: {{ section.settings.modal_text_color }};
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+  }
+
+  .astrojap-modal-close-{{ ai_gen_id }}:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .astrojap-modal-title-{{ ai_gen_id }} {
+    font-size: 28px;
+    font-weight: 700;
+    color: {{ section.settings.modal_text_color }};
+    margin: 0 0 24px;
+    text-align: center;
+  }
+
+  .astrojap-form-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .astrojap-form-group-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .astrojap-form-label-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 600;
+    color: {{ section.settings.modal_text_color }};
+  }
+
+  .astrojap-form-input-{{ ai_gen_id }},
+  .astrojap-form-select-{{ ai_gen_id }},
+  .astrojap-form-textarea-{{ ai_gen_id }} {
+    padding: 12px 16px;
+    border: 1px solid {{ section.settings.input_border_color }};
+    border-radius: 8px;
+    font-size: 16px;
+    color: {{ section.settings.modal_text_color }};
+    background-color: {{ section.settings.input_background }};
+    transition: border-color 0.3s ease;
+  }
+
+  .astrojap-form-input-{{ ai_gen_id }}:focus,
+  .astrojap-form-select-{{ ai_gen_id }}:focus,
+  .astrojap-form-textarea-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: {{ section.settings.book_button_bg }};
+  }
+
+  .astrojap-form-textarea-{{ ai_gen_id }} {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .astrojap-form-submit-{{ ai_gen_id }} {
+    padding: 16px 32px;
+    background-color: {{ section.settings.book_button_bg }};
+    color: {{ section.settings.book_button_text_color }};
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+  }
+
+  .astrojap-form-submit-{{ ai_gen_id }}:hover {
+    background-color: {{ section.settings.book_button_hover_bg }};
+  }
+
+  .astrojap-required-{{ ai_gen_id }} {
+    color: #e74c3c;
+  }
+
+  .astrojap-success-box-{{ ai_gen_id }} {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .astrojap-booking-card-{{ ai_gen_id }} {
+      padding: 24px;
+    }
+    .astrojap-booking-title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+    .astrojap-service-buttons-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+    .astrojap-service-btn-{{ ai_gen_id }} {
+      width: 100%;
+    }
+    .astrojap-modal-{{ ai_gen_id }} {
+      padding: 24px;
+      width: 95%;
+    }
+    .astrojap-modal-title-{{ ai_gen_id }} {
+      font-size: 22px;
+    }
+  }
+{% endstyle %}
+
+<astrojap-appointment-booking-{{ ai_gen_id }} class="astrojap-appointment-booking-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="astrojap-booking-card-{{ ai_gen_id }}">
+    {% if section.settings.section_title != blank %}
+      <h2 class="astrojap-booking-title-{{ ai_gen_id }}">{{ section.settings.section_title }}</h2>
+    {% endif %}
+
+    {% if section.settings.section_description != blank %}
+      <p class="astrojap-booking-description-{{ ai_gen_id }}">{{ section.settings.section_description }}</p>
+    {% endif %}
+
+    <div class="astrojap-service-buttons-{{ ai_gen_id }}">
+      <button class="astrojap-service-btn-{{ ai_gen_id }}" data-service="{{ section.settings.service_1_name }}">
+        {{ section.settings.service_1_name }}
+      </button>
+      <button class="astrojap-service-btn-{{ ai_gen_id }}" data-service="{{ section.settings.service_2_name }}">
+        {{ section.settings.service_2_name }}
+      </button>
+      <button class="astrojap-service-btn-{{ ai_gen_id }}" data-service="{{ section.settings.service_3_name }}">
+        {{ section.settings.service_3_name }}
+      </button>
+    </div>
+
+    <div class="astrojap-book-btn-wrapper-{{ ai_gen_id }}">
+      <button class="astrojap-book-btn-{{ ai_gen_id }}">
+        {{ section.settings.button_text }}
+      </button>
+    </div>
+  </div>
+
+  <div class="astrojap-modal-overlay-{{ ai_gen_id }}">
+    <div class="astrojap-modal-{{ ai_gen_id }}">
+      <button class="astrojap-modal-close-{{ ai_gen_id }}" aria-label="Close modal">×</button>
+
+      <h3 class="astrojap-modal-title-{{ ai_gen_id }}">{{ section.settings.modal_title }}</h3>
+
+      {% assign form_classes = 'astrojap-form-' | append: ai_gen_id %}
+      
+      {% comment %} NATIVE SHOPIFY CONTACT FORM LINKED TO ID 941953 {% endcomment %}
+      {% form 'contact', id: '941953', class: form_classes %}
+        
+        {% if form.posted_successfully? %}
+          <div class="astrojap-success-box-{{ ai_gen_id }}">
+            Booking request sent successfully! We will contact you soon.
+          </div>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+               document.querySelector('.astrojap-modal-overlay-{{ ai_gen_id }}').classList.add('active');
+            });
+          </script>
+        {% endif %}
+
+        <div class="astrojap-form-group-{{ ai_gen_id }}">
+          <label class="astrojap-form-label-{{ ai_gen_id }}" for="full-name-{{ ai_gen_id }}">
+            Full Name <span class="astrojap-required-{{ ai_gen_id }}">*</span>
+          </label>
+          <input type="text" id="full-name-{{ ai_gen_id }}" name="contact[Full_Name]" class="astrojap-form-input-{{ ai_gen_id }}" required>
+        </div>
+
+        <div class="astrojap-form-group-{{ ai_gen_id }}">
+          <label class="astrojap-form-label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
+            Phone Number <span class="astrojap-required-{{ ai_gen_id }}">*</span>
+          </label>
+          <input type="tel" id="phone-{{ ai_gen_id }}" name="contact[Phone]" class="astrojap-form-input-{{ ai_gen_id }}" required>
+        </div>
+
+        <div class="astrojap-form-group-{{ ai_gen_id }}">
+          <label class="astrojap-form-label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
+            Email <span class="astrojap-required-{{ ai_gen_id }}">*</span>
+          </label>
+          <input type="email" id="email-{{ ai_gen_id }}" name="contact[email]" class="astrojap-form-input-{{ ai_gen_id }}" required>
+        </div>
+
+        <div class="astrojap-form-group-{{ ai_gen_id }}">
+          <label class="astrojap-form-label-{{ ai_gen_id }}" for="service-{{ ai_gen_id }}">
+            Select Service <span class="astrojap-required-{{ ai_gen_id }}">*</span>
+          </label>
+          <select id="service-{{ ai_gen_id }}" name="contact[Preferred_Service]" class="astrojap-form-select-{{ ai_gen_id }}" required>
+            <option value="">Choose a service</option>
+            <option value="{{ section.settings.service_1_name }}">{{ section.settings.service_1_name }}</option>
+            <option value="{{ section.settings.service_2_name }}">{{ section.settings.service_2_name }}</option>
+            <option value="{{ section.settings.service_3_name }}">{{ section.settings.service_3_name }}</option>
+          </select>
+        </div>
+
+        <div class="astrojap-form-group-{{ ai_gen_id }}">
+          <label class="astrojap-form-label-{{ ai_gen_id }}" for="date-{{ ai_gen_id }}">
+            Preferred Date <span class="astrojap-required-{{ ai_gen_id }}">*</span>
+          </label>
+          <input type="text" id="date-{{ ai_gen_id }}" name="contact[Preferred_Date]" class="astrojap-form-input-{{ ai_gen_id }}" placeholder="YYYY-MM-DD" required>
+        </div>
+
+        <div class="astrojap-form-group-{{ ai_gen_id }}">
+          <label class="astrojap-form-label-{{ ai_gen_id }}" for="time-{{ ai_gen_id }}">
+            Preferred Time <span class="astrojap-required-{{ ai_gen_id }}">*</span>
+          </label>
+          <select id="time-{{ ai_gen_id }}" name="contact[Preferred_Time]" class="astrojap-form-select-{{ ai_gen_id }}" required>
+            <option value="">Choose a time</option>
+            <option value="09:00 AM">09:00 AM</option>
+            <option value="10:00 AM">10:00 AM</option>
+            <option value="11:00 AM">11:00 AM</option>
+            <option value="12:00 PM">12:00 PM</option>
+            <option value="01:00 PM">01:00 PM</option>
+            <option value="02:00 PM">02:00 PM</option>
+            <option value="03:00 PM">03:00 PM</option>
+            <option value="04:00 PM">04:00 PM</option>
+            <option value="05:00 PM">05:00 PM</option>
+            <option value="06:00 PM">06:00 PM</option>
+          </select>
+        </div>
+
+        <div class="astrojap-form-group-{{ ai_gen_id }}">
+          <label class="astrojap-form-label-{{ ai_gen_id }}" for="message-{{ ai_gen_id }}">
+            Message (Optional)
+          </label>
+          <textarea id="message-{{ ai_gen_id }}" name="contact[body]" class="astrojap-form-textarea-{{ ai_gen_id }}" placeholder="Any specific requirements or questions..."></textarea>
+        </div>
+
+        <button type="submit" class="astrojap-form-submit-{{ ai_gen_id }}">
+          {{ section.settings.submit_button_text }}
+        </button>
+      {% endform %}
+    </div>
+  </div>
+</astrojap-appointment-booking-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstrojapAppointmentBooking{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.serviceButtons = this.querySelectorAll('.astrojap-service-btn-{{ ai_gen_id }}');
+        this.bookButton = this.querySelector('.astrojap-book-btn-{{ ai_gen_id }}');
+        this.modalOverlay = this.querySelector('.astrojap-modal-overlay-{{ ai_gen_id }}');
+        this.modalClose = this.querySelector('.astrojap-modal-close-{{ ai_gen_id }}');
+        this.serviceSelect = this.querySelector('#service-{{ ai_gen_id }}');
+        this.form = this.querySelector('.astrojap-form-{{ ai_gen_id }}');
+        this.dateInput = this.querySelector('#date-{{ ai_gen_id }}');
+        this.selectedService = '';
+
+        this.setupEventListeners();
+        this.initializeDatePicker();
+      }
+
+      setupEventListeners() {
+        this.serviceButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            this.serviceButtons.forEach((btn) => btn.classList.remove('active'));
+            button.classList.add('active');
+            this.selectedService = button.getAttribute('data-service');
+          });
+        });
+
+        this.bookButton.addEventListener('click', () => {
+          this.openModal();
+        });
+
+        this.modalClose.addEventListener('click', () => {
+          this.closeModal();
+        });
+
+        this.modalOverlay.addEventListener('click', (e) => {
+          if (e.target === this.modalOverlay) {
+            this.closeModal();
+          }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modalOverlay.classList.contains('active')) {
+            this.closeModal();
+          }
+        });
+
+        if (this.form) {
+          this.form.addEventListener('submit', (e) => {
+            if (!this.validateForm()) {
+              e.preventDefault();
+            }
+          });
+        }
+      }
+
+      initializeDatePicker() {
+        this.dateInput.setAttribute('type', 'date');
+        const today = new Date().toISOString().split('T')[0];
+        this.dateInput.setAttribute('min', today);
+      }
+
+      openModal() {
+        this.modalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        if (this.selectedService) {
+          this.serviceSelect.value = this.selectedService;
+        }
+      }
+
+      closeModal() {
+        this.modalOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      validateForm() {
+        const requiredFields = this.form.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach((field) => {
+          if (!field.value.trim()) {
+            isValid = false;
+            field.style.borderColor = '#e74c3c';
+            // Also notify browser default validation if needed
+          } else {
+            field.style.borderColor = '';
+          }
+        });
+
+        return isValid;
+      }
+    }
+
+    customElements.define('astrojap-appointment-booking-{{ ai_gen_id }}', AstrojapAppointmentBooking{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Appointment booking",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section content"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section title",
+      "default": "Book an Appointment"
+    },
+    {
+      "type": "textarea",
+      "id": "section_description",
+      "label": "Description",
+      "default": "Connect with expert astrologers for personalized guidance."
+    },
+    {
+      "type": "header",
+      "content": "Services"
+    },
+    {
+      "type": "text",
+      "id": "service_1_name",
+      "label": "Service 1 name",
+      "default": "Chat Consultation"
+    },
+    {
+      "type": "text",
+      "id": "service_2_name",
+      "label": "Service 2 name",
+      "default": "Call Consultation"
+    },
+    {
+      "type": "text",
+      "id": "service_3_name",
+      "label": "Service 3 name",
+      "default": "Personal Consultation"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Book button text",
+      "default": "Book Appointment"
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "Submit button text",
+      "default": "Confirm Booking"
+    },
+    {
+      "type": "header",
+      "content": "Modal"
+    },
+    {
+      "type": "text",
+      "id": "modal_title",
+      "label": "Modal title",
+      "default": "Complete Your Booking"
+    },
+    {
+      "type": "header",
+      "content": "Card colors"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Service button colors"
+    },
+    {
+      "type": "color",
+      "id": "service_button_bg",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "service_button_text",
+      "label": "Text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "service_button_border",
+      "label": "Border",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "service_button_hover_bg",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "service_button_hover_text",
+      "label": "Hover text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "service_button_active_bg",
+      "label": "Active background",
+      "default": "#FFD700"
+    },
+    {
+      "type": "color",
+      "id": "service_button_active_text",
+      "label": "Active text",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Book button colors"
+    },
+    {
+      "type": "color",
+      "id": "book_button_bg",
+      "label": "Background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "book_button_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "book_button_hover_bg",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Modal colors"
+    },
+    {
+      "type": "color",
+      "id": "modal_background",
+      "label": "Modal background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "modal_text_color",
+      "label": "Modal text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Input background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border",
+      "default": "#e0e0e0"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Appointment booking"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,802 @@
+{% doc %}
+  @prompt
+    i want to create a buy to chat feature just like astrotalk a famous astrology webapp where we can pay a price to chat with astrologer.
+    
+    for this block  we are gonna create product grid of collection astrologer where we will gonna show the image, price, name, and chat button whih will be our buy buttton., not like this we want it to be in the 2 column format of each product which will be 1:2 columns of each astrologer where in the first column we will gonna show the image then in the next column we will gonna show the name of th astrologer, then below we will show the type, then tags, then in a row we will show price and chat now button, this is correct  now place in grid of  3x5, on the chat now button we will direct go to checkout page no need for the cart in between
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astrologer-list-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 0;
+  }
+
+  .ai-astrologer-list__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-astrologer-list__header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.heading_alignment }};
+    margin-bottom: {{ block.settings.heading_spacing }}px;
+  }
+
+  .ai-astrologer-list__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0;
+  }
+
+  .ai-astrologer-list__items-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.item_gap }}px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ai-astrologer-item-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    box-shadow: {{ block.settings.card_shadow_horizontal }}px {{ block.settings.card_shadow_vertical }}px {{ block.settings.card_shadow_blur }}px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity }});
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-astrologer-item-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: {{ block.settings.card_shadow_horizontal }}px {{ block.settings.card_shadow_vertical | plus: 4 }}px {{ block.settings.card_shadow_blur | plus: 5 }}px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity | plus: 0.1 }});
+  }
+
+  .ai-astrologer-item__inner-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0;
+  }
+
+  .ai-astrologer-item__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .ai-astrologer-item__image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-astrologer-item__image-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+  }
+
+  .ai-astrologer-item__image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-astrologer-item__content-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .ai-astrologer-item__info-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-astrologer-item__name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.name_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.name_color }};
+    margin: 0 0 {{ block.settings.name_spacing }}px 0;
+    line-height: 1.3;
+  }
+
+  .ai-astrologer-item__type-{{ ai_gen_id }} {
+    font-size: {{ block.settings.type_size }}px;
+    color: {{ block.settings.type_color }};
+    margin: 0 0 {{ block.settings.type_spacing }}px 0;
+    line-height: 1.4;
+  }
+
+  .ai-astrologer-item__tags-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 {{ block.settings.tags_spacing }}px 0;
+  }
+
+  .ai-astrologer-item__tag-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 4px 12px;
+    background-color: {{ block.settings.tag_background }};
+    color: {{ block.settings.tag_text_color }};
+    border-radius: {{ block.settings.tag_border_radius }}px;
+    font-size: {{ block.settings.tag_size }}px;
+    line-height: 1.4;
+  }
+
+  .ai-astrologer-item__footer-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: auto;
+  }
+
+  .ai-astrologer-item__price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    color: {{ block.settings.price_color }};
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .ai-astrologer-item__button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.button_padding }}px {{ block.settings.button_padding | times: 1.5 }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .ai-astrologer-item__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    transform: scale(1.02);
+  }
+
+  .ai-astrologer-item__button-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-astrologer-item__button-icon-{{ ai_gen_id }} {
+    margin-left: 6px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .ai-astrologer-list__empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-astrologer-list__items-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_tablet }}, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-astrologer-list__items-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+    }
+
+    .ai-astrologer-item__inner-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-astrologer-item__image-wrapper-{{ ai_gen_id }} {
+      padding-top: 75%;
+    }
+
+    .ai-astrologer-list__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-astrologer-item__name-{{ ai_gen_id }} {
+      font-size: {{ block.settings.name_size | times: 0.9 }}px;
+    }
+
+    .ai-astrologer-item__footer-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .ai-astrologer-item__button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<astrologer-list-{{ ai_gen_id }} class="ai-astrologer-list-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-astrologer-list__container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <div class="ai-astrologer-list__header-{{ ai_gen_id }}">
+        <h2 class="ai-astrologer-list__title-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      </div>
+    {% endif %}
+
+    {% if block.settings.collection != blank and block.settings.collection.products.size > 0 %}
+      <ul class="ai-astrologer-list__items-{{ ai_gen_id }}">
+        {% for product in block.settings.collection.products limit: block.settings.products_to_show %}
+          <li class="ai-astrologer-item-{{ ai_gen_id }}">
+            <div class="ai-astrologer-item__inner-{{ ai_gen_id }}">
+              <div class="ai-astrologer-item__image-wrapper-{{ ai_gen_id }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    class="ai-astrologer-item__image-{{ ai_gen_id }}"
+                    loading="lazy"
+                    width="600"
+                    height="600"
+                  >
+                {% else %}
+                  <div class="ai-astrologer-item__image-placeholder-{{ ai_gen_id }}">
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="ai-astrologer-item__content-{{ ai_gen_id }}">
+                <div class="ai-astrologer-item__info-{{ ai_gen_id }}">
+                  <h3 class="ai-astrologer-item__name-{{ ai_gen_id }}">{{ product.title }}</h3>
+                  
+                  {% if product.type != blank %}
+                    <div class="ai-astrologer-item__type-{{ ai_gen_id }}">{{ product.type }}</div>
+                  {% endif %}
+
+                  {% if product.tags.size > 0 %}
+                    <div class="ai-astrologer-item__tags-{{ ai_gen_id }}">
+                      {% for tag in product.tags limit: block.settings.max_tags %}
+                        <span class="ai-astrologer-item__tag-{{ ai_gen_id }}">{{ tag }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="ai-astrologer-item__footer-{{ ai_gen_id }}">
+                  <div class="ai-astrologer-item__price-{{ ai_gen_id }}">
+                    {{ product.price | money }}
+                  </div>
+
+                  <form action="/cart/add" method="post" class="ai-astrologer-form-{{ ai_gen_id }}">
+                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                    <input type="hidden" name="return_to" value="/checkout">
+                    <button
+                      type="submit"
+                      class="ai-astrologer-item__button-{{ ai_gen_id }}"
+                      {% unless product.available %}disabled{% endunless %}
+                    >
+                      {% if product.available %}
+                        {{ block.settings.button_text }}
+                        <svg class="ai-astrologer-item__button-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                      {% else %}
+                        {{ block.settings.sold_out_text }}
+                      {% endif %}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="ai-astrologer-list__empty-{{ ai_gen_id }}">
+        {% if block.settings.collection == blank %}
+          Please select a collection to display astrologers
+        {% else %}
+          No products found in this collection
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</astrologer-list-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstrologerList{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.forms = this.querySelectorAll('.ai-astrologer-form-{{ ai_gen_id }}');
+        this.setupFormHandlers();
+      }
+
+      setupFormHandlers() {
+        this.forms.forEach((form) => {
+          form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            
+            const formData = new FormData(form);
+            const button = form.querySelector('.ai-astrologer-item__button-{{ ai_gen_id }}');
+            const originalText = button.innerHTML;
+            
+            button.disabled = true;
+            button.textContent = 'Processing...';
+
+            fetch('/cart/add.js', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              window.location.href = '/checkout';
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              button.disabled = false;
+              button.innerHTML = originalText;
+              alert('Unable to proceed to checkout. Please try again.');
+            });
+          });
+        });
+      }
+    }
+
+    customElements.define('astrologer-list-{{ ai_gen_id }}', AstrologerList{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Astrologer chat grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Astrologer collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 50,
+      "step": 1,
+      "label": "Products to show",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Chat with our astrologers"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Heading spacing",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Columns on tablet",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Space between items",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_horizontal",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow horizontal",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_vertical",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow vertical",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_blur",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "label": "Shadow opacity",
+      "default": 0.1
+    },
+    {
+      "type": "header",
+      "content": "Astrologer name"
+    },
+    {
+      "type": "range",
+      "id": "name_size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Name size",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Name color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "name_spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Name spacing",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Type"
+    },
+    {
+      "type": "range",
+      "id": "type_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Type size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "type_color",
+      "label": "Type color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "type_spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Type spacing",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Tags"
+    },
+    {
+      "type": "range",
+      "id": "max_tags",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Maximum tags to show",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "tag_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Tag size",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "tag_background",
+      "label": "Tag background",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "tag_text_color",
+      "label": "Tag text color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "tag_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Tag border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "tags_spacing",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Tags spacing",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Price"
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Price size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#334fb4"
+    },
+    {
+      "type": "header",
+      "content": "Chat button"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Chat Now"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "sold_out_text",
+      "label": "Sold out text",
+      "default": "Unavailable"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#334fb4"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Button font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Button padding",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrologer chat grid"
+    }
+  ]
+}
+{% endschema %}
+

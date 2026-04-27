@@ -1,0 +1,63 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "blocks_MBRwDz": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_3fa7d50_wcijxx": {
+          "type": "ai_gen_block_3fa7d50",
+          "settings": {
+            "heading": "Wallet Recharge",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_weight": "700",
+            "subheading": "Add funds to continue your astrology sessions without interruption.",
+            "subheading_size": 18,
+            "subheading_color": "#121212",
+            "subheading_weight": "400",
+            "text_alignment": "center",
+            "spacing": 12,
+            "desktop_width_percent": 100,
+            "padding_top": 40,
+            "padding_bottom": 40,
+            "padding_horizontal": 20
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_3fa7d50_wcijxx"
+      ],
+      "name": "Kundli premium feature",
+      "settings": {}
+    },
+    "wallet_recharge_D8yPrR": {
+      "type": "wallet-recharge",
+      "name": "Wallet Recharge",
+      "settings": {
+        "master_variant_id": "1000"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "blocks_MBRwDz",
+    "wallet_recharge_D8yPrR"
+  ]
+}

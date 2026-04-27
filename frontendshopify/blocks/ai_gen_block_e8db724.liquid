@@ -1,0 +1,267 @@
+{% doc %}
+  @prompt
+    ✅ 1. HERO SECTION (About Intro)
+    
+    Prompt:
+    
+    Create a Shopify Online Store 2.0 hero section for the About Us page of an astrology brand called Astrojap.
+    
+    Content:
+    
+    Heading:
+    Guiding You Through the Power of Astrology
+    
+    Subheading:
+    At Astrojap, we combine ancient Vedic wisdom with modern technology to help you make better life decisions.
+    
+    Layout:
+    
+    Full width
+    
+    Height: 70vh
+    
+    Background: astrology theme (stars/zodiac)
+    
+    Text overlay center
+    
+    Editable:
+    
+    Heading
+    
+    Subheading
+    
+    Background image
+    
+    Overlay
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-astrojap-{{ ai_gen_id }} {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 70vh;
+    min-height: 400px;
+    overflow: hidden;
+  }
+
+  .ai-hero-astrojap-background-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .ai-hero-astrojap-background-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-hero-astrojap-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    position: relative;
+  }
+
+  .ai-hero-astrojap-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+  }
+
+  .ai-hero-astrojap-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity }});
+    z-index: 2;
+  }
+
+  .ai-hero-astrojap-content-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    text-align: center;
+    width: 90%;
+    max-width: 1000px;
+    padding: 20px;
+  }
+
+  .ai-hero-astrojap-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    margin: 0 0 20px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .ai-hero-astrojap-subheading-{{ ai_gen_id }} {
+    color: {{ block.settings.subheading_color }};
+    font-size: {{ block.settings.subheading_size }}px;
+    margin: 0;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-astrojap-{{ ai_gen_id }} {
+      height: 60vh;
+      min-height: 350px;
+    }
+
+    .ai-hero-astrojap-heading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.6);
+    }
+
+    .ai-hero-astrojap-subheading-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subheading_size }}px * 0.8);
+    }
+  }
+{% endstyle %}
+
+<astrojap-hero-{{ ai_gen_id }} class="ai-hero-astrojap-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-hero-astrojap-background-{{ ai_gen_id }}">
+    {% if block.settings.background_image %}
+      <img
+        src="{{ block.settings.background_image | image_url: width: 2000 }}"
+        alt="{{ block.settings.background_image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.background_image.width }}"
+        height="{{ block.settings.background_image.height }}"
+      >
+    {% else %}
+      <div class="ai-hero-astrojap-placeholder-{{ ai_gen_id }}">
+        {{ 'hero-apparel-1' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ai-hero-astrojap-overlay-{{ ai_gen_id }}"></div>
+
+  <div class="ai-hero-astrojap-content-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h1 class="ai-hero-astrojap-heading-{{ ai_gen_id }}">
+        {{ block.settings.heading }}
+      </h1>
+    {% endif %}
+
+    {% if block.settings.subheading != blank %}
+      <p class="ai-hero-astrojap-subheading-{{ ai_gen_id }}">
+        {{ block.settings.subheading }}
+      </p>
+    {% endif %}
+  </div>
+</astrojap-hero-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstrojapHero{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.style.display = 'block';
+      }
+    }
+
+    customElements.define('astrojap-hero-{{ ai_gen_id }}', AstrojapHero{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Astrojap hero",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Guiding You Through the Power of Astrology"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "At Astrojap, we combine ancient Vedic wisdom with modern technology to help you make better life decisions."
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "Heading style"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Subheading style"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#e0e0e0"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrojap hero"
+    }
+  ]
+}
+{% endschema %}

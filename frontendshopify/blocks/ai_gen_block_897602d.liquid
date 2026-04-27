@@ -1,0 +1,723 @@
+{% doc %}
+  @prompt
+    Hi 👋
+    
+    Welcome to *SP ResearchVia Pvt. Ltd.*
+    
+    Make informed decisions with research-backed stock market insights 📊
+    
+    What you get:
+    • Data-driven market analysis  
+    • Stock insights based on research  
+    • Trade reviews  
+    • Structured planning  
+    
+    📲 Start using our app:
+    https://play.google.com/store/apps/details?id=com.spresearchvia.ra  
+    
+    🌐 Learn more:
+    www.researchvia.in  
+    
+    👨‍💼 SEBI Registered Research Analyst  
+    
+    ⚠️ Market investments are subject to risks.
+    
+    How can we assist you further?
+    
+    make it mobile responsive , Create a customer reviews section in a clean grid layout.
+    
+    Layout:
+    - 2 columns on desktop
+    - Cards with rounded corners and light grey background
+    
+    Each review card should include:
+    - Star rating at the top (5 stars)
+    - Customer name with "Verified" badge
+    - Small date on top right
+    - Review title (bold)
+    - Review text below
+    
+    Design:
+    - Soft shadows
+    - Padding inside each card
+    - Clean spacing between cards
+    - Modern and minimal style
+    
+    Make it responsive for mobile (1 column).
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-reviews-section-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: {{ block.settings.section_padding }}px 20px;
+  }
+
+  .ai-reviews-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-reviews-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 12px 0;
+  }
+
+  .ai-reviews-subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin: 0;
+  }
+
+  .ai-reviews-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: {{ block.settings.card_gap }}px;
+  }
+
+  .ai-review-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_bg_color }};
+    border-radius: {{ block.settings.card_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    box-shadow: 0 {{ block.settings.shadow_vertical }}px {{ block.settings.shadow_blur }}px rgba(0, 0, 0, {{ block.settings.shadow_opacity }});
+  }
+
+  .ai-review-header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .ai-review-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    color: {{ block.settings.star_color }};
+    font-size: {{ block.settings.star_size }}px;
+  }
+
+  .ai-review-date-{{ ai_gen_id }} {
+    font-size: {{ block.settings.date_size }}px;
+    color: {{ block.settings.date_color }};
+    white-space: nowrap;
+  }
+
+  .ai-review-customer-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .ai-review-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.name_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.name_color }};
+  }
+
+  .ai-review-verified-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background-color: {{ block.settings.badge_bg_color }};
+    color: {{ block.settings.badge_text_color }};
+    border-radius: {{ block.settings.badge_radius }}px;
+    font-size: {{ block.settings.badge_size }}px;
+    font-weight: 600;
+  }
+
+  .ai-review-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.review_title_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.review_title_color }};
+    margin: 0 0 8px 0;
+  }
+
+  .ai-review-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.review_text_size }}px;
+    line-height: 1.6;
+    color: {{ block.settings.review_text_color }};
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-reviews-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    }
+  }
+{% endstyle %}
+
+<div class="ai-reviews-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.show_header %}
+    <div class="ai-reviews-header-{{ ai_gen_id }}">
+      {% if block.settings.section_title != blank %}
+        <h2 class="ai-reviews-title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+      {% endif %}
+      {% if block.settings.section_subtitle != blank %}
+        <p class="ai-reviews-subtitle-{{ ai_gen_id }}">{{ block.settings.section_subtitle }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="ai-reviews-grid-{{ ai_gen_id }}">
+    {% for i in (1..6) %}
+      {% liquid
+        assign name_key = 'review_' | append: i | append: '_name'
+        assign title_key = 'review_' | append: i | append: '_title'
+        assign text_key = 'review_' | append: i | append: '_text'
+        assign date_key = 'review_' | append: i | append: '_date'
+        assign verified_key = 'review_' | append: i | append: '_verified'
+
+        assign review_name = block.settings[name_key]
+        assign review_title = block.settings[title_key]
+        assign review_text = block.settings[text_key]
+        assign review_date = block.settings[date_key]
+        assign review_verified = block.settings[verified_key]
+      %}
+
+      {% if review_name != blank or review_title != blank or review_text != blank %}
+        <div class="ai-review-card-{{ ai_gen_id }}">
+          <div class="ai-review-header-{{ ai_gen_id }}">
+            <div class="ai-review-stars-{{ ai_gen_id }}">
+              {% for star in (1..5) %}
+                <span>★</span>
+              {% endfor %}
+            </div>
+            {% if review_date != blank %}
+              <div class="ai-review-date-{{ ai_gen_id }}">{{ review_date }}</div>
+            {% endif %}
+          </div>
+
+          <div class="ai-review-customer-{{ ai_gen_id }}">
+            {% if review_name != blank %}
+              <div class="ai-review-name-{{ ai_gen_id }}">{{ review_name }}</div>
+            {% endif %}
+            {% if review_verified %}
+              <div class="ai-review-verified-{{ ai_gen_id }}">
+                <span>✓</span>
+                <span>Verified</span>
+              </div>
+            {% endif %}
+          </div>
+
+          {% if review_title != blank %}
+            <h3 class="ai-review-title-{{ ai_gen_id }}">{{ review_title }}</h3>
+          {% endif %}
+
+          {% if review_text != blank %}
+            <p class="ai-review-text-{{ ai_gen_id }}">{{ review_text }}</p>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer reviews",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show header",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title",
+      "default": "Customer Reviews"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 20,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "text",
+      "id": "section_subtitle",
+      "label": "Subtitle",
+      "default": "See what our customers are saying"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Subtitle size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Header spacing",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Padding",
+      "min": 15,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "shadow_vertical",
+      "label": "Shadow vertical offset",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "label": "Shadow blur",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "default": 0.1
+    },
+    {
+      "type": "header",
+      "content": "Star rating"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#ffc107"
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "label": "Star size",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Customer info"
+    },
+    {
+      "type": "range",
+      "id": "name_size",
+      "label": "Name size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Name color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "date_size",
+      "label": "Date size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "date_color",
+      "label": "Date color",
+      "default": "#999999"
+    },
+    {
+      "type": "header",
+      "content": "Verified badge"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Background",
+      "default": "#e8f5e9"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Text",
+      "default": "#2e7d32"
+    },
+    {
+      "type": "range",
+      "id": "badge_size",
+      "label": "Text size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "badge_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Review content"
+    },
+    {
+      "type": "range",
+      "id": "review_title_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "color",
+      "id": "review_title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "review_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "review_text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Review 1"
+    },
+    {
+      "type": "text",
+      "id": "review_1_name",
+      "label": "Customer name",
+      "default": "Sarah Johnson"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_1_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_1_date",
+      "label": "Date",
+      "default": "2 days ago"
+    },
+    {
+      "type": "text",
+      "id": "review_1_title",
+      "label": "Review title",
+      "default": "Absolutely love it!"
+    },
+    {
+      "type": "textarea",
+      "id": "review_1_text",
+      "label": "Review text",
+      "default": "This product exceeded my expectations. The quality is outstanding and it arrived quickly. Highly recommend to anyone looking for a reliable solution."
+    },
+    {
+      "type": "header",
+      "content": "Review 2"
+    },
+    {
+      "type": "text",
+      "id": "review_2_name",
+      "label": "Customer name",
+      "default": "Michael Chen"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_2_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_2_date",
+      "label": "Date",
+      "default": "1 week ago"
+    },
+    {
+      "type": "text",
+      "id": "review_2_title",
+      "label": "Review title",
+      "default": "Great value for money"
+    },
+    {
+      "type": "textarea",
+      "id": "review_2_text",
+      "label": "Review text",
+      "default": "I've been using this for a month now and it's been fantastic. The customer service was also very helpful when I had questions."
+    },
+    {
+      "type": "header",
+      "content": "Review 3"
+    },
+    {
+      "type": "text",
+      "id": "review_3_name",
+      "label": "Customer name",
+      "default": "Emily Rodriguez"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_3_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_3_date",
+      "label": "Date",
+      "default": "2 weeks ago"
+    },
+    {
+      "type": "text",
+      "id": "review_3_title",
+      "label": "Review title",
+      "default": "Highly recommended"
+    },
+    {
+      "type": "textarea",
+      "id": "review_3_text",
+      "label": "Review text",
+      "default": "Perfect for what I needed. The design is sleek and modern, and it works exactly as described. Will definitely purchase again."
+    },
+    {
+      "type": "header",
+      "content": "Review 4"
+    },
+    {
+      "type": "text",
+      "id": "review_4_name",
+      "label": "Customer name",
+      "default": "David Thompson"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_4_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "review_4_date",
+      "label": "Date",
+      "default": "3 weeks ago"
+    },
+    {
+      "type": "text",
+      "id": "review_4_title",
+      "label": "Review title",
+      "default": "Excellent quality"
+    },
+    {
+      "type": "textarea",
+      "id": "review_4_text",
+      "label": "Review text",
+      "default": "The attention to detail is impressive. Everything from the packaging to the product itself shows quality craftsmanship."
+    },
+    {
+      "type": "header",
+      "content": "Review 5"
+    },
+    {
+      "type": "text",
+      "id": "review_5_name",
+      "label": "Customer name"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_5_verified",
+      "label": "Verified purchase",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "review_5_date",
+      "label": "Date"
+    },
+    {
+      "type": "text",
+      "id": "review_5_title",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_5_text",
+      "label": "Review text"
+    },
+    {
+      "type": "header",
+      "content": "Review 6"
+    },
+    {
+      "type": "text",
+      "id": "review_6_name",
+      "label": "Customer name"
+    },
+    {
+      "type": "checkbox",
+      "id": "review_6_verified",
+      "label": "Verified purchase",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "review_6_date",
+      "label": "Date"
+    },
+    {
+      "type": "text",
+      "id": "review_6_title",
+      "label": "Review title"
+    },
+    {
+      "type": "textarea",
+      "id": "review_6_text",
+      "label": "Review text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer reviews"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,150 @@
+{% assign ai_gen_id = section.id %}
+{% assign selected_collection = section.settings.collection %}
+
+<div class="product-grid-{{ ai_gen_id }}">
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h2>{{ section.settings.title }}</h2>
+
+      <div class="sort-wrapper">
+        <select id="sort-{{ ai_gen_id }}">
+          <option value="manual">Featured</option>
+          <option value="price-asc">Price Low to High</option>
+          <option value="price-desc">Price High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid" id="grid-{{ ai_gen_id }}">
+
+      {% if selected_collection != blank and selected_collection.products_count > 0 %}
+
+        {% for product in selected_collection.products limit: 12 %}
+        <div class="card"
+             data-price="{{ product.price }}"
+             data-index="{{ forloop.index }}">
+
+          <div class="image">
+            <img src="{{ product.featured_image | image_url: width: 600 }}">
+          </div>
+
+          <div class="content">
+            <h3>{{ product.title }}</h3>
+
+            <div class="price">
+              {{ product.price | money }}
+            </div>
+
+            <button 
+              class="add-btn"
+              data-id="{{ product.selected_or_first_available_variant.id }}">
+              {{ section.settings.button_text }}
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+
+      {% else %}
+        <p>No products found. Please select a collection.</p>
+      {% endif %}
+
+    </div>
+
+  </div>
+</div>
+
+<style>
+.product-grid-{{ ai_gen_id }} {
+  padding: 40px 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.sort-wrapper select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.card img {
+  width: 100%;
+}
+
+.add-btn {
+  width: 100%;
+  padding: 10px;
+  background: black;
+  color: white;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+@media(max-width:480px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+
+<script>
+
+</script>
+
+{% schema %}
+{
+  "name": "Product Grid Fix",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "ADD TO CART"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid Fix"
+    }
+  ]
+}
+{% endschema %}

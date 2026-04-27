@@ -1,0 +1,220 @@
+{% comment %}
+  Renders cart drawer
+{% endcomment %}
+
+{{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+
+
+
+<style>
+  .drawer {
+    visibility: hidden;
+  }
+
+  /* ASTROTALK DRAWER STYLES */
+  .at-drawer-inner {
+    width: 450px !important;
+    max-width: 90vw !important;
+    background: #fff !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+
+  .at-drawer-header {
+    display: flex;
+    flex-direction: column;
+    padding: 20px !important;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .at-drawer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .at-drawer-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #000;
+    margin: 0;
+  }
+
+  .at-drawer-timer {
+    background: #f1f1f1;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .at-drawer-items {
+    padding: 0 20px !important;
+  }
+
+  .at-drawer-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .at-d-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f9f9f9;
+    flex-shrink: 0;
+  }
+
+  .at-d-image img { width: 100%; height: 100%; object-fit: cover; }
+
+  .at-d-info { flex: 1; position: relative; }
+  .at-d-remove { position: absolute; top: 0; right: 0; }
+  .at-d-tags { display: flex; gap: 5px; margin-bottom: 5px; }
+  .at-d-tag { font-size: 9px; font-weight: 900; text-transform: uppercase; color: #e67e22; }
+  .at-d-title { font-size: 13px; font-weight: 700; color: #000; text-decoration: none; display: block; margin-bottom: 10px; line-height: 1.3; }
+
+  .at-d-controls { display: flex; justify-content: space-between; align-items: center; }
+  .at-d-qty { display: flex; align-items: center; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+  .at-d-qty-btn { background: #fff; border: none; padding: 4px 8px; cursor: pointer; font-size: 14px; }
+  .at-d-qty-input { width: 25px; text-align: center; border: none; font-size: 12px; font-weight: 700; }
+
+  .at-d-price { text-align: right; }
+  .at-d-now { font-size: 14px; font-weight: 800; color: #000; }
+
+  .at-drawer-footer {
+    padding: 20px !important;
+    background: #fff;
+    border-top: 1px solid #eee;
+    position: sticky;
+    bottom: 0;
+  }
+
+  .at-d-subtotal { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; font-weight: 700; }
+  .at-d-btn { width: 100%; background: #000; color: #fff; border: none; padding: 16px; border-radius: 8px; font-size: 14px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; cursor: pointer; }
+  .at-d-payment-icons { display: flex; gap: 5px; background: #fff; padding: 2px 5px; border-radius: 3px; }
+  .at-d-pay-icon { height: 10px; }
+
+  .at-d-cashback { font-size: 11px; font-weight: 600; color: #666; margin-top: 10px; text-align: left; }
+</style>
+
+<cart-drawer class="drawer{% if cart == empty %} is-empty{% endif %}">
+  <div id="CartDrawer" class="cart-drawer">
+    <div id="CartDrawer-Overlay" class="cart-drawer__overlay"></div>
+    <div
+      class="drawer__inner at-drawer-inner"
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ 'sections.cart.title' | t }}"
+      tabindex="-1"
+    >
+      {%- if cart == empty -%}
+        <div class="drawer__inner-empty" style="padding: 40px; text-align: center;">
+          <h2 class="at-drawer-title">Your cart is empty</h2>
+          <button class="drawer__close" type="button" onclick="this.closest('cart-drawer').close()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+          <a href="{{ routes.all_products_collection_url }}" class="at-d-btn" style="margin-top: 20px; justify-content: center;">CONTINUE SHOPPING</a>
+        </div>
+      {%- else -%}
+        <!-- HEADER -->
+        <div class="at-drawer-header">
+          <div class="at-drawer-top">
+            <h2 class="at-drawer-title">My Cart ({{ cart.item_count }})</h2>
+            <button class="drawer__close" type="button" onclick="this.closest('cart-drawer').close()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #999;">✕</button>
+          </div>
+          <div class="at-drawer-timer">
+            Items saved for : <span id="at-drawer-countdown">10m 00s</span>
+          </div>
+        </div>
+
+        <cart-drawer-items class="at-drawer-items">
+          <form action="{{ routes.cart_url }}" id="CartDrawer-Form" method="post">
+            <div id="CartDrawer-CartItems" class="js-contents">
+              {%- for item in cart.items -%}
+                <div class="at-drawer-item cart-item" id="CartDrawer-Item-{{ item.index | plus: 1 }}">
+                  <div class="at-d-image">
+                    <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.title }}" loading="lazy">
+                  </div>
+                  <div class="at-d-info">
+                    <cart-remove-button class="at-d-remove" data-index="{{ item.index | plus: 1 }}">
+                      <button type="button" style="background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px;">✕</button>
+                    </cart-remove-button>
+                    <div class="at-d-tags">
+                      <span class="at-d-tag">PREPAID ORDER</span>
+                    </div>
+                    <a href="{{ item.url }}" class="at-d-title">{{ item.product.title | escape }}</a>
+                    
+                    <div class="at-d-controls">
+                      <div class="at-d-qty">
+                        <button type="button" class="at-d-qty-btn" onclick="const input = this.parentNode.querySelector('input'); input.stepDown(); input.dispatchEvent(new Event('change', { bubbles: true }));">-</button>
+                        <input 
+                          class="at-d-qty-input" 
+                          type="number" 
+                          name="updates[]" 
+                          value="{{ item.quantity }}" 
+                          id="Drawer-quantity-{{ item.index | plus: 1 }}"
+                          data-index="{{ item.index | plus: 1 }}"
+                        >
+                        <button type="button" class="at-d-qty-btn" onclick="const input = this.parentNode.querySelector('input'); input.stepUp(); input.dispatchEvent(new Event('change', { bubbles: true }));">+</button>
+                      </div>
+                      <div class="at-d-price">
+                        <span class="at-d-now">₹{{ item.final_line_price | divided_by: 100 }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+            <p class="visually-hidden" id="CartDrawer-LineItemStatus" role="status" aria-hidden="true">{{ 'accessibility.loading' | t }}</p>
+          </form>
+        </cart-drawer-items>
+
+        <!-- FOOTER -->
+        <div class="at-drawer-footer js-contents">
+          <div class="at-d-subtotal">
+            <span>Subtotal</span>
+            <span>₹{{ cart.total_price | divided_by: 100 }}</span>
+          </div>
+          <button type="submit" form="CartDrawer-Form" name="checkout" class="at-d-btn">
+            <span>SELECT ADDRESS</span>
+            <div class="at-d-payment-icons">
+              <img class="at-d-pay-icon" src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg">
+              <img class="at-d-pay-icon" src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg">
+              <img class="at-d-pay-icon" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo.svg">
+            </div>
+          </button>
+          <div class="at-d-cashback">Flat ₹500 Cashback on all Prepaid Orders</div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</cart-drawer>
+
+<script>
+  // Drawer Countdown
+  (function() {
+    function startDrawerTimer(duration, display) {
+      var timer = duration, minutes, seconds;
+      setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        display.textContent = minutes + "m " + seconds + "s";
+        if (--timer < 0) timer = duration;
+      }, 1000);
+    }
+    const display = document.querySelector('#at-drawer-countdown');
+    if(display) startDrawerTimer(600, display);
+  })();
+</script>

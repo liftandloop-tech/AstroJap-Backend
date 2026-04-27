@@ -1,0 +1,452 @@
+ {% comment %} 
+  Section: Purchased Sessions
+  - Fetches sessions from Supabase by Shopify customer ID
+  - Redirects to /pages/chat?session_id=...&astro_uid=...&duration=...
+{% endcomment %}
+
+{% comment %} Test Code  {% endcomment %}
+{%- style -%}
+  .ps-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.section_bg }};
+    font-family: 'Outfit', sans-serif;
+  }
+  .ps-card-bg-{{ section.id }} { background: {{ section.settings.card_bg }}; }
+  .ps-btn-{{ section.id }} {
+    background: {{ section.settings.button_bg }};
+    color: {{ section.settings.button_text_color }};
+  }
+{%- endstyle -%}
+
+<section class="ps-section ps-section-{{ section.id }}" id="ps-section-root">
+  <div class="ps-container">
+
+    <div class="ps-header">
+      <h2 class="ps-title">{{ section.settings.title }}</h2>
+      <p class="ps-subtitle">{{ section.settings.subtitle }}</p>
+    </div>
+
+    {% comment %} Loading state {% endcomment %}
+    <div id="ps-loading" class="ps-loading-wrap">
+      <div class="ps-spinner"></div>
+      <p>Loading your sessions…</p>
+    </div>
+
+    {% comment %} Sessions grid (populated by JS) {% endcomment %}
+    <div class="ps-grid" id="ps-grid" style="display:none;">
+      {% if request.design_mode %}
+        {% for i in (1..3) %}
+          <div class="ps-card-outer">
+            <div class="ps-card ps-card-bg-{{ section.id }}">
+              <div class="ps-card-avatar" style="font-size:36px;opacity:0.3;">🌙</div>
+            </div>
+            <span class="ps-name">Preview Astrologer {{ i }}</span>
+            <span class="ps-meta">30 Min Session</span>
+            <span class="ps-status ps-status--available">Available</span>
+            <button class="ps-btn ps-btn-{{ section.id }}">{{ section.settings.button_label }}</button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% comment %} Empty state {% endcomment %}
+    <div id="ps-empty" class="ps-empty" style="display:none;">
+      <div class="ps-empty-icon">🔮</div>
+      <p>You have no active sessions yet.</p>
+      <a href="/collections/all" class="ps-browse-link">Browse Astrologers →</a>
+    </div>
+
+    {% comment %} Error state {% endcomment %}
+    <div id="ps-error" class="ps-error" style="display:none;">
+      <p>Could not load sessions. Please refresh and try again.</p>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function() {
+  const CUSTOMER_ID     = '{{ customer.id }}';
+  const SECTION_ID      = '{{ section.id }}';
+  const BTN_LABEL       = {{ section.settings.button_label | json }};
+  const CARD_BG         = {{ section.settings.card_bg | json }};
+  const BTN_BG          = {{ section.settings.button_bg | json }};
+  const BTN_COLOR       = {{ section.settings.button_text_color | json }};
+
+  const elRoot    = document.getElementById('ps-section-root');
+  const elLoading = document.getElementById('ps-loading');
+  const elGrid    = document.getElementById('ps-grid');
+  const elEmpty   = document.getElementById('ps-empty');
+  const elError   = document.getElementById('ps-error');
+
+  function hide(el) { el.style.display = 'none'; }
+  function show(el, display) { el.style.display = display || 'block'; }
+
+  function statusBadge(status) {
+    const map = {
+      available:  { label: 'Available',   cls: 'ps-status--available' },
+      in_session: { label: 'In Session',  cls: 'ps-status--active'    },
+      completed:  { label: 'Completed',   cls: 'ps-status--done'      },
+      expired:    { label: 'Expired',     cls: 'ps-status--expired'   },
+    };
+    const s = map[status] || { label: status, cls: '' };
+    return `<span class="ps-status ${s.cls}">${s.label}</span>`;
+  }
+
+  function buildCard(session) {
+    const astro = session.astrologers || {};
+    const img   = astro.profile_image || 'https://via.placeholder.com/150';
+    const name  = astro.name || 'Astrologer';
+    const uid   = astro.cometchat_uid || '';
+    const dur   = session.duration_minutes || 30;
+    const sid   = session.id;
+    const stat  = session.status || 'available';
+
+    const isJoinable  = ['available', 'in_session'].includes(stat);
+    const isCompleted = stat === 'completed';
+
+    const card = document.createElement('div');
+    card.className = 'ps-card-outer';
+
+    const reviewHtml = isCompleted ? `
+      <div class="ps-review-wrap" id="review-wrap-${sid}">
+        <div class="ps-stars" data-sid="${sid}">
+          ${[1,2,3,4,5].map(n =>
+            `<span class="ps-star" data-val="${n}" onclick="setRating('${sid}',${n})">★</span>`
+          ).join('')}
+        </div>
+        <input type="text" class="ps-review-input" id="review-comment-${sid}"
+               placeholder="Share your experience (optional)" maxlength="300">
+        <button class="ps-btn ps-review-btn"
+                style="background:${BTN_BG};color:${BTN_COLOR};margin-top:6px;"
+                onclick="submitRating('${sid}')">Submit Review</button>
+        <p class="ps-review-msg" id="review-msg-${sid}"></p>
+      </div>` : '';
+
+    card.innerHTML = `
+      <div class="ps-card" style="background:${CARD_BG};">
+        <img src="${img}" alt="${name}" class="ps-card-img" onerror="this.src='https://via.placeholder.com/150'">
+      </div>
+      <span class="ps-name">${name}</span>
+      <span class="ps-meta">${dur} Min Session</span>
+      ${statusBadge(stat)}
+      <button
+        class="ps-btn"
+        style="background:${BTN_BG};color:${BTN_COLOR};"
+        data-sid="${sid}" data-uid="${uid}" data-dur="${dur}"
+        ${!isJoinable ? 'disabled' : ''}
+      >
+        ${isJoinable ? BTN_LABEL : (isCompleted ? 'Completed' : 'Expired')}
+      </button>
+      ${reviewHtml}
+    `;
+
+    const btn = card.querySelector('.ps-btn');
+    if (isJoinable) {
+      btn.addEventListener('click', function() {
+        btn.textContent = 'Loading…';
+        btn.disabled = true;
+        const params = new URLSearchParams({ session_id: sid, astro_uid: uid, duration: dur });
+        window.location.href = '/pages/chat?' + params.toString();
+      });
+    }
+
+    // Check if already reviewed — hide the form if so
+    if (isCompleted) {
+      const API = window.AstroAPIBase || 'https://astro-jap-backend.vercel.app/api';
+      fetch(`${API}/reviews/session/${sid}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.review) {
+            const wrap = document.getElementById(`review-wrap-${sid}`);
+            if (wrap) {
+              wrap.innerHTML = `<p class="ps-review-msg" style="color:#22c55e;">
+                ⭐ ${'★'.repeat(data.review.rating)} — You reviewed this session.
+              </p>`;
+            }
+          }
+        }).catch(() => {});
+    }
+
+    return card;
+  }
+
+  // Star rating state
+  window._ratings = {};
+  window.setRating = function(sid, val) {
+    window._ratings[sid] = val;
+    const stars = document.querySelectorAll(`.ps-stars[data-sid="${sid}"] .ps-star`);
+    stars.forEach((s, i) => {
+      s.style.color = i < val ? '#f97316' : '#ddd';
+    });
+  };
+
+  window.submitRating = async function(sid) {
+    const rating  = window._ratings[sid];
+    const comment = document.getElementById(`review-comment-${sid}`)?.value || '';
+    const msgEl   = document.getElementById(`review-msg-${sid}`);
+    const btn     = document.querySelector(`.ps-review-btn`);
+
+    if (!rating) { if (msgEl) msgEl.textContent = 'Please select a star rating.'; return; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+
+    try {
+      const res  = await AstroAPI.submitReview(sid, CUSTOMER_ID, rating, comment);
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (msgEl) msgEl.textContent = data.error || 'Could not submit review.';
+        if (btn) { btn.disabled = false; btn.textContent = 'Submit Review'; }
+        return;
+      }
+
+      const wrap = document.getElementById(`review-wrap-${sid}`);
+      if (wrap) {
+        wrap.innerHTML = `<p class="ps-review-msg" style="color:#22c55e;">
+          ✅ Thank you! Your review has been submitted.
+        </p>`;
+      }
+    } catch (e) {
+      if (msgEl) msgEl.textContent = 'Network error. Please try again.';
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Review'; }
+    }
+  };
+
+  async function fetchSessions() {
+    // Use AstroAPI which talks to the backend (not raw Supabase)
+    const API = window.AstroAPIBase || 'https://astro-jap-backend.vercel.app/api';
+    const res = await fetch(`${API}/sessions/get-customer-sessions`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ customer_id: CUSTOMER_ID })
+    });
+    if (!res.ok) throw new Error('Failed to fetch sessions');
+    return res.json();
+  }
+
+  async function init() {
+    if (!CUSTOMER_ID && !window.Shopify?.designMode) {
+      hide(elRoot);
+      return;
+    }
+    if (!CUSTOMER_ID) {
+      hide(elLoading);
+      show(elEmpty);
+      return;
+    }
+
+    try {
+      const sessions = await fetchSessions();
+      hide(elLoading);
+
+      const list = Array.isArray(sessions) ? sessions : (sessions.sessions || sessions.data || []);
+
+      if (!list.length) {
+        show(elEmpty);
+        return;
+      }
+
+      elGrid.innerHTML = '';
+      list.forEach(s => elGrid.appendChild(buildCard(s)));
+      show(elGrid, 'flex');
+
+    } catch (err) {
+      console.error('[PurchasedSessions]', err);
+      hide(elLoading);
+      show(elError);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+<style>
+.ps-section { font-family: 'Outfit', sans-serif; }
+.ps-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; text-align: center; }
+.ps-header { margin-bottom: 48px; }
+.ps-title { font-size: 2.4rem; font-weight: 700; color: #1a1a1a; margin: 0 0 10px; }
+.ps-subtitle { font-size: 1.05rem; color: #888; margin: 0; }
+
+.ps-loading-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; color: #999; padding: 60px 0; }
+.ps-spinner { width: 36px; height: 36px; border: 3px solid #e0e0e0; border-top-color: #1a1a1a; border-radius: 50%; animation: ps-spin 0.8s linear infinite; }
+@keyframes ps-spin { to { transform: rotate(360deg); } }
+
+.ps-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; }
+
+.ps-card-outer { display: flex; flex-direction: column; align-items: center; width: 170px; gap: 10px; }
+.ps-card { width: 160px; height: 160px; border-radius: 28px; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.07); transition: transform 0.25s ease; }
+.ps-card:hover { transform: translateY(-4px); }
+.ps-card-img { width: 100%; height: 100%; object-fit: cover; }
+.ps-card-avatar { font-size: 36px; }
+
+.ps-name { font-size: 1.05rem; font-weight: 600; color: #1a1a1a; }
+.ps-meta { font-size: 0.85rem; color: #aaa; }
+
+.ps-status { font-size: 0.75rem; font-weight: 600; padding: 3px 12px; border-radius: 50px; letter-spacing: 0.03em; }
+.ps-status--available { background: #e6f9f0; color: #1a7a4a; }
+.ps-status--active    { background: #fff4e0; color: #b06000; }
+.ps-status--done      { background: #ebebeb; color: #666; }
+.ps-status--expired   { background: #fdecea; color: #a33; }
+
+.ps-btn { border: none; padding: 10px 0; border-radius: 50px; font-weight: 700; font-size: 0.9rem; width: 100%; cursor: pointer; transition: opacity 0.2s, transform 0.15s; }
+.ps-btn:hover:not(:disabled) { opacity: 0.85; transform: scale(1.02); }
+.ps-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.ps-empty { padding: 60px 0; color: #888; }
+.ps-empty-icon { font-size: 48px; margin-bottom: 16px; }
+.ps-empty p { font-size: 1rem; margin: 0 0 16px; }
+.ps-browse-link { display: inline-block; padding: 10px 28px; border-radius: 50px; background: #1a1a1a; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+.ps-browse-link:hover { opacity: 0.8; }
+
+.ps-error { padding: 40px 0; color: #c0392b; font-size: 0.95rem; }
+
+/* ── Review Form ── */
+.ps-review-wrap  { width: 100%; margin-top: 8px; text-align: center; }
+.ps-stars        { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+.ps-star         { font-size: 1.5rem; color: #ddd; cursor: pointer; transition: color 0.15s; }
+.ps-star:hover   { color: #f97316; }
+.ps-review-input {
+  width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0;
+  border-radius: 8px; font-size: 0.82rem; margin-bottom: 4px;
+  font-family: 'Outfit', sans-serif; box-sizing: border-box;
+}
+.ps-review-btn   { font-size: 0.82rem !important; padding: 8px 0 !important; }
+.ps-review-msg   { font-size: 0.8rem; margin: 6px 0 0; min-height: 18px; }
+
+@media (max-width: 600px) {
+  .ps-title { font-size: 1.8rem; }
+  .ps-card-outer { width: 140px; }
+  .ps-card { width: 130px; height: 130px; }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Purchased Sessions",
+  "settings": [
+    { "type": "text",  "id": "title",             "label": "Section Title",      "default": "My Purchased Sessions" },
+    { "type": "text",  "id": "subtitle",           "label": "Section Subtitle",   "default": "Your spiritual journey continues here." },
+    { "type": "color", "id": "section_bg",         "label": "Section Background", "default": "#ffffff" },
+    { "type": "color", "id": "card_bg",            "label": "Card Background",    "default": "#fcf8f1" },
+    { "type": "text",  "id": "button_label",       "label": "Button Text",        "default": "Start Session" },
+    { "type": "color", "id": "button_bg",          "label": "Button Background",  "default": "#1a1a1a" },
+    { "type": "color", "id": "button_text_color",  "label": "Button Text Color",  "default": "#ffffff" },
+    { "type": "range", "id": "padding_top",    "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top Padding",    "default": 60 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom Padding", "default": 60 }
+  ],
+  "presets": [{ "name": "Purchased Sessions" }]
+}
+{% endschema %} 
+
+{% comment %} <section id="purchased-sessions-section" style="padding: 40px 20px;">
+  <h2 style="text-align:center; font-size:28px; margin-bottom:20px;">
+    Your Purchased Sessions
+  </h2>
+
+  <div id="sessions-loading" style="text-align:center;">
+    🔄 Loading your sessions...
+  </div>
+
+  <div id="sessions-grid" style="
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap:20px;
+  "></div>
+
+  <div id="no-sessions" style="display:none; text-align:center;">
+    ❌ No sessions found
+  </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+  const grid = document.getElementById("sessions-grid");
+  const loading = document.getElementById("sessions-loading");
+  const noSessions = document.getElementById("no-sessions");
+
+  const customerId = {{ customer.id | json }};
+
+  console.log("Customer ID:", customerId);
+
+  if (!customerId) {
+    loading.innerHTML = "⚠️ Please login to see your sessions";
+    return;
+  }
+
+  try {
+    const response = await window.AstroAPI.getActiveSession(customerId);
+    console.log("API RESPONSE:", response);
+
+    loading.style.display = "none";
+
+    // normalize response
+    let sessions = [];
+    if (Array.isArray(response)) {
+      sessions = response;
+    } else if (response.data) {
+      sessions = response.data;
+    } else if (response.session) {
+      sessions = [response.session];
+    }
+
+    if (!sessions.length) {
+      noSessions.style.display = "block";
+      return;
+    }
+
+    sessions.forEach(session => {
+      const astro = session.astrologers || session.astrologer || {};
+
+      const card = document.createElement("div");
+      card.style = `
+        border:1px solid #ddd;
+        padding:20px;
+        border-radius:12px;
+        background:#fff;
+        text-align:center;
+      `;
+
+      card.innerHTML = `
+        <img 
+          src="${astro.profile_image || 'https://via.placeholder.com/80'}" 
+          width="80" height="80"
+          style="border-radius:50%; margin-bottom:10px;"
+        />
+
+        <h3>${astro.name || "Astrologer"}</h3>
+
+        <p>${session.duration_minutes || 20} mins session</p>
+
+        <button 
+          style="
+            margin-top:10px;
+            padding:10px 15px;
+            border:none;
+            background:#1E3A8A;
+            color:#fff;
+            border-radius:8px;
+            cursor:pointer;
+          "
+          onclick="startChat('${session.id}', '${astro.cometchat_uid || ''}', ${session.duration_minutes || 20})"
+        >
+          Start Chat
+        </button>
+      `;
+
+      grid.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("Error loading sessions:", err);
+    loading.innerHTML = "❌ Failed to load sessions";
+  }
+});
+
+// Redirect to chat page
+function startChat(sessionId, astroUid, duration) {
+  const url = `/pages/chat?session_id=${sessionId}&astro_uid=${astroUid}&duration=${duration}`;
+  window.location.href = url;
+}
+</script> {% endcomment %}

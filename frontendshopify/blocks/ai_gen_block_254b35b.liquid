@@ -1,0 +1,988 @@
+{% doc %}
+  @prompt
+    🔥 Section Requirements
+    
+    Create a full screen slider (100vh height)
+    
+    Slider should take entire viewport height (desktop + mobile)
+    
+    Width: 100% full width
+    
+    Total 5 slides
+    
+    Each slide must include:
+    
+    Full background image (cover, center)
+    
+    Dark gradient overlay for readability
+    
+    Heading (large, bold)
+    
+    Subheading (smaller text below)
+    
+    CTA button
+    
+    🎯 Content Alignment
+    
+    Align content to right side (like premium hero banners)
+    
+    Vertical center alignment
+    
+    Add proper spacing (padding 80px–120px)
+    
+    🎨 Design Style
+    
+    Premium astrology / luxury feel
+    
+    Smooth transitions (fade or slide)
+    
+    Elegant typography
+    
+    Button style:
+    
+    Rounded
+    
+    Background: #7a1e12 (maroon)
+    
+    Text: white
+    
+    Slight hover effect
+    
+    🎬 Slider Features
+    
+    Autoplay enabled
+    
+    Navigation arrows (left/right)
+    
+    Dots indicator at bottom
+    
+    Pause on hover
+    
+    Smooth animation (0.5–1s transition)
+    
+    📱 Mobile Optimization
+    
+    Maintain full screen height (100vh)
+    
+    Center align text on mobile
+    
+    Responsive font scaling
+    
+    Stack content properly
+    
+    🧩 Slide Content (Astrojap Data)
+    Slide 1
+    
+    Heading:
+    Find Your Power Stone
+    
+    Subheading:
+    Personalised bracelets made for your Rashi
+    
+    Button Text:
+    Explore Rashi Stones
+    
+    Button Link:
+    /collections/rashi-stones
+    
+    Slide 2
+    
+    Heading:
+    Get Your Free Kundli
+    
+    Subheading:
+    Accurate Janam Kundli with detailed predictions
+    
+    Button Text:
+    Generate Kundli
+    
+    Button Link:
+    / pages / free-kundli
+    
+    Slide 3
+    
+    Heading:
+    Talk to Expert Astrologers
+    
+    Subheading:
+    Get personalised guidance for career, love & life
+    
+    Button Text:
+    Talk to Astrologer
+    
+    Button Link:
+    / pages / talk-to-astrologer
+    
+    Slide 4
+    
+    Heading:
+    Check Love Compatibility
+    
+    Subheading:
+    Find your perfect match with our love calculator
+    
+    Button Text:
+    Calculate Love %
+    
+    Button Link:
+    / pages / love-calculator
+    
+    Slide 5
+    
+    Heading:
+    Unlock Your Future
+    
+    Subheading:
+    Daily horoscope and accurate astrology predictions
+    
+    Button Text:
+    View Horoscope
+    
+    Button Link:
+    / pages / horoscope
+    
+    ⚙️ Shopify Technical Requirements
+    
+    Use Liquid + section schema
+    
+    Make each slide dynamic & editable
+    
+    Add settings for:
+    
+    Background image (per slide)
+    
+    Heading
+    
+    Subheading
+    
+    Button text & link
+    
+    Use CSS:
+    height: 100vh
+    object-fit: cover
+    
+    🚀 Goal
+    
+    Create a premium full-screen astrology hero slider similar to high-end websites, optimized for conversion + visual impact.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astro-slider-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: block;
+  }
+
+  .ai-astro-slider__slides-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-astro-slider__slide-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity {{ block.settings.transition_duration }}s ease-in-out;
+  }
+
+  .ai-astro-slider__slide-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+  }
+
+  .ai-astro-slider__slide-bg-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-astro-slider__slide-bg-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .ai-astro-slider__slide-bg-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-astro-slider__slide-bg-placeholder-{{ ai_gen_id }} svg {
+    width: 200px;
+    height: 200px;
+    opacity: 0.3;
+  }
+
+  .ai-astro-slider__overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, {{ block.settings.overlay_opacity }}) 0%,
+      rgba(0, 0, 0, {{ block.settings.overlay_opacity | times: 0.7 }}) 50%,
+      rgba(0, 0, 0, {{ block.settings.overlay_opacity | times: 0.3 }}) 100%
+    );
+    z-index: 1;
+  }
+
+  .ai-astro-slider__content-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 {{ block.settings.content_padding_desktop }}px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .ai-astro-slider__content-inner-{{ ai_gen_id }} {
+    max-width: 600px;
+    text-align: right;
+  }
+
+  .ai-astro-slider__heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size_desktop }}px;
+    font-weight: 700;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 20px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  .ai-astro-slider__subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_size_desktop }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 30px;
+    line-height: 1.5;
+    opacity: 0.9;
+  }
+
+  .ai-astro-slider__button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 16px 40px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-astro-slider__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(122, 30, 18, 0.3);
+  }
+
+  .ai-astro-slider__nav-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-astro-slider__nav-{{ ai_gen_id }}:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .ai-astro-slider__nav-{{ ai_gen_id }} svg {
+    width: 24px;
+    height: 24px;
+    stroke: {{ block.settings.text_color }};
+  }
+
+  .ai-astro-slider__nav--prev-{{ ai_gen_id }} {
+    left: 30px;
+  }
+
+  .ai-astro-slider__nav--next-{{ ai_gen_id }} {
+    right: 30px;
+  }
+
+  .ai-astro-slider__dots-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    gap: 12px;
+  }
+
+  .ai-astro-slider__dot-{{ ai_gen_id }} {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-astro-slider__dot-{{ ai_gen_id }}.active {
+    background: {{ block.settings.button_bg_color }};
+    border-color: {{ block.settings.button_bg_color }};
+    transform: scale(1.2);
+  }
+
+  .ai-astro-slider__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    text-align: center;
+    z-index: 10;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-astro-slider__content-{{ ai_gen_id }} {
+      justify-content: center;
+      padding: 0 {{ block.settings.content_padding_mobile }}px;
+    }
+
+    .ai-astro-slider__content-inner-{{ ai_gen_id }} {
+      text-align: center;
+      max-width: 100%;
+    }
+
+    .ai-astro-slider__heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size_mobile }}px;
+      margin-bottom: 15px;
+    }
+
+    .ai-astro-slider__subheading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subheading_size_mobile }}px;
+      margin-bottom: 25px;
+    }
+
+    .ai-astro-slider__button-{{ ai_gen_id }} {
+      padding: 14px 32px;
+      font-size: {{ block.settings.button_font_size | times: 0.9 }}px;
+    }
+
+    .ai-astro-slider__nav-{{ ai_gen_id }} {
+      width: 40px;
+      height: 40px;
+    }
+
+    .ai-astro-slider__nav--prev-{{ ai_gen_id }} {
+      left: 15px;
+    }
+
+    .ai-astro-slider__nav--next-{{ ai_gen_id }} {
+      right: 15px;
+    }
+
+    .ai-astro-slider__dots-{{ ai_gen_id }} {
+      bottom: 30px;
+    }
+  }
+{% endstyle %}
+
+<astro-slider-{{ ai_gen_id }}
+  class="ai-astro-slider-{{ ai_gen_id }}"
+  data-autoplay="{{ block.settings.autoplay }}"
+  data-autoplay-speed="{{ block.settings.autoplay_speed }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-astro-slider__slides-{{ ai_gen_id }}">
+    {% for i in (1..5) %}
+      {% liquid
+        assign slide_enabled_key = 'slide_' | append: i | append: '_enabled'
+        assign slide_image_key = 'slide_' | append: i | append: '_image'
+        assign slide_heading_key = 'slide_' | append: i | append: '_heading'
+        assign slide_subheading_key = 'slide_' | append: i | append: '_subheading'
+        assign slide_button_text_key = 'slide_' | append: i | append: '_button_text'
+        assign slide_button_link_key = 'slide_' | append: i | append: '_button_link'
+
+        assign slide_enabled = block.settings[slide_enabled_key]
+        assign slide_image = block.settings[slide_image_key]
+        assign slide_heading = block.settings[slide_heading_key]
+        assign slide_subheading = block.settings[slide_subheading_key]
+        assign slide_button_text = block.settings[slide_button_text_key]
+        assign slide_button_link = block.settings[slide_button_link_key]
+      %}
+
+      {% if slide_enabled %}
+        <div
+          class="ai-astro-slider__slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+          data-slide-index="{{ forloop.index0 }}"
+        >
+          <div class="ai-astro-slider__slide-bg-{{ ai_gen_id }}">
+            {% if slide_image %}
+              <img
+                src="{{ slide_image | image_url: width: 2000 }}"
+                alt="{{ slide_heading | escape }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                width="{{ slide_image.width }}"
+                height="{{ slide_image.height }}"
+              >
+            {% else %}
+              <div class="ai-astro-slider__slide-bg-placeholder-{{ ai_gen_id }}">
+                {{ 'hero-apparel-1' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="ai-astro-slider__overlay-{{ ai_gen_id }}"></div>
+
+          <div class="ai-astro-slider__content-{{ ai_gen_id }}">
+            <div class="ai-astro-slider__content-inner-{{ ai_gen_id }}">
+              {% if slide_heading != blank %}
+                <h2 class="ai-astro-slider__heading-{{ ai_gen_id }}">{{ slide_heading }}</h2>
+              {% endif %}
+
+              {% if slide_subheading != blank %}
+                <p class="ai-astro-slider__subheading-{{ ai_gen_id }}">{{ slide_subheading }}</p>
+              {% endif %}
+
+              {% if slide_button_text != blank %}
+                <a
+                  href="{{ slide_button_link }}"
+                  class="ai-astro-slider__button-{{ ai_gen_id }}"
+                >
+                  {{ slide_button_text }}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <button
+    class="ai-astro-slider__nav-{{ ai_gen_id }} ai-astro-slider__nav--prev-{{ ai_gen_id }}"
+    aria-label="Previous slide"
+    data-nav="prev"
+  >
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18L9 12L15 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <button
+    class="ai-astro-slider__nav-{{ ai_gen_id }} ai-astro-slider__nav--next-{{ ai_gen_id }}"
+    aria-label="Next slide"
+    data-nav="next"
+  >
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 18L15 12L9 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="ai-astro-slider__dots-{{ ai_gen_id }}">
+    {% for i in (1..5) %}
+      {% liquid
+        assign slide_enabled_key = 'slide_' | append: i | append: '_enabled'
+        assign slide_enabled = block.settings[slide_enabled_key]
+      %}
+      {% if slide_enabled %}
+        <button
+          class="ai-astro-slider__dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+          aria-label="Go to slide {{ forloop.index }}"
+          data-dot-index="{{ forloop.index0 }}"
+        ></button>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% unless block.settings.slide_1_image or block.settings.slide_2_image or block.settings.slide_3_image or block.settings.slide_4_image or block.settings.slide_5_image %}
+    <div class="ai-astro-slider__empty-state-{{ ai_gen_id }}">
+      Add images to your slides to get started
+    </div>
+  {% endunless %}
+</astro-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstroSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.autoplayTimer = null;
+        this.isPaused = false;
+      }
+
+      connectedCallback() {
+        this.slides = this.querySelectorAll('.ai-astro-slider__slide-{{ ai_gen_id }}');
+        this.dots = this.querySelectorAll('.ai-astro-slider__dot-{{ ai_gen_id }}');
+        this.prevBtn = this.querySelector('[data-nav="prev"]');
+        this.nextBtn = this.querySelector('[data-nav="next"]');
+        this.autoplay = this.dataset.autoplay === 'true';
+        this.autoplaySpeed = parseInt(this.dataset.autoplaySpeed) * 1000;
+
+        if (this.slides.length === 0) return;
+
+        this.setupEventListeners();
+        
+        if (this.autoplay) {
+          this.startAutoplay();
+        }
+      }
+
+      setupEventListeners() {
+        this.prevBtn.addEventListener('click', () => this.goToPrevSlide());
+        this.nextBtn.addEventListener('click', () => this.goToNextSlide());
+
+        this.dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => this.goToSlide(index));
+        });
+
+        this.addEventListener('mouseenter', () => {
+          this.isPaused = true;
+          this.stopAutoplay();
+        });
+
+        this.addEventListener('mouseleave', () => {
+          this.isPaused = false;
+          if (this.autoplay) {
+            this.startAutoplay();
+          }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') this.goToPrevSlide();
+          if (e.key === 'ArrowRight') this.goToNextSlide();
+        });
+      }
+
+      goToSlide(index) {
+        this.slides[this.currentSlide].classList.remove('active');
+        this.dots[this.currentSlide].classList.remove('active');
+
+        this.currentSlide = index;
+
+        this.slides[this.currentSlide].classList.add('active');
+        this.dots[this.currentSlide].classList.add('active');
+
+        if (this.autoplay && !this.isPaused) {
+          this.stopAutoplay();
+          this.startAutoplay();
+        }
+      }
+
+      goToNextSlide() {
+        const nextIndex = (this.currentSlide + 1) % this.slides.length;
+        this.goToSlide(nextIndex);
+      }
+
+      goToPrevSlide() {
+        const prevIndex = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
+        this.goToSlide(prevIndex);
+      }
+
+      startAutoplay() {
+        this.autoplayTimer = setInterval(() => {
+          this.goToNextSlide();
+        }, this.autoplaySpeed);
+      }
+
+      stopAutoplay() {
+        if (this.autoplayTimer) {
+          clearInterval(this.autoplayTimer);
+          this.autoplayTimer = null;
+        }
+      }
+
+      disconnectedCallback() {
+        this.stopAutoplay();
+      }
+    }
+
+    customElements.define('astro-slider-{{ ai_gen_id }}', AstroSlider{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Astrology hero slider",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Slider settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Autoplay speed",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "transition_duration",
+      "min": 0.5,
+      "max": 2,
+      "step": 0.5,
+      "unit": "s",
+      "label": "Transition duration",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "label": "Overlay opacity",
+      "default": 0.6
+    },
+    {
+      "type": "header",
+      "content": "Content style"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 30,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size (desktop)",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 20,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size (mobile)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "min": 14,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Subheading size (desktop)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "min": 12,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Subheading size (mobile)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "content_padding_desktop",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Content padding (desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "content_padding_mobile",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Content padding (mobile)",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background color",
+      "default": "#7a1e12"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#5a1509"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Slide 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_1_enabled",
+      "label": "Enable slide 1",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_1_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "slide_1_heading",
+      "label": "Heading",
+      "default": "Find Your Power Stone"
+    },
+    {
+      "type": "text",
+      "id": "slide_1_subheading",
+      "label": "Subheading",
+      "default": "Personalised bracelets made for your Rashi"
+    },
+    {
+      "type": "text",
+      "id": "slide_1_button_text",
+      "label": "Button text",
+      "default": "Explore Rashi Stones"
+    },
+    {
+      "type": "url",
+      "id": "slide_1_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_2_enabled",
+      "label": "Enable slide 2",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_2_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "slide_2_heading",
+      "label": "Heading",
+      "default": "Get Your Free Kundli"
+    },
+    {
+      "type": "text",
+      "id": "slide_2_subheading",
+      "label": "Subheading",
+      "default": "Accurate Janam Kundli with detailed predictions"
+    },
+    {
+      "type": "text",
+      "id": "slide_2_button_text",
+      "label": "Button text",
+      "default": "Generate Kundli"
+    },
+    {
+      "type": "url",
+      "id": "slide_2_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_3_enabled",
+      "label": "Enable slide 3",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_3_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "slide_3_heading",
+      "label": "Heading",
+      "default": "Talk to Expert Astrologers"
+    },
+    {
+      "type": "text",
+      "id": "slide_3_subheading",
+      "label": "Subheading",
+      "default": "Get personalised guidance for career, love & life"
+    },
+    {
+      "type": "text",
+      "id": "slide_3_button_text",
+      "label": "Button text",
+      "default": "Talk to Astrologer"
+    },
+    {
+      "type": "url",
+      "id": "slide_3_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_4_enabled",
+      "label": "Enable slide 4",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_4_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "slide_4_heading",
+      "label": "Heading",
+      "default": "Check Love Compatibility"
+    },
+    {
+      "type": "text",
+      "id": "slide_4_subheading",
+      "label": "Subheading",
+      "default": "Find your perfect match with our love calculator"
+    },
+    {
+      "type": "text",
+      "id": "slide_4_button_text",
+      "label": "Button text",
+      "default": "Calculate Love %"
+    },
+    {
+      "type": "url",
+      "id": "slide_4_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Slide 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "slide_5_enabled",
+      "label": "Enable slide 5",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "slide_5_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "slide_5_heading",
+      "label": "Heading",
+      "default": "Unlock Your Future"
+    },
+    {
+      "type": "text",
+      "id": "slide_5_subheading",
+      "label": "Subheading",
+      "default": "Daily horoscope and accurate astrology predictions"
+    },
+    {
+      "type": "text",
+      "id": "slide_5_button_text",
+      "label": "Button text",
+      "default": "View Horoscope"
+    },
+    {
+      "type": "url",
+      "id": "slide_5_button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrology hero slider"
+    }
+  ]
+}
+{% endschema %}

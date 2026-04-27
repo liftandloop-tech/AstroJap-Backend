@@ -1,0 +1,482 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "1773143638e9fb3b81": {
+      "type": "_blocks",
+      "disabled": true,
+      "settings": {}
+    },
+    "1773142536007bfbaa": {
+      "type": "_blocks",
+      "disabled": true,
+      "settings": {}
+    },
+    "1773142802fc9e8f47": {
+      "type": "_blocks",
+      "disabled": true,
+      "settings": {}
+    },
+    "17731441166fe9fa34": {
+      "type": "_blocks",
+      "disabled": true,
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "177331704623e604ee": {
+      "type": "_blocks",
+      "disabled": true,
+      "settings": {}
+    },
+    "177383293304ee01e5": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_e8db724_nkTdV4": {
+          "type": "ai_gen_block_e8db724",
+          "settings": {
+            "heading": "Guiding You Through the Power of Astrology",
+            "subheading": "At Astrojap, we combine ancient Vedic wisdom with modern technology to help you make better life decisions.",
+            "overlay_opacity": 0.5,
+            "heading_size": 56,
+            "heading_color": "#ffffff",
+            "subheading_size": 20,
+            "subheading_color": "#e0e0e0"
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_1d0fd59_jRgm3r": {
+          "type": "ai_gen_block_1d0fd59",
+          "settings": {
+            "image_border_radius": 8,
+            "heading": "Our Story",
+            "content": "<p>Astrojap was created with the vision of making astrology simple, accessible, and reliable for everyone. We aim to bring authentic Vedic astrology insights into the digital world.</p>",
+            "desktop_width_percent": 100,
+            "section_padding": 40,
+            "column_gap": 60,
+            "content_padding": 20,
+            "mobile_gap": 32,
+            "mobile_content_padding": 16,
+            "heading_size": 36,
+            "heading_spacing": 20,
+            "text_size": 16,
+            "heading_color": "#121212",
+            "text_color": "#121212"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_e8db724_nkTdV4",
+        "ai_gen_block_1d0fd59_jRgm3r"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "17738342897c0eec25": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_142bf5a_NTTAPp": {
+          "type": "ai_gen_block_142bf5a",
+          "settings": {
+            "card_1_heading": "Our Mission",
+            "card_1_text": "To empower individuals with accurate astrology insights for better decision-making.",
+            "card_1_icon": "target",
+            "card_2_heading": "Our Vision",
+            "card_2_text": "To become a trusted global platform for astrology and spiritual guidance.",
+            "card_2_icon": "compass",
+            "desktop_width_percent": 100,
+            "max_width": 1200,
+            "card_gap": 30,
+            "section_padding": 40,
+            "text_alignment": "center",
+            "card_background": "#ffffff",
+            "card_border_radius": 16,
+            "card_padding": 40,
+            "shadow_vertical": 4,
+            "shadow_blur": 15,
+            "shadow_opacity": 0.1,
+            "icon_size": 70,
+            "icon_background": "#f3f3f3",
+            "icon_color": "#121212",
+            "icon_margin_bottom": 20,
+            "heading_size": 24,
+            "heading_color": "#121212",
+            "heading_margin_bottom": 15,
+            "text_size": 16,
+            "text_color": "#666666"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_142bf5a_NTTAPp"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "1773834417c1bde375": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_062c58a_nJLjBa": {
+          "type": "ai_gen_block_062c58a",
+          "settings": {
+            "heading": "Why Choose Astrojap",
+            "heading_alignment": "center",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 40,
+            "background_color": "#ffffff",
+            "section_padding": 60,
+            "desktop_width_percent": 100,
+            "columns_desktop": 4,
+            "columns_tablet": 2,
+            "columns_mobile": "1",
+            "grid_gap": 30,
+            "card_background": "#f3f3f3",
+            "card_padding": 30,
+            "card_border_radius": 8,
+            "card_border_thickness": 0,
+            "card_border_color": "#e0e0e0",
+            "card_alignment": "center",
+            "icon_size": 40,
+            "icon_spacing": 15,
+            "feature_title_size": 18,
+            "feature_title_color": "#121212",
+            "title_spacing": 10,
+            "feature_text_size": 14,
+            "feature_text_color": "#666666",
+            "feature_1_enabled": true,
+            "feature_1_icon": "✨",
+            "feature_1_title": "Accurate Vedic astrology calculations",
+            "feature_1_text": "Get precise astrological insights based on authentic Vedic principles",
+            "feature_2_enabled": true,
+            "feature_2_icon": "🎯",
+            "feature_2_title": "Easy-to-use kundli tools",
+            "feature_2_text": "Simple and intuitive tools to create and analyze your birth chart",
+            "feature_3_enabled": true,
+            "feature_3_icon": "👥",
+            "feature_3_title": "Trusted by thousands of users",
+            "feature_3_text": "Join our growing community of satisfied users worldwide",
+            "feature_4_enabled": true,
+            "feature_4_icon": "💡",
+            "feature_4_title": "Personalized insights",
+            "feature_4_text": "Receive customized astrological guidance tailored to your unique chart"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_062c58a_nJLjBa"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "1773834530a6724337": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_3b5422e_BXmiGC": {
+          "type": "ai_gen_block_3b5422e",
+          "settings": {
+            "image_width": 45,
+            "image_border_radius": 0,
+            "heading": "Meet the Vision Behind Astrojap",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 20,
+            "text": "<p>Astrojap is built by passionate individuals who believe in combining traditional astrology with modern innovation.</p>",
+            "text_size": 16,
+            "text_color": "#121212",
+            "text_spacing": 24,
+            "name": "",
+            "name_size": 20,
+            "name_color": "#121212",
+            "name_spacing": 8,
+            "description": "",
+            "description_size": 14,
+            "description_color": "#666666",
+            "desktop_width_percent": 100,
+            "content_gap": 60,
+            "mobile_gap": 30,
+            "section_padding": 40,
+            "background_color": "#ffffff"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_3b5422e_BXmiGC"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "1773834602c630cc20": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_25c85b5_c9cEz6": {
+          "type": "ai_gen_block_25c85b5",
+          "settings": {
+            "heading": "Start Your Astrology Journey Today",
+            "subheading": "Explore your kundli, horoscope, and personalized insights with Astrojap.",
+            "button_text": "Get Started",
+            "button_link": "",
+            "desktop_width_percent": 100,
+            "content_max_width": 700,
+            "padding_top": 60,
+            "padding_bottom": 60,
+            "padding_horizontal": 40,
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 20,
+            "subheading_size": 18,
+            "subheading_color": "#121212",
+            "button_spacing": 30,
+            "button_font_size": 16,
+            "button_padding_vertical": 14,
+            "button_padding_horizontal": 35,
+            "button_background": "#334fb4",
+            "button_text_color": "#ffffff",
+            "button_hover_background": "#121212",
+            "button_hover_text_color": "#ffffff",
+            "button_border_radius": 4,
+            "background_color": "#f3f3f3",
+            "border_radius": 8
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_25c85b5_c9cEz6"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "blocks_wbQjDw": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_3911172_8LbyP8": {
+          "type": "ai_gen_block_3911172",
+          "settings": {
+            "height_desktop": 70,
+            "height_mobile": 50,
+            "zoom_speed": 10,
+            "slide_duration": 6,
+            "overlay_color": "#000000",
+            "overlay_opacity": 0.5,
+            "text_alignment": "center",
+            "vertical_alignment": "center",
+            "content_width": 1200,
+            "badge_content": "",
+            "badge_bg": "#ffd700",
+            "badge_color_text": "#000000",
+            "heading_font_size": 55,
+            "heading_color": "#ffd700",
+            "subheading_color": "#ffd700",
+            "image_1_d": "shopify://shop_images/Group_31.png",
+            "image_1_m": "shopify://shop_images/Group_33.png",
+            "heading_1": "",
+            "subheading_1": "",
+            "image_2_d": "shopify://shop_images/Group_36.png",
+            "heading_2": "",
+            "subheading_2": "",
+            "pri_btn_bg": "#ffd700",
+            "pri_btn_text": "#000000",
+            "pri_url": "",
+            "sec_url": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_3911172_8LbyP8"
+      ],
+      "name": "Astrologer page hero",
+      "settings": {}
+    },
+    "blocks_AYigVi": {
+      "type": "_blocks",
+      "name": "Chat with astrologer",
+      "settings": {}
+    },
+    "blocks_pMyVeY": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_0f1e61a_QcAHVp": {
+          "type": "ai_gen_block_0f1e61a",
+          "name": "Shop by purpose",
+          "settings": {
+            "heading": "Shop by Purpose",
+            "heading_font": "serif",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 48,
+            "cards_per_row": 5,
+            "cards_per_row_tablet": 4,
+            "card_spacing": 16,
+            "mobile_card_width": 140,
+            "card_background": "#f5f1ea",
+            "card_border_radius": 14,
+            "card_padding": 20,
+            "card_shadow_opacity": 0.1,
+            "hover_lift": 4,
+            "card_title_size": 15,
+            "card_title_weight": "500",
+            "card_title_color": "#121212",
+            "card_1_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.33.20_AM.png",
+            "card_1_title": "Money",
+            "card_1_link": "https://astrojap.com/pages/money",
+            "card_2_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.31.44_AM.png",
+            "card_2_title": "Love",
+            "card_2_link": "https://astrojap.com/pages/love",
+            "card_3_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.41.12_AM.png",
+            "card_3_title": "Protection",
+            "card_3_link": "https://astrojap.com/pages/protection",
+            "card_4_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.47.58_AM.png",
+            "card_4_title": "Evil Eye",
+            "card_4_link": "https://astrojap.com/pages/evil-eye",
+            "card_5_image": "shopify://shop_images/Screenshot_2026-03-30_at_10.45.11_AM.png",
+            "card_5_title": "Health",
+            "card_5_link": "https://astrojap.com/pages/health",
+            "card_6_title": "",
+            "card_6_link": "",
+            "card_7_title": "",
+            "card_7_link": "",
+            "card_8_title": "",
+            "card_8_link": "",
+            "card_9_title": "",
+            "card_9_link": "",
+            "card_10_title": "",
+            "card_10_link": ""
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_7ffc4a1_QtNzzE": {
+          "type": "ai_gen_block_7ffc4a1",
+          "settings": {
+            "collection": "astrologers",
+            "products_to_show": 15,
+            "heading": "Chat with our astrologers",
+            "heading_alignment": "center",
+            "heading_size": 32,
+            "heading_color": "#121212",
+            "heading_spacing": 30,
+            "columns_desktop": 3,
+            "columns_tablet": 2,
+            "columns_mobile": "1",
+            "desktop_width_percent": 100,
+            "max_width": 1200,
+            "section_padding": 40,
+            "item_gap": 20,
+            "card_background": "#ffffff",
+            "card_border_radius": 12,
+            "card_padding": 20,
+            "card_shadow_horizontal": 0,
+            "card_shadow_vertical": 2,
+            "card_shadow_blur": 10,
+            "card_shadow_opacity": 0.1,
+            "name_size": 20,
+            "name_color": "#121212",
+            "name_spacing": 8,
+            "type_size": 14,
+            "type_color": "#666666",
+            "type_spacing": 8,
+            "max_tags": 5,
+            "tag_size": 12,
+            "tag_background": "#f3f3f3",
+            "tag_text_color": "#121212",
+            "tag_border_radius": 12,
+            "tags_spacing": 16,
+            "price_size": 18,
+            "price_color": "#334fb4",
+            "button_text": "Chat Now",
+            "sold_out_text": "Unavailable",
+            "button_background": "#334fb4",
+            "button_hover_background": "#121212",
+            "button_text_color": "#ffffff",
+            "button_font_size": 14,
+            "button_padding": 10,
+            "button_border_radius": 8
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_1c5e2c7_9nmAFU": {
+          "type": "ai_gen_block_1c5e2c7",
+          "settings": {
+            "title": "About Astrologer",
+            "description": "<p>With over 15 years of experience in Vedic astrology, I specialize in providing personalized guidance for life's most important decisions. My approach combines traditional astrological wisdom with modern insights to help you navigate your path with clarity and confidence.</p><p>I believe that astrology is a powerful tool for self-discovery and transformation. Through detailed birth chart analysis and planetary transit readings, I help clients understand their unique strengths, challenges, and opportunities for growth.</p>",
+            "max_width": 800,
+            "text_alignment": "center",
+            "padding_top": 40,
+            "padding_bottom": 40,
+            "title_size": 32,
+            "title_spacing": 24,
+            "title_color": "#121212",
+            "description_size": 16,
+            "description_color": "#121212",
+            "background_color": "#ffffff"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_0f1e61a_QcAHVp",
+        "ai_gen_block_7ffc4a1_QtNzzE",
+        "ai_gen_block_1c5e2c7_9nmAFU"
+      ],
+      "name": "Astrologer about",
+      "settings": {}
+    },
+    "blocks_UFC6zQ": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_e67e250_G7WgMe": {
+          "type": "ai_gen_block_e67e250",
+          "settings": {
+            "bg_color": "#ffffff",
+            "line_color": "#d32f2f",
+            "text_color": "#333333",
+            "btn_bg": "#d32f2f",
+            "heading": "Discover Your Path",
+            "subheading": "Enter your birth details accurately to cast your exact planetary alignments and cosmic analysis."
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_e67e250_G7WgMe"
+      ],
+      "name": "Appointment booking",
+      "settings": {}
+    }
+  },
+  "order": [
+    "1773143638e9fb3b81",
+    "1773142536007bfbaa",
+    "1773142802fc9e8f47",
+    "17731441166fe9fa34",
+    "main",
+    "177331704623e604ee",
+    "177383293304ee01e5",
+    "17738342897c0eec25",
+    "1773834417c1bde375",
+    "1773834530a6724337",
+    "1773834602c630cc20",
+    "blocks_wbQjDw",
+    "blocks_AYigVi",
+    "blocks_pMyVeY",
+    "blocks_UFC6zQ"
+  ]
+}

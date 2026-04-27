@@ -1,0 +1,177 @@
+{% assign ai_gen_id = block.id | replace: '-', '' | downcase %}
+
+{% style %}
+  .hero-slider-wrap-{{ ai_gen_id }} {
+    position: relative; 
+    width: 100%; 
+    height: {{ block.settings.desktop_height | default: 750 }}px;
+    background: {{ block.settings.bg_color | default: '#000000' }};
+    overflow: hidden;
+  }
+
+  /* ── THE INDIVIDUAL SLIDE ── */
+  .ai-slide-{{ ai_gen_id }} {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0; visibility: hidden;
+    transition: opacity 1.5s ease-in-out;
+    z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .ai-slide-{{ ai_gen_id }}.active {
+    opacity: 1; visibility: visible;
+    z-index: 2;
+  }
+
+  /* ── KEN BURNS REVERSE (ZOOM OUT) ENGINE ── */
+  .ai-zoom-wrap-{{ ai_gen_id }} {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    overflow: hidden;
+  }
+
+  .ai-img-{{ ai_gen_id }} {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transform: scale(1.3);
+    will-change: transform;
+    transition: none;
+  }
+
+  /* Only animate when active */
+  .ai-slide-{{ ai_gen_id }}.active .ai-img-{{ ai_gen_id }} {
+    animation: zoomOutHero-{{ ai_gen_id }} {{ block.settings.speed | default: 10 }}s linear forwards;
+  }
+
+  @keyframes zoomOutHero-{{ ai_gen_id }} {
+    from { transform: scale(1.3); } /* Start deep zoom */
+    to { transform: scale(1); }      /* End at original size */
+  }
+
+  /* ── CONTENT OVERLAY ── */
+  .ai-overlay-{{ ai_gen_id }} {
+    position: absolute; inset: 0;
+    background: {{ block.settings.overlay_color | default: '#000' }};
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .ai-content-box-{{ ai_gen_id }} {
+    position: relative; z-index: 10;
+    max-width: {{ block.settings.max_width | default: 800 }}px;
+    width: 90%; text-align: center; color: #fff;
+    opacity: 0; transform: translateY(40px);
+    transition: all 1s ease 0.8s; /* Delayed fade up */
+  }
+
+  .ai-slide-{{ ai_gen_id }}.active .ai-content-box-{{ ai_gen_id }} {
+    opacity: 1; transform: translateY(0);
+  }
+
+  .ai-h-{{ ai_gen_id }} {
+    font-size: clamp(34px, 5.5vw, 75px); font-weight: 700; line-height: 1.1; margin: 0 0 20px;
+    text-transform: uppercase; 
+    text-shadow: 0 10px 35px rgba(0,0,0,0.4);
+    /* ── TITLE COLOR APPLIED HERE ── */
+    color: {{ block.settings.title_color | default: '#ffffff' }};
+  }
+
+  /* ── MOBILE OPTIMIZATION ── */
+  @media (max-width: 749px) {
+    .hero-slider-wrap-{{ ai_gen_id }} { height: 100vw; } /* Forces 1:1 Aspect on Mobile */
+    .ai-img-{{ ai_gen_id }}.desktop-v { display: none; }
+    .ai-img-{{ ai_gen_id }}.mobile-v { display: block; }
+  }
+  @media (min-width: 750px) {
+    .ai-img-{{ ai_gen_id }}.mobile-v { display: none; }
+  }
+{% endstyle %}
+
+<div class="hero-slider-wrap-{{ ai_gen_id }}">
+  <div id="slider-engine-{{ ai_gen_id }}" style="position: absolute; inset: 0;">
+    
+    {% for i in (1..3) %}
+      {% capture d_img_k %}image_{{ i }}_d{% endcapture %}
+      {% capture m_img_k %}image_{{ i }}_m{% endcapture %}
+      {% capture t_key %}title_{{ i }}{% endcapture %}
+      {% capture u_key %}url_{{ i }}{% endcapture %}
+
+      {% assign desktop = block.settings[d_img_k] %}
+      {% assign mobile = block.settings[m_img_k] %}
+
+      {% if desktop != blank or forloop.first %}
+        <div class="ai-slide-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}">
+           <div class="ai-zoom-wrap-{{ ai_gen_id }}">
+             <!-- Performance-optimized Image Loading -->
+             {% if desktop != blank %}
+               <img src="{{ desktop | image_url: width: 2800 }}" width="{{ desktop.width }}" height="{{ desktop.height }}" class="ai-img-{{ ai_gen_id }} desktop-v" alt="Banner {{ i }}">
+             {% else %}
+               {{ 'hero-apparel-1' | placeholder_svg_tag: 'ai-img-id desktop-v' }}
+             {% endif %}
+             
+             {% if mobile != blank %}
+               <img src="{{ mobile | image_url: width: 1200 }}" width="{{ mobile.width }}" height="{{ mobile.height }}" class="ai-img-{{ ai_gen_id }} mobile-v" alt="Mobile Banner {{ i }}">
+             {% else %}
+               <img src="{{ desktop | image_url: width: 1200 }}" width="1200" height="1200" class="ai-img-{{ ai_gen_id }} mobile-v" alt="Mobile Banner {{ i }}">
+             {% endif %}
+
+             <div class="ai-overlay-{{ ai_gen_id }}"></div>
+           </div>
+
+           <div class="ai-content-box-{{ ai_gen_id }}">
+              {% if block.settings[t_key] != blank %}<h2 class="ai-h-{{ ai_gen_id }}">{{ block.settings[t_key] }}</h2>{% endif %}
+              <a href="{{ block.settings[u_key] | default: '#' }}" style="display:inline-block; padding:18px 50px; background:#fff; color:#000; text-decoration:none; font-weight:700; border-radius:30px;">Shop the Look</a>
+           </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+</div>
+
+<script>
+  (function() {
+    const parent = document.querySelector('#slider-engine-{{ ai_gen_id }}');
+    if (!parent) return;
+    const slides = parent.querySelectorAll('.ai-slide-{{ ai_gen_id }}');
+    if (slides.length <= 1) return;
+    let curIdx = 0;
+    setInterval(() => {
+      slides[curIdx].classList.remove('active');
+      curIdx = (curIdx + 1) % slides.length;
+      slides[curIdx].classList.add('active');
+    }, {{ block.settings.speed | default: 10 }} * 1000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Advanced Image Slider",
+  "settings": [
+    { "type": "range", "id": "desktop_height", "min": 400, "max": 900, "step": 50, "unit": "px", "label": "Height", "default": 750 },
+    { "type": "range", "id": "speed", "min": 5, "max": 20, "step": 1, "unit": "sec", "label": "Duration (Zoom)", "default": 10 },
+    /* ── TITLE COLOR SETTING ADDED ── */
+    { "type": "color", "id": "title_color", "label": "Title Color", "default": "#ffffff" },
+    { "type": "color", "id": "overlay_color", "label": "Overlay Color", "default": "#000000" },
+    { "type": "range", "id": "overlay_opacity", "min": 0, "max": 90, "step": 10, "unit": "%", "label": "Darkness", "default": 20 },
+    { "type": "header", "content": "Slide 1" },
+    { "type": "image_picker", "id": "image_1_d", "label": "Desktop Image 1" },
+    { "type": "image_picker", "id": "image_1_m", "label": "Mobile Image 1 (Square)" },
+    { "type": "text", "id": "title_1", "label": "Title 1", "default": "Pure Motion" },
+    { "type": "url", "id": "url_1", "label": "Link 1" },
+    { "type": "header", "content": "Slide 2" },
+    { "type": "image_picker", "id": "image_2_d", "label": "Desktop Image 2" },
+    { "type": "image_picker", "id": "image_2_m", "label": "Mobile Image 2 (Square)" },
+    { "type": "text", "id": "title_2", "label": "Title 2", "default": "Elevated Style" },
+    { "type": "url", "id": "url_2", "label": "Link 2" },
+    { "type": "header", "content": "Slide 3" },
+    { "type": "image_picker", "id": "image_3_d", "label": "Desktop Image 3" },
+    { "type": "image_picker", "id": "image_3_m", "label": "Mobile Image 3 (Square)" },
+    { "type": "text", "id": "title_3", "label": "Title 3", "default": "Modern Luxury" },
+    { "type": "url", "id": "url_3", "label": "Link 3" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,211 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "dates": "22 Dec – 19 Jan",
+            "tag_1": "Builds Inner Strength",
+            "tag_2": "Releases Emotional Heaviness"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "special_offer": {
+          "type": "special_offer",
+          "settings": {
+            "offer_desc": "Flat ₹500 Cashback on all prepaid orders."
+          }
+        },
+        "review_testimonial": {
+          "type": "review_testimonial",
+          "settings": {}
+        },
+        "shop_by_rashi": {
+          "type": "shop_by_rashi",
+          "settings": {
+            "title": "Shop by Rashi"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "benefit_cards": {
+          "type": "benefit_cards",
+          "settings": {}
+        },
+        "trust_grid": {
+          "type": "trust_grid",
+          "settings": {}
+        },
+        "benefits": {
+          "type": "collapsible_tab",
+          "settings": {
+             "heading": "Benefits",
+             "content": "<ul><li>Builds Inner Strength - Helps Capricorns feel strong, steady, and emotionally resilient.</li><li>Releases Emotional Heaviness - Supports letting go of stored stress.</li></ul>"
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "special_offer",
+        "review_testimonial",
+        "shop_by_rashi",
+        "buy_buttons",
+        "description",
+        "benefit_cards",
+        "trust_grid",
+        "benefits"
+      ],
+      "settings": {
+        "cashback_amount": "500",
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
+    },
+    "17769364929e2f30ea": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "17769367800fae3233": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1776938258b12fd716": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_897602d_hKh7wF": {
+          "type": "ai_gen_block_897602d",
+          "settings": {
+            "desktop_width_percent": 100,
+            "section_padding": 40,
+            "columns_desktop": 2,
+            "card_gap": 20,
+            "show_header": true,
+            "section_title": "Customer Reviews",
+            "title_size": 32,
+            "title_color": "#000000",
+            "section_subtitle": "See what our customers are saying",
+            "subtitle_size": 16,
+            "subtitle_color": "#666666",
+            "header_spacing": 40,
+            "card_bg_color": "#f5f5f5",
+            "card_radius": 12,
+            "card_padding": 25,
+            "shadow_vertical": 4,
+            "shadow_blur": 15,
+            "shadow_opacity": 0.1,
+            "star_color": "#ffc107",
+            "star_size": 18,
+            "name_size": 16,
+            "name_color": "#000000",
+            "date_size": 12,
+            "date_color": "#999999",
+            "badge_bg_color": "#e8f5e9",
+            "badge_text_color": "#2e7d32",
+            "badge_size": 11,
+            "badge_radius": 12,
+            "review_title_size": 17,
+            "review_title_color": "#000000",
+            "review_text_size": 14,
+            "review_text_color": "#333333",
+            "review_1_name": "Sarah Johnson",
+            "review_1_verified": true,
+            "review_1_date": "2 days ago",
+            "review_1_title": "Absolutely love it!",
+            "review_1_text": "This product exceeded my expectations. The quality is outstanding and it arrived quickly. Highly recommend to anyone looking for a reliable solution.",
+            "review_2_name": "Michael Chen",
+            "review_2_verified": true,
+            "review_2_date": "1 week ago",
+            "review_2_title": "Great value for money",
+            "review_2_text": "I've been using this for a month now and it's been fantastic. The customer service was also very helpful when I had questions.",
+            "review_3_name": "Emily Rodriguez",
+            "review_3_verified": true,
+            "review_3_date": "2 weeks ago",
+            "review_3_title": "Highly recommended",
+            "review_3_text": "Perfect for what I needed. The design is sleek and modern, and it works exactly as described. Will definitely purchase again.",
+            "review_4_name": "David Thompson",
+            "review_4_verified": true,
+            "review_4_date": "3 weeks ago",
+            "review_4_title": "Excellent quality",
+            "review_4_text": "The attention to detail is impressive. Everything from the packaging to the product itself shows quality craftsmanship.",
+            "review_5_name": "",
+            "review_5_verified": false,
+            "review_5_date": "",
+            "review_5_title": "",
+            "review_5_text": "",
+            "review_6_name": "",
+            "review_6_verified": false,
+            "review_6_date": "",
+            "review_6_title": "",
+            "review_6_text": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_897602d_hKh7wF"
+      ],
+      "settings": {}
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You may also like",
+        "manual_collection": "bracelets",
+        "products_to_show": 4,
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "blocks_eryWEV": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_3fa7d50_mMrnjL": {
+          "type": "ai_gen_block_3fa7d50",
+          "settings": {
+            "heading": "Your heading here",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_weight": "700",
+            "subheading": "Your subheading text goes here",
+            "subheading_size": 18,
+            "subheading_color": "#121212",
+            "subheading_weight": "400",
+            "text_alignment": "center",
+            "spacing": 12,
+            "desktop_width_percent": 100,
+            "padding_top": 40,
+            "padding_bottom": 40,
+            "padding_horizontal": 20
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_3fa7d50_mMrnjL"
+      ],
+      "name": "Heading and subheading",
+      "settings": {}
+    }
+  },
+  "order": [
+    "blocks_eryWEV",
+    "main",
+    "17769364929e2f30ea",
+    "17769367800fae3233",
+    "1776938258b12fd716",
+    "related-products"
+  ]
+}

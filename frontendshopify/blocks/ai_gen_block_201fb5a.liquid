@@ -1,0 +1,279 @@
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astro-sec-{{ ai_gen_id }} {
+    padding: 60px 20px;
+    background: {{ section.settings.bg_color | default: '#fcfcfc' }};
+    font-family: 'Inter', sans-serif;
+  }
+  .ai-astro-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .ai-astro-head-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 32px;
+    font-weight: 800;
+    color: #111;
+  }
+  
+  /* ── 3 COLUMN GRID ── */
+  .ai-astro-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 900px) {
+    .ai-astro-grid-{{ ai_gen_id }} { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .ai-astro-grid-{{ ai_gen_id }} { grid-template-columns: 1fr; }
+  }
+
+  /* ── CARD STYLING ── */
+  .ai-acard-{{ ai_gen_id }} {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid #f2f2f2;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .ai-acard-{{ ai_gen_id }}:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  }
+
+  /* ── IMAGE & NAME ROW ── */
+  .ai-atop-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .ai-aimg-wrap-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    border: 3px solid #ffe033; /* Exact Yellow Border */
+    padding: 2px;
+  }
+  .ai-aimg-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .ai-aname-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0 0 6px 0;
+  }
+  
+  .ai-abadge-{{ ai_gen_id }} {
+    display: inline-block;
+    background: #fff9e6;
+    color: #fca000;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-askills-{{ ai_gen_id }} {
+    font-size: 13px;
+    font-weight: 500;
+    color: #888;
+    margin-bottom: 25px;
+    min-height: 20px;
+  }
+
+  .ai-aline-{{ ai_gen_id }} {
+    border: none;
+    border-top: 1px dashed #eaeaea;
+    margin: 0 0 25px 0;
+  }
+
+  /* ── STATS BLOCK ── */
+  .ai-astats-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  .ai-astat-val-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 800;
+    color: #111;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+  }
+  .ai-astat-val-{{ ai_gen_id }} span {
+    font-size: 16px;
+    margin-left: 2px;
+  }
+  .ai-astat-lbl-{{ ai_gen_id }} {
+    font-size: 10px;
+    font-weight: 700;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+
+  /* ── PRICE ── */
+  .ai-aprice-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: auto;
+  }
+  .ai-aprice-val-{{ ai_gen_id }} {
+    color: #ff5722; /* Vibrant Orange */
+    font-weight: 800;
+    font-size: 20px;
+  }
+  .ai-aprice-min-{{ ai_gen_id }} {
+    color: #aaa;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* ── BUTTON ── */
+  .ai-abtn-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    text-align: center;
+    background: #fff;
+    color: #25d366; /* Vibrant Green */
+    border: 2px solid #25d366;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .ai-abtn-{{ ai_gen_id }}:hover {
+    background: #25d366;
+    color: #fff;
+  }
+{% endstyle %}
+
+<div class="ai-astro-sec-{{ ai_gen_id }}">
+  <div class="ai-astro-container-{{ ai_gen_id }}">
+    
+    {% if section.settings.title != blank %}
+      <h2 class="ai-astro-head-{{ ai_gen_id }}">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    <div class="ai-astro-grid-{{ ai_gen_id }}">
+      
+      {% comment %} --- BULLETPROOF COLLECTION FETCH --- {% endcomment %}
+      {% assign my_collection = section.settings.collection %}
+      {% assign ast_products = my_collection.products %}
+      
+      {% if ast_products == blank or ast_products.size == 0 %}
+        {% assign ast_products = collections[my_collection].products %}
+      {% endif %}
+
+      {% if ast_products != blank and ast_products.size > 0 %}
+        {% for product in ast_products limit: 12 %}
+          
+          {% comment %} Data Hooks - Reads from Product Metafields or uses standard fallbacks {% endcomment %}
+          {% assign exp = product.metafields.custom.experience | default: '15' %}
+          {% assign ord = product.metafields.custom.orders | default: '5000' %}
+          {% assign skl = product.metafields.custom.skills | default: product.type | default: 'Vedic, Kundli' %}
+
+          <div class="ai-acard-{{ ai_gen_id }}">
+            <div class="ai-atop-{{ ai_gen_id }}">
+              <div class="ai-aimg-wrap-{{ ai_gen_id }}">
+                <img src="{{ product.featured_image | image_url: width: 150 }}" alt="{{ product.title }}" class="ai-aimg-{{ ai_gen_id }}" loading="lazy">
+              </div>
+              <div>
+                <h3 class="ai-aname-{{ ai_gen_id }}">{{ product.title }}</h3>
+                <span class="ai-abadge-{{ ai_gen_id }}">Verified Guru</span>
+              </div>
+            </div>
+
+            <div class="ai-askills-{{ ai_gen_id }}">{{ skl }}</div>
+
+            <hr class="ai-aline-{{ ai_gen_id }}">
+
+            <div class="ai-astats-{{ ai_gen_id }}">
+              <div>
+                <div class="ai-astat-val-{{ ai_gen_id }}">{{ exp }}<span>yr</span></div>
+                <div class="ai-astat-lbl-{{ ai_gen_id }}">EXP</div>
+              </div>
+              <div>
+                <div class="ai-astat-val-{{ ai_gen_id }}">{{ ord }}<span>+</span></div>
+                <div class="ai-astat-lbl-{{ ai_gen_id }}">ORDERS</div>
+              </div>
+            </div>
+
+            <div class="ai-aprice-{{ ai_gen_id }}">
+              <span class="ai-aprice-val-{{ ai_gen_id }}">{{ product.price | money }}</span><span class="ai-aprice-min-{{ ai_gen_id }}">/min</span>
+            </div>
+
+            {% if product.available %}
+              <form method="post" action="/cart/add" style="margin: 0;">
+                <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="ai-abtn-{{ ai_gen_id }}">Chat Now ✦</button>
+              </form>
+            {% else %}
+               <button type="button" class="ai-abtn-{{ ai_gen_id }}" style="border-color:#ccc; color:#aaa; background:#f9f9f9; cursor:not-allowed;" disabled>Offline</button>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="text-align: center; grid-column: 1 / -1; color: #666; font-size: 16px;">
+          <strong>No products found.</strong><br>
+          Please go to Theme Customizer, click this section, and easily select your active Astrologer Collection!
+        </p>
+      {% endif %}
+      
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Astrologers Category Grid",
+  "settings": [
+    { 
+      "type": "text", 
+      "id": "title", 
+      "label": "Section Heading", 
+      "default": "Our Expert Gurus" 
+    },
+    { 
+      "type": "collection", 
+      "id": "collection", 
+      "label": "Select Astrologer Collection" 
+    },
+    { 
+      "type": "color", 
+      "id": "bg_color", 
+      "label": "Background Color", 
+      "default": "#fcfcfc" 
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrologers Category Grid"
+    }
+  ]
+}
+{% endschema %}

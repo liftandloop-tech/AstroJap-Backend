@@ -1,0 +1,146 @@
+{% comment %}
+  OFFICIAL SHOPIFY BLOCK VERSION
+  Fixed: Removed nested blocks (not allowed in block files).
+  Fixed: All settings moved to root of schema.
+{% endcomment %}
+
+{%- assign block_id = block.id | replace: '_', '' | downcase -%}
+
+{%- style -%}
+  /* The block itself will be sticky if placed in a sticky section */
+  .ai-cg-block-{{ block_id }} {
+    width: 100%;
+    background-color: {{ block.settings.bg_color | default: '#ffffff' }};
+    padding: 12px 0;
+    border-top: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .ai-cg-items-{{ block_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  /* Sticky behavior logic */
+  .ai-cg-items-{{ block_id }}:not(.expanded) {
+    max-height: 110px;
+  }
+
+  .ai-cg-item-{{ block_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    width: 80px;
+  }
+
+  .ai-cg-icon-{{ block_id }} {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fdf3e7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+
+  .ai-cg-icon-{{ block_id }} img {
+    width: 75%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .ai-cg-label-{{ block_id }} {
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-cg-items-{{ block_id }}:not(.expanded) {
+      max-height: 95px;
+    }
+    .ai-cg-icon-{{ block_id }} {
+      width: 50px;
+      height: 50px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="ai-cg-block-{{ block_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-cg-items-{{ block_id }}" id="Grid-{{ block_id }}">
+    {%- for i in (1..24) -%}
+      {%- assign en_key = 'cat_' | append: i | append: '_en' -%}
+      {%- if block.settings[en_key] -%}
+        {%- assign im_key = 'cat_' | append: i | append: '_img' -%}
+        {%- assign lb_key = 'cat_' | append: i | append: '_txt' -%}
+        {%- assign lk_key = 'cat_' | append: i | append: '_url' -%}
+        
+        <a href="{{ block.settings[lk_key] | default: '#' }}" class="ai-cg-item-{{ block_id }}">
+          <div class="ai-cg-icon-{{ block_id }}">
+            {%- if block.settings[im_key] != blank -%}
+              <img 
+                src="{{ block.settings[im_key] | image_url: width: 120 }}" 
+                alt="{{ block.settings[lb_key] | escape }}" 
+                width="60" 
+                height="60" 
+                loading="lazy"
+              >
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag }}
+            {%- endif -%}
+          </div>
+          <span class="ai-cg-label-{{ block_id }}">{{ block.settings[lb_key] }}</span>
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <div style="text-align: center; padding-top: 5px;">
+    <button 
+      onclick="document.getElementById('Grid-{{ block_id }}').classList.toggle('expanded')" 
+      style="background: #fff; border: 1px solid #ddd; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 10px;"
+      aria-label="Toggle Categories"
+    >
+      ▼
+    </button>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Sticky Category Grid",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    { "type": "header", "content": "Category 1" },
+    { "type": "checkbox", "id": "cat_1_en", "label": "Enable Category 1", "default": true },
+    { "type": "image_picker", "id": "cat_1_img", "label": "Icon Image" },
+    { "type": "text", "id": "cat_1_txt", "label": "Label Text", "default": "Rudraksha" },
+    { "type": "url", "id": "cat_1_url", "label": "Link URL" },
+
+    { "type": "header", "content": "Category 2" },
+    { "type": "checkbox", "id": "cat_2_en", "label": "Enable Category 2", "default": true },
+    { "type": "image_picker", "id": "cat_2_img", "label": "Icon Image" },
+    { "type": "text", "id": "cat_2_txt", "label": "Label Text", "default": "Bracelet" },
+    { "type": "url", "id": "cat_2_url", "label": "Link URL" }
+  ],
+  "presets": [
+    {
+      "name": "Sticky Category Grid"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-chat",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

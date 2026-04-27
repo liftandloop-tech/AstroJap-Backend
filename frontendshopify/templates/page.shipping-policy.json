@@ -1,0 +1,273 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "1773143638e9fb3b81": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1773142536007bfbaa": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1773142802fc9e8f47": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "17731441166fe9fa34": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "177331704623e604ee": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "177383293304ee01e5": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_e8db724_nkTdV4": {
+          "type": "ai_gen_block_e8db724",
+          "settings": {
+            "heading": "Guiding You Through the Power of Astrology",
+            "subheading": "At Astrojap, we combine ancient Vedic wisdom with modern technology to help you make better life decisions.",
+            "overlay_opacity": 0.5,
+            "heading_size": 56,
+            "heading_color": "#ffffff",
+            "subheading_size": 20,
+            "subheading_color": "#e0e0e0"
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_1d0fd59_jRgm3r": {
+          "type": "ai_gen_block_1d0fd59",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp_Image_2026-04-05_at_10.56.27.jpg",
+            "image_border_radius": 8,
+            "heading": "Our Story",
+            "content": "<p>Astrojap was created with the vision of making astrology simple, accessible, and reliable for everyone. We aim to bring authentic Vedic astrology insights into the digital world, helping individuals gain clarity, confidence, and a deeper understanding of their life journey. By combining traditional wisdom with modern technology, we ensure that accurate guidance is available anytime, anywhere.</p>",
+            "desktop_width_percent": 100,
+            "section_padding": 40,
+            "column_gap": 60,
+            "content_padding": 20,
+            "mobile_gap": 32,
+            "mobile_content_padding": 16,
+            "heading_size": 36,
+            "heading_spacing": 20,
+            "text_size": 16,
+            "heading_color": "#121212",
+            "text_color": "#121212"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_e8db724_nkTdV4",
+        "ai_gen_block_1d0fd59_jRgm3r"
+      ],
+      "settings": {}
+    },
+    "17738342897c0eec25": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_142bf5a_NTTAPp": {
+          "type": "ai_gen_block_142bf5a",
+          "settings": {
+            "card_1_heading": "Our Mission",
+            "card_1_text": "To empower individuals with accurate astrology insights for better decision-making.",
+            "card_1_icon": "target",
+            "card_2_heading": "Our Vision",
+            "card_2_text": "To become a trusted global platform for astrology and spiritual guidance.",
+            "card_2_icon": "compass",
+            "desktop_width_percent": 100,
+            "max_width": 1200,
+            "card_gap": 30,
+            "section_padding": 40,
+            "text_alignment": "center",
+            "card_background": "#ffffff",
+            "card_border_radius": 16,
+            "card_padding": 40,
+            "shadow_vertical": 4,
+            "shadow_blur": 15,
+            "shadow_opacity": 0.1,
+            "icon_size": 70,
+            "icon_background": "#f3f3f3",
+            "icon_color": "#121212",
+            "icon_margin_bottom": 20,
+            "heading_size": 24,
+            "heading_color": "#121212",
+            "heading_margin_bottom": 15,
+            "text_size": 16,
+            "text_color": "#666666"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_142bf5a_NTTAPp"
+      ],
+      "settings": {}
+    },
+    "1773834417c1bde375": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_062c58a_nJLjBa": {
+          "type": "ai_gen_block_062c58a",
+          "settings": {
+            "heading": "Why Choose Astrojap",
+            "heading_alignment": "center",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 40,
+            "background_color": "#ffffff",
+            "section_padding": 60,
+            "desktop_width_percent": 100,
+            "columns_desktop": 4,
+            "columns_tablet": 2,
+            "columns_mobile": "1",
+            "grid_gap": 30,
+            "card_background": "#f3f3f3",
+            "card_padding": 30,
+            "card_border_radius": 8,
+            "card_border_thickness": 0,
+            "card_border_color": "#e0e0e0",
+            "card_alignment": "center",
+            "icon_size": 40,
+            "icon_spacing": 15,
+            "feature_title_size": 18,
+            "feature_title_color": "#121212",
+            "title_spacing": 10,
+            "feature_text_size": 14,
+            "feature_text_color": "#666666",
+            "feature_1_enabled": true,
+            "feature_1_icon": "✨",
+            "feature_1_title": "Accurate Vedic astrology calculations",
+            "feature_1_text": "Get precise astrological insights based on authentic Vedic principles",
+            "feature_2_enabled": true,
+            "feature_2_icon": "🎯",
+            "feature_2_title": "Easy-to-use kundli tools",
+            "feature_2_text": "Simple and intuitive tools to create and analyze your birth chart",
+            "feature_3_enabled": true,
+            "feature_3_icon": "👥",
+            "feature_3_title": "Trusted by thousands of users",
+            "feature_3_text": "Join our growing community of satisfied users worldwide",
+            "feature_4_enabled": true,
+            "feature_4_icon": "💡",
+            "feature_4_title": "Personalized insights",
+            "feature_4_text": "Receive customized astrological guidance tailored to your unique chart"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_062c58a_nJLjBa"
+      ],
+      "settings": {}
+    },
+    "1773834530a6724337": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_3b5422e_BXmiGC": {
+          "type": "ai_gen_block_3b5422e",
+          "settings": {
+            "image": "shopify://shop_images/astrologer1.png",
+            "image_width": 50,
+            "image_border_radius": 0,
+            "heading": "Meet the Vision Behind Astrojap",
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 20,
+            "text": "<p>Astrojap is built by passionate individuals who believe in combining traditional astrology with modern innovation.</p>",
+            "text_size": 16,
+            "text_color": "#121212",
+            "text_spacing": 24,
+            "name": "",
+            "name_size": 20,
+            "name_color": "#121212",
+            "name_spacing": 8,
+            "description": "",
+            "description_size": 14,
+            "description_color": "#666666",
+            "desktop_width_percent": 100,
+            "content_gap": 60,
+            "mobile_gap": 30,
+            "section_padding": 40,
+            "background_color": "#ffffff"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_3b5422e_BXmiGC"
+      ],
+      "settings": {}
+    },
+    "1773834602c630cc20": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_25c85b5_c9cEz6": {
+          "type": "ai_gen_block_25c85b5",
+          "settings": {
+            "heading": "Start Your Astrology Journey Today",
+            "subheading": "Explore your kundli, horoscope, and personalized insights with Astrojap.",
+            "button_text": "Get Started",
+            "button_link": "https://astrojap.com/pages/kundali",
+            "desktop_width_percent": 100,
+            "content_max_width": 700,
+            "padding_top": 60,
+            "padding_bottom": 60,
+            "padding_horizontal": 40,
+            "heading_size": 36,
+            "heading_color": "#121212",
+            "heading_spacing": 20,
+            "subheading_size": 18,
+            "subheading_color": "#121212",
+            "button_spacing": 30,
+            "button_font_size": 16,
+            "button_padding_vertical": 14,
+            "button_padding_horizontal": 35,
+            "button_background": "#334fb4",
+            "button_text_color": "#ffffff",
+            "button_hover_background": "#121212",
+            "button_hover_text_color": "#ffffff",
+            "button_border_radius": 4,
+            "background_color": "#f3f3f3",
+            "border_radius": 8
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_25c85b5_c9cEz6"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "1773143638e9fb3b81",
+    "1773142536007bfbaa",
+    "1773142802fc9e8f47",
+    "17731441166fe9fa34",
+    "main",
+    "177331704623e604ee",
+    "177383293304ee01e5",
+    "17738342897c0eec25",
+    "1773834417c1bde375",
+    "1773834530a6724337",
+    "1773834602c630cc20"
+  ]
+}

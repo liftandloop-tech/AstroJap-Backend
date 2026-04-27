@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "booking-confirmed",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

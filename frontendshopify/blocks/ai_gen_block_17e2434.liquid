@@ -1,0 +1,664 @@
+{% doc %}
+  @prompt
+    Create a modern, clean, and fully customizable Shopify section for an astrology website named "Astrojab". The section should be designed for a Horoscope page and must include multiple sub-sections with pre-filled sample data.
+    
+    The design should follow a soft, spiritual theme with light purple, white, and subtle gradient tones. UI should be minimal, modern, and mobile responsive.
+    
+    IMPORTANT:
+    
+    * All content must be editable from Shopify customizer
+    * Use dynamic blocks wherever possible
+    * Keep sections modular and reusable
+    * No hardcoded values that cannot be edited
+    
+    ---
+    
+    SECTION STRUCTURE:
+    
+    1. DAILY HOROSCOPE RESULT SECTION
+    
+    * Title: "Your Horoscope Today"
+    * Subtext: "Personalized insights based on your zodiac sign"
+    * Pre-filled sample (Leo):
+    
+      * Love: "Today brings warmth and deeper emotional connection. Express your feelings openly."
+      * Career: "Opportunities may arise unexpectedly. Stay confident and take initiative."
+      * Health: "Focus on mental relaxation. Avoid stress and take short breaks."
+      * Luck: "A positive day overall with favorable outcomes in important matters."
+    * Each category
+    , didnt like this create somthing else 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astro-horoscope-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: {{ block.settings.section_padding }}px 20px;
+    background: linear-gradient(135deg, {{ block.settings.gradient_start }} 0%, {{ block.settings.gradient_end }} 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-astro-horoscope-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .ai-astro-container-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .ai-astro-zodiac-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-astro-zodiac-icon-{{ ai_gen_id }} {
+    font-size: {{ block.settings.zodiac_icon_size }}px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .ai-astro-zodiac-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.zodiac_name_size }}px;
+    color: {{ block.settings.zodiac_name_color }};
+    margin: 0 0 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .ai-astro-date-range-{{ ai_gen_id }} {
+    font-size: {{ block.settings.date_size }}px;
+    color: {{ block.settings.date_color }};
+    margin: 0 0 20px;
+    opacity: 0.9;
+  }
+
+  .ai-astro-main-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.main_title_size }}px;
+    color: {{ block.settings.main_title_color }};
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .ai-astro-reading-card-{{ ai_gen_id }} {
+    background: {{ block.settings.card_background }};
+    backdrop-filter: blur(10px);
+    border-radius: {{ block.settings.card_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    margin-bottom: {{ block.settings.card_spacing }}px;
+    border: 1px solid {{ block.settings.card_border_color }};
+    box-shadow: 0 8px 32px rgba(0, 0, 0, {{ block.settings.shadow_opacity }});
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-astro-reading-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, {{ block.settings.shadow_opacity | times: 1.5 }});
+  }
+
+  .ai-astro-reading-header-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .ai-astro-reading-icon-wrapper-{{ ai_gen_id }} {
+    width: {{ block.settings.reading_icon_size }}px;
+    height: {{ block.settings.reading_icon_size }}px;
+    background: {{ block.settings.icon_bg_color }};
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: {{ block.settings.reading_icon_size | times: 0.5 }}px;
+    flex-shrink: 0;
+  }
+
+  .ai-astro-reading-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.reading_title_size }}px;
+    color: {{ block.settings.reading_title_color }};
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .ai-astro-reading-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.reading_text_size }}px;
+    color: {{ block.settings.reading_text_color }};
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .ai-astro-footer-{{ ai_gen_id }} {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid {{ block.settings.footer_border_color }};
+  }
+
+  .ai-astro-footer-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.footer_text_size }}px;
+    color: {{ block.settings.footer_text_color }};
+    margin: 0;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-astro-horoscope-{{ ai_gen_id }} {
+      width: 100%;
+      padding: {{ block.settings.section_padding | times: 0.6 }}px 16px;
+    }
+
+    .ai-astro-zodiac-icon-{{ ai_gen_id }} {
+      font-size: {{ block.settings.zodiac_icon_size | times: 0.8 }}px;
+    }
+
+    .ai-astro-zodiac-name-{{ ai_gen_id }} {
+      font-size: {{ block.settings.zodiac_name_size | times: 0.8 }}px;
+    }
+
+    .ai-astro-main-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.main_title_size | times: 0.8 }}px;
+    }
+
+    .ai-astro-reading-card-{{ ai_gen_id }} {
+      padding: {{ block.settings.card_padding | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<astro-horoscope-{{ ai_gen_id }} class="ai-astro-horoscope-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-astro-container-{{ ai_gen_id }}">
+    <div class="ai-astro-zodiac-header-{{ ai_gen_id }}">
+      {% if block.settings.zodiac_icon != blank %}
+        <span class="ai-astro-zodiac-icon-{{ ai_gen_id }}">{{ block.settings.zodiac_icon }}</span>
+      {% endif %}
+      {% if block.settings.zodiac_name != blank %}
+        <h2 class="ai-astro-zodiac-name-{{ ai_gen_id }}">{{ block.settings.zodiac_name }}</h2>
+      {% endif %}
+      {% if block.settings.date_range != blank %}
+        <p class="ai-astro-date-range-{{ ai_gen_id }}">{{ block.settings.date_range }}</p>
+      {% endif %}
+      {% if block.settings.main_title != blank %}
+        <h3 class="ai-astro-main-title-{{ ai_gen_id }}">{{ block.settings.main_title }}</h3>
+      {% endif %}
+    </div>
+
+    {% if block.settings.show_love and block.settings.love_text != blank %}
+      <div class="ai-astro-reading-card-{{ ai_gen_id }}">
+        <div class="ai-astro-reading-header-{{ ai_gen_id }}">
+          <div class="ai-astro-reading-icon-wrapper-{{ ai_gen_id }}">
+            {{ block.settings.love_icon }}
+          </div>
+          <h4 class="ai-astro-reading-title-{{ ai_gen_id }}">{{ block.settings.love_title }}</h4>
+        </div>
+        <p class="ai-astro-reading-text-{{ ai_gen_id }}">{{ block.settings.love_text }}</p>
+      </div>
+    {% endif %}
+
+    {% if block.settings.show_career and block.settings.career_text != blank %}
+      <div class="ai-astro-reading-card-{{ ai_gen_id }}">
+        <div class="ai-astro-reading-header-{{ ai_gen_id }}">
+          <div class="ai-astro-reading-icon-wrapper-{{ ai_gen_id }}">
+            {{ block.settings.career_icon }}
+          </div>
+          <h4 class="ai-astro-reading-title-{{ ai_gen_id }}">{{ block.settings.career_title }}</h4>
+        </div>
+        <p class="ai-astro-reading-text-{{ ai_gen_id }}">{{ block.settings.career_text }}</p>
+      </div>
+    {% endif %}
+
+    {% if block.settings.show_health and block.settings.health_text != blank %}
+      <div class="ai-astro-reading-card-{{ ai_gen_id }}">
+        <div class="ai-astro-reading-header-{{ ai_gen_id }}">
+          <div class="ai-astro-reading-icon-wrapper-{{ ai_gen_id }}">
+            {{ block.settings.health_icon }}
+          </div>
+          <h4 class="ai-astro-reading-title-{{ ai_gen_id }}">{{ block.settings.health_title }}</h4>
+        </div>
+        <p class="ai-astro-reading-text-{{ ai_gen_id }}">{{ block.settings.health_text }}</p>
+      </div>
+    {% endif %}
+
+    {% if block.settings.show_wealth and block.settings.wealth_text != blank %}
+      <div class="ai-astro-reading-card-{{ ai_gen_id }}">
+        <div class="ai-astro-reading-header-{{ ai_gen_id }}">
+          <div class="ai-astro-reading-icon-wrapper-{{ ai_gen_id }}">
+            {{ block.settings.wealth_icon }}
+          </div>
+          <h4 class="ai-astro-reading-title-{{ ai_gen_id }}">{{ block.settings.wealth_title }}</h4>
+        </div>
+        <p class="ai-astro-reading-text-{{ ai_gen_id }}">{{ block.settings.wealth_text }}</p>
+      </div>
+    {% endif %}
+
+    {% if block.settings.footer_text != blank %}
+      <div class="ai-astro-footer-{{ ai_gen_id }}">
+        <p class="ai-astro-footer-text-{{ ai_gen_id }}">{{ block.settings.footer_text }}</p>
+      </div>
+    {% endif %}
+  </div>
+</astro-horoscope-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstroHoroscope{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccessibility();
+      }
+
+      setupAccessibility() {
+        const cards = this.querySelectorAll('.ai-astro-reading-card-{{ ai_gen_id }}');
+        cards.forEach((card, index) => {
+          card.setAttribute('role', 'article');
+          card.setAttribute('aria-label', `Reading ${index + 1}`);
+        });
+      }
+    }
+
+    customElements.define('astro-horoscope-{{ ai_gen_id }}', AstroHoroscope{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Astrology reading",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Zodiac sign"
+    },
+    {
+      "type": "text",
+      "id": "zodiac_icon",
+      "label": "Zodiac icon",
+      "default": "♌"
+    },
+    {
+      "type": "text",
+      "id": "zodiac_name",
+      "label": "Zodiac name",
+      "default": "Leo"
+    },
+    {
+      "type": "text",
+      "id": "date_range",
+      "label": "Date range",
+      "default": "July 23 - August 22"
+    },
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "Main title",
+      "default": "Today's Cosmic Guidance"
+    },
+    {
+      "type": "range",
+      "id": "zodiac_icon_size",
+      "label": "Zodiac icon size",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "zodiac_name_size",
+      "label": "Zodiac name size",
+      "min": 20,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "date_size",
+      "label": "Date size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "main_title_size",
+      "label": "Main title size",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "zodiac_name_color",
+      "label": "Zodiac name color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "date_color",
+      "label": "Date color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "main_title_color",
+      "label": "Main title color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section padding",
+      "min": 30,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 70
+    },
+    {
+      "type": "color",
+      "id": "gradient_start",
+      "label": "Gradient start",
+      "default": "#6b46c1"
+    },
+    {
+      "type": "color",
+      "id": "gradient_end",
+      "label": "Gradient end",
+      "default": "#9333ea"
+    },
+    {
+      "type": "header",
+      "content": "Reading cards"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 20,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "label": "Card spacing",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "rgba(255, 255, 255, 0.95)"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "rgba(255, 255, 255, 0.3)"
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Shadow opacity",
+      "min": 0,
+      "max": 0.5,
+      "step": 0.1,
+      "default": 0.2
+    },
+    {
+      "type": "range",
+      "id": "reading_icon_size",
+      "label": "Icon size",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "color",
+      "id": "icon_bg_color",
+      "label": "Icon background",
+      "default": "#f3e8ff"
+    },
+    {
+      "type": "range",
+      "id": "reading_title_size",
+      "label": "Reading title size",
+      "min": 16,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "reading_text_size",
+      "label": "Reading text size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "reading_title_color",
+      "label": "Reading title color",
+      "default": "#2d1b4e"
+    },
+    {
+      "type": "color",
+      "id": "reading_text_color",
+      "label": "Reading text color",
+      "default": "#4a4a4a"
+    },
+    {
+      "type": "header",
+      "content": "Love reading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_love",
+      "label": "Show love reading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "love_icon",
+      "label": "Icon",
+      "default": "💖"
+    },
+    {
+      "type": "text",
+      "id": "love_title",
+      "label": "Title",
+      "default": "Love & Relationships"
+    },
+    {
+      "type": "textarea",
+      "id": "love_text",
+      "label": "Reading text",
+      "default": "Today brings warmth and deeper emotional connection. Express your feelings openly and you'll find your relationships flourishing. Single Leos may encounter someone special in an unexpected place."
+    },
+    {
+      "type": "header",
+      "content": "Career reading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_career",
+      "label": "Show career reading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "career_icon",
+      "label": "Icon",
+      "default": "💼"
+    },
+    {
+      "type": "text",
+      "id": "career_title",
+      "label": "Title",
+      "default": "Career & Success"
+    },
+    {
+      "type": "textarea",
+      "id": "career_text",
+      "label": "Reading text",
+      "default": "Opportunities may arise unexpectedly. Stay confident and take initiative when presenting your ideas. Your natural leadership qualities will shine through, making this an excellent day for important meetings or presentations."
+    },
+    {
+      "type": "header",
+      "content": "Health reading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_health",
+      "label": "Show health reading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "health_icon",
+      "label": "Icon",
+      "default": "🌿"
+    },
+    {
+      "type": "text",
+      "id": "health_title",
+      "label": "Title",
+      "default": "Health & Wellness"
+    },
+    {
+      "type": "textarea",
+      "id": "health_text",
+      "label": "Reading text",
+      "default": "Focus on mental relaxation and inner peace. Avoid stress and take short breaks throughout the day. Consider meditation or a gentle yoga session to maintain balance and vitality."
+    },
+    {
+      "type": "header",
+      "content": "Wealth reading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wealth",
+      "label": "Show wealth reading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "wealth_icon",
+      "label": "Icon",
+      "default": "✨"
+    },
+    {
+      "type": "text",
+      "id": "wealth_title",
+      "label": "Title",
+      "default": "Luck & Fortune"
+    },
+    {
+      "type": "textarea",
+      "id": "wealth_text",
+      "label": "Reading text",
+      "default": "A positive day overall with favorable outcomes in important matters. Financial opportunities may present themselves. Trust your intuition when making decisions about investments or major purchases."
+    },
+    {
+      "type": "header",
+      "content": "Footer"
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Footer text",
+      "default": "The stars guide, but you create your destiny ✨"
+    },
+    {
+      "type": "range",
+      "id": "footer_text_size",
+      "label": "Footer text size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "footer_text_color",
+      "label": "Footer text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "footer_border_color",
+      "label": "Footer border color",
+      "default": "rgba(255, 255, 255, 0.2)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrology reading"
+    }
+  ]
+}
+{% endschema %}

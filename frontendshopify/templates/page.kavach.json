@@ -1,0 +1,52 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "blocks_MBRwDz": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_c605e38_xK4iF3": {
+          "type": "ai_gen_block_c605e38",
+          "name": "Infinite Product Grid",
+          "settings": {
+            "title": "Divine Kavach Collection",
+            "collection": "kavach",
+            "bg_color": "#ffffff",
+            "show_badge": true,
+            "badge_size_desktop": 100,
+            "badge_size_mobile": 80,
+            "badge_l1": "100%*",
+            "badge_l2": "CASHBACK",
+            "badge_l3": "on prepaid order",
+            "badge_bg_color": "#ffdc00",
+            "badge_text_color": "#1a1a1a"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_c605e38_xK4iF3"
+      ],
+      "name": "Kundli premium feature",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "blocks_MBRwDz"
+  ]
+}

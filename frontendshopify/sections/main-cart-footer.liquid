@@ -1,0 +1,245 @@
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-totals.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* PREMIUM FOOTER STYLES */
+  .at-cart-footer {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    margin-top: 20px;
+    max-width: 600px;
+    margin-left: 0;
+  }
+
+  .at-footer-subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .at-subtotal-label {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+  }
+
+  .at-subtotal-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: #000;
+  }
+
+  .at-checkout-btn-wrap {
+    position: relative;
+  }
+
+  .at-checkout-btn {
+    width: 100%;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 18px 25px;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+    transition: background 0.3s;
+  }
+
+  .at-checkout-btn:hover {
+    background: #333;
+  }
+
+  .at-payment-icons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .at-pay-icon {
+    height: 14px;
+    display: block;
+  }
+
+  .at-cashback-note {
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-align: left;
+  }
+
+  .at-gift-banner {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .at-gift-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .at-gift-btn {
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    background: #333;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+{%- endstyle -%}
+
+<style>
+  #main-cart-footer.is-empty {
+    display: none;
+  }
+</style>
+
+<div
+  class="gradient color-{{ section.settings.color_scheme }}{% if cart == empty %} is-empty{% endif %}"
+  id="main-cart-footer"
+  data-id="{{ section.id }}"
+>
+  <div class="page-width">
+    <div class="at-cart-footer js-contents section-{{ section.id }}-padding">
+      {%- if cart != empty -%}
+        <!-- GIFT VOUCHER BANNER -->
+        <div class="at-gift-banner">
+          <div class="at-gift-info">
+            <span>🏷️</span>
+            <span>Get brand gift vouchers upto ₹400</span>
+          </div>
+          <a href="javascript:void(0)" onclick="toggleOffers(true)" class="at-gift-btn">VIEW ></a>
+        </div>
+
+        <div class="cart__blocks">
+          {% for block in section.blocks %}
+            {%- case block.type -%}
+              {%- when '@app' -%}
+                {% render block %}
+              {%- when 'subtotal' -%}
+                <div class="at-footer-subtotal" {{ block.shopify_attributes }}>
+                  <span class="at-subtotal-label">Subtotal</span>
+                  <span class="at-subtotal-value">₹{{ cart.total_price | divided_by: 100 }}</span>
+                </div>
+              {%- when 'buttons' -%}
+                <div class="at-checkout-btn-wrap" {{ block.shopify_attributes }}>
+                  <button
+                    type="submit"
+                    id="checkout"
+                    class="at-checkout-btn"
+                    name="checkout"
+                    {% if cart == empty %}
+                      disabled
+                    {% endif %}
+                    form="cart"
+                  >
+                    <span>SELECT ADDRESS</span>
+                    <div class="at-payment-icons">
+                      <img class="at-pay-icon" src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" alt="Paytm">
+                      <img class="at-pay-icon" src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe">
+                      <img class="at-pay-icon" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo.svg" alt="GPay">
+                    </div>
+                  </button>
+                  <div class="at-cashback-note">
+                    Flat ₹500 Cashback on all Prepaid Orders
+                  </div>
+                </div>
+            {%- endcase -%}
+          {% endfor %}
+
+          <div id="cart-errors"></div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-footer.name",
+  "class": "cart__footer-wrapper",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },    
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "subtotal",
+      "name": "t:sections.main-cart-footer.blocks.subtotal.name",
+      "limit": 1
+    },
+    {
+      "type": "buttons",
+      "name": "t:sections.main-cart-footer.blocks.buttons.name",
+      "limit": 1
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

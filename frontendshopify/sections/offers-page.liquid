@@ -1,0 +1,258 @@
+{%- style -%}
+  .offers-page {
+    padding: 40px 0 80px;
+    background: #fdfbf7;
+    min-height: 80vh;
+    margin-top: 150px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .offers-page {
+      margin-top: 100px;
+      padding: 30px 0 60px;
+    }
+  }
+
+  .offers-header {
+    text-align: center;
+    margin-bottom: 60px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .offers-header h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .offers-header p {
+    color: #555;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 40px;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .offer-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 35px 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.03);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .offer-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    border-color: rgba(0,0,0,0.1);
+  }
+
+  .offer-logo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 50%;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+  }
+
+  .offer-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .offer-brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+
+  .offer-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    line-height: 1.3;
+  }
+
+  .offer-meta {
+    font-size: 14px;
+    color: #444;
+    background: #f8f9fa;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    display: inline-block;
+  }
+
+  .offer-btn {
+    width: 100%;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.3s ease;
+    margin-top: auto;
+  }
+
+  .offer-btn:hover {
+    background: #000;
+    transform: scale(1.02);
+  }
+
+  .offer-expiry {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #999;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .offer-expiry::before {
+    content: '⏱';
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .offers-header h1 { font-size: 32px; }
+    .offers-grid { grid-template-columns: 1fr; gap: 30px; }
+    .offers-header p { font-size: 16px; }
+  }
+{%- endstyle -%}
+
+<div class="offers-page">
+  <div class="page-width">
+    <div class="offers-header">
+      <h1>Exclusive Offers & Gift Vouchers</h1>
+      <p>Redeem your points for premium brand vouchers and exclusive discounts</p>
+    </div>
+
+    <div class="offers-grid">
+      <!-- Amazon -->
+      <div class="offer-card">
+        <div class="offer-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg" alt="Amazon">
+        </div>
+        <div class="offer-brand">Amazon</div>
+        <div class="offer-title">₹200 Amazon Gift Voucher</div>
+        <div class="offer-meta">Valid on orders above ₹1999</div>
+        <button class="offer-btn">CLAIM NOW</button>
+        <div class="offer-expiry">Expires in 15 days</div>
+      </div>
+
+      <!-- Flipkart -->
+      <div class="offer-card">
+        <div class="offer-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Flipkart_logo.png" alt="Flipkart">
+        </div>
+        <div class="offer-brand">Flipkart</div>
+        <div class="offer-title">₹500 Flipkart Gift Card</div>
+        <div class="offer-meta">Valid on orders above ₹4999</div>
+        <button class="offer-btn">CLAIM NOW</button>
+        <div class="offer-expiry">Expires in 30 days</div>
+      </div>
+
+      <!-- Myntra -->
+      <div class="offer-card">
+        <div class="offer-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/bc/Myntra_Logo.png" alt="Myntra">
+        </div>
+        <div class="offer-brand">Myntra</div>
+        <div class="offer-title">FLAT 25% OFF on Myntra</div>
+        <div class="offer-meta">No minimum purchase required</div>
+        <button class="offer-btn">GET CODE</button>
+        <div class="offer-expiry">Expires in 7 days</div>
+      </div>
+
+      <!-- Swiggy -->
+      <div class="offer-card">
+        <div class="offer-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Swiggy_logo.svg/1200px-Swiggy_logo.svg.png" alt="Swiggy">
+        </div>
+        <div class="offer-brand">Swiggy</div>
+        <div class="offer-title">₹100 Swiggy Money</div>
+        <div class="offer-meta">Valid on Food & Instamart</div>
+        <button class="offer-btn">CLAIM NOW</button>
+        <div class="offer-expiry">Expires in 3 days</div>
+      </div>
+
+      <!-- Zomato -->
+      <div class="offer-card">
+        <div class="offer-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/bd/Zomato_Logo.png" alt="Zomato">
+        </div>
+        <div class="offer-brand">Zomato</div>
+        <div class="offer-title">Buy 1 Get 1 Free on Pro</div>
+        <div class="offer-meta">Exclusive for Gold members</div>
+        <button class="offer-btn">REDEEM</button>
+        <div class="offer-expiry">Expires in 10 days</div>
+      </div>
+
+      <!-- Uber -->
+      <div class="offer-card">
+        <div class="offer-logo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/58/Uber_logo_2018.svg" alt="Uber">
+        </div>
+        <div class="offer-brand">Uber</div>
+        <div class="offer-title">₹50 OFF on next 3 rides</div>
+        <div class="offer-meta">Valid on Premier & Intercity</div>
+        <button class="offer-btn">ACTIVATE</button>
+        <div class="offer-expiry">Expires in 20 days</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Offers Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Customization options coming soon"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offers Page"
+    }
+  ]
+}
+{% endschema %}

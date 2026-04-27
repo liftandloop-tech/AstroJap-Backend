@@ -1,0 +1,758 @@
+{% doc %}
+  @prompt
+    Create a Shopify section named **Chat With Astrologer** using Liquid, HTML, CSS and minimal JavaScript.
+    
+    Requirements:
+    
+    1. Section Header
+    
+    * Display title: **Chat With Astrologer**
+    * Below the title add a search bar with placeholder **"Search name..."**
+    
+    2. Astrologer Grid
+    
+    * Show astrologers in a responsive grid
+    * Desktop: 3 cards per row
+    * Tablet: 2 cards
+    * Mobile: 1 card
+    
+    3. Astrologer Card Layout
+       Each card should include:
+    
+    * Circular astrologer image with yellow border
+    * Astrologer name
+    * Specialization text
+    * Languages text
+    * Experience (Example: Exp: 5 Years)
+    * Orders count
+    * Price per minute (Example: ₹43/min)
+    * Green outline **Chat** button
+    
+    4. Card Design
+    
+    * White background
+    * Rounded corners
+    * Soft shadow
+    * Padding inside card
+    * Hover effect (slight lift)
+    
+    5. Shopify Blocks
+       Allow adding astrologers dynamically with blocks.
+       Each block should include:
+    
+    * Image
+    * Name
+    * Specialization
+    * Languages
+    * Experience
+    * Orders
+    * Price per minute
+    * Chat link
+    
+    6. Search Function
+       Use simple JavaScript to filter astrologers by name using the search input.
+    
+    7. Mobile Responsive
+       Ensure the layout adapts properly for mobile screens.
+    
+    Section file name: **chat-with-astrologer.liquid**
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astrologer-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-astrologer-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-astrologer-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .ai-astrologer-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 20px;
+    font-weight: 600;
+  }
+
+  .ai-astrologer-search-{{ ai_gen_id }} {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .ai-astrologer-search-input-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid {{ block.settings.search_border_color }};
+    border-radius: {{ block.settings.search_border_radius }}px;
+    font-size: 16px;
+    outline: none;
+  }
+
+  .ai-astrologer-search-input-{{ ai_gen_id }}:focus {
+    border-color: {{ block.settings.search_focus_color }};
+  }
+
+  .ai-astrologer-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+
+  .ai-astrologer-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ai-astrologer-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-astrologer-image-wrapper-{{ ai_gen_id }} {
+    width: {{ block.settings.image_size }}px;
+    height: {{ block.settings.image_size }}px;
+    border-radius: 50%;
+    border: 3px solid {{ block.settings.image_border_color }};
+    overflow: hidden;
+    margin-bottom: 15px;
+    flex-shrink: 0;
+  }
+
+  .ai-astrologer-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-astrologer-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-astrologer-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  .ai-astrologer-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.name_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 8px;
+  }
+
+  .ai-astrologer-specialization-{{ ai_gen_id }} {
+    font-size: {{ block.settings.detail_size }}px;
+    color: {{ block.settings.detail_color }};
+    margin: 0 0 6px;
+  }
+
+  .ai-astrologer-languages-{{ ai_gen_id }} {
+    font-size: {{ block.settings.detail_size }}px;
+    color: {{ block.settings.detail_color }};
+    margin: 0 0 6px;
+  }
+
+  .ai-astrologer-experience-{{ ai_gen_id }} {
+    font-size: {{ block.settings.detail_size }}px;
+    color: {{ block.settings.detail_color }};
+    margin: 0 0 6px;
+  }
+
+  .ai-astrologer-orders-{{ ai_gen_id }} {
+    font-size: {{ block.settings.detail_size }}px;
+    color: {{ block.settings.detail_color }};
+    margin: 0 0 10px;
+  }
+
+  .ai-astrologer-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.price_color }};
+    margin: 0 0 15px;
+  }
+
+  .ai-astrologer-chat-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: 2px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-astrologer-chat-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text_color }};
+    border-color: {{ block.settings.button_hover_border_color }};
+  }
+
+  .ai-astrologer-no-results-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 18px;
+    color: {{ block.settings.detail_color }};
+    display: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-astrologer-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-astrologer-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .ai-astrologer-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.8);
+    }
+
+    .ai-astrologer-section-{{ ai_gen_id }} {
+      padding: 30px 15px;
+    }
+  }
+{% endstyle %}
+
+<astrologer-section-{{ ai_gen_id }} class="ai-astrologer-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-astrologer-container-{{ ai_gen_id }}">
+    <div class="ai-astrologer-header-{{ ai_gen_id }}">
+      <h2 class="ai-astrologer-title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+      <div class="ai-astrologer-search-{{ ai_gen_id }}">
+        <input
+          type="text"
+          class="ai-astrologer-search-input-{{ ai_gen_id }}"
+          placeholder="{{ block.settings.search_placeholder }}"
+          aria-label="Search astrologers by name"
+        >
+      </div>
+    </div>
+
+    <div class="ai-astrologer-grid-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign image_key = 'astrologer_' | append: i | append: '_image'
+          assign name_key = 'astrologer_' | append: i | append: '_name'
+          assign spec_key = 'astrologer_' | append: i | append: '_specialization'
+          assign lang_key = 'astrologer_' | append: i | append: '_languages'
+          assign exp_key = 'astrologer_' | append: i | append: '_experience'
+          assign orders_key = 'astrologer_' | append: i | append: '_orders'
+          assign price_key = 'astrologer_' | append: i | append: '_price'
+          assign link_key = 'astrologer_' | append: i | append: '_link'
+
+          assign astrologer_image = block.settings[image_key]
+          assign astrologer_name = block.settings[name_key]
+          assign specialization = block.settings[spec_key]
+          assign languages = block.settings[lang_key]
+          assign experience = block.settings[exp_key]
+          assign orders = block.settings[orders_key]
+          assign price = block.settings[price_key]
+          assign chat_link = block.settings[link_key]
+        %}
+
+        {% if astrologer_name != blank %}
+          <div class="ai-astrologer-card-{{ ai_gen_id }}" data-astrologer-name="{{ astrologer_name | downcase }}">
+            <div class="ai-astrologer-image-wrapper-{{ ai_gen_id }}">
+              {% if astrologer_image %}
+                <img
+                  src="{{ astrologer_image | image_url: width: 200 }}"
+                  alt="{{ astrologer_name | escape }}"
+                  class="ai-astrologer-image-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="200"
+                  height="200"
+                >
+              {% else %}
+                <div class="ai-astrologer-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <h3 class="ai-astrologer-name-{{ ai_gen_id }}">{{ astrologer_name }}</h3>
+
+            {% if specialization != blank %}
+              <p class="ai-astrologer-specialization-{{ ai_gen_id }}">{{ specialization }}</p>
+            {% endif %}
+
+            {% if languages != blank %}
+              <p class="ai-astrologer-languages-{{ ai_gen_id }}">{{ languages }}</p>
+            {% endif %}
+
+            {% if experience != blank %}
+              <p class="ai-astrologer-experience-{{ ai_gen_id }}">Exp: {{ experience }}</p>
+            {% endif %}
+
+            {% if orders != blank %}
+              <p class="ai-astrologer-orders-{{ ai_gen_id }}">{{ orders }} Orders</p>
+            {% endif %}
+
+            {% if price != blank %}
+              <p class="ai-astrologer-price-{{ ai_gen_id }}">{{ price }}</p>
+            {% endif %}
+
+            <a
+              href="{% if chat_link != blank %}{{ chat_link }}{% else %}#{% endif %}"
+              class="ai-astrologer-chat-button-{{ ai_gen_id }}"
+            >
+              {{ block.settings.button_text }}
+            </a>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="ai-astrologer-no-results-{{ ai_gen_id }}">
+      No astrologers found matching your search.
+    </div>
+  </div>
+</astrologer-section-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstrologerSection{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.searchInput = this.querySelector('.ai-astrologer-search-input-{{ ai_gen_id }}');
+        this.cards = this.querySelectorAll('.ai-astrologer-card-{{ ai_gen_id }}');
+        this.noResults = this.querySelector('.ai-astrologer-no-results-{{ ai_gen_id }}');
+
+        if (this.searchInput) {
+          this.searchInput.addEventListener('input', this.handleSearch.bind(this));
+        }
+      }
+
+      handleSearch(event) {
+        const searchTerm = event.target.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        this.cards.forEach((card) => {
+          const astrologerName = card.getAttribute('data-astrologer-name');
+
+          if (astrologerName.includes(searchTerm)) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (visibleCount === 0) {
+          this.noResults.style.display = 'block';
+        } else {
+          this.noResults.style.display = 'none';
+        }
+      }
+    }
+
+    customElements.define('astrologer-section-{{ ai_gen_id }}', AstrologerSection{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Chat with astrologer",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section title",
+      "default": "Chat With Astrologer"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Search bar"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search name..."
+    },
+    {
+      "type": "color",
+      "id": "search_border_color",
+      "label": "Border color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "search_focus_color",
+      "label": "Focus border color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "search_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "min": 60,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "label": "Image size",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "image_border_color",
+      "label": "Image border color",
+      "default": "#FFD700"
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Name color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "name_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Name size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "detail_color",
+      "label": "Detail text color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "detail_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Detail text size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Price size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Chat"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#22c55e"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border color",
+      "default": "#22c55e"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#22c55e"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Hover border color",
+      "default": "#22c55e"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Astrologer 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "astrologer_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_1_name",
+      "label": "Name",
+      "default": "Astrologer 1"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_1_specialization",
+      "label": "Specialization",
+      "default": "Vedic, Tarot"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_1_languages",
+      "label": "Languages",
+      "default": "Hindi, English"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_1_experience",
+      "label": "Experience",
+      "default": "5 Years"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_1_orders",
+      "label": "Orders count",
+      "default": "1500"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_1_price",
+      "label": "Price per minute",
+      "default": "₹43/min"
+    },
+    {
+      "type": "url",
+      "id": "astrologer_1_link",
+      "label": "Chat link"
+    },
+    {
+      "type": "header",
+      "content": "Astrologer 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "astrologer_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_2_name",
+      "label": "Name",
+      "default": "Astrologer 2"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_2_specialization",
+      "label": "Specialization",
+      "default": "Numerology, Palmistry"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_2_languages",
+      "label": "Languages",
+      "default": "Hindi, English"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_2_experience",
+      "label": "Experience",
+      "default": "7 Years"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_2_orders",
+      "label": "Orders count",
+      "default": "2000"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_2_price",
+      "label": "Price per minute",
+      "default": "₹50/min"
+    },
+    {
+      "type": "url",
+      "id": "astrologer_2_link",
+      "label": "Chat link"
+    },
+    {
+      "type": "header",
+      "content": "Astrologer 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "astrologer_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_3_name",
+      "label": "Name",
+      "default": "Astrologer 3"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_3_specialization",
+      "label": "Specialization",
+      "default": "KP Astrology, Vastu"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_3_languages",
+      "label": "Languages",
+      "default": "Hindi, English, Tamil"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_3_experience",
+      "label": "Experience",
+      "default": "10 Years"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_3_orders",
+      "label": "Orders count",
+      "default": "3500"
+    },
+    {
+      "type": "text",
+      "id": "astrologer_3_price",
+      "label": "Price per minute",
+      "default": "₹60/min"
+    },
+    {
+      "type": "url",
+      "id": "astrologer_3_link",
+      "label": "Chat link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Chat with astrologer"
+    }
+  ]
+}
+{% endschema %}

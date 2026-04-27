@@ -1,0 +1,297 @@
+{% comment %}
+  GLOBAL CUSTOMER REVIEWS SECTION
+  Standalone section for ratings and user reviews with image upload and profile fetching.
+{% endcomment %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background: #fdf8f3; /* Light beige background from image */
+  }
+
+  .ai-global-rev-container {
+    max-width: 900px; margin: 0 auto; padding: 0 20px; font-family: 'Inter', sans-serif;
+  }
+
+  /* MATCHING IMAGE DESIGN */
+  .ai-rev-card-main {
+    background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); padding: 40px; margin-bottom: 30px; border: 1px solid #f0f0f0;
+  }
+  
+  .ai-rev-title-center { text-align: center; font-weight: 800; font-size: 20px; color: #333; margin-bottom: 40px; }
+
+  .ai-rev-summary-grid { display: grid; grid-template-columns: 1fr 1px 1fr; align-items: center; gap: 40px; }
+  .ai-rev-divider-v { width: 1px; height: 100px; background: #f0f0f0; }
+
+  @media (max-width: 749px) {
+    .ai-rev-summary-grid { grid-template-columns: 1fr; gap: 20px; }
+    .ai-rev-divider-v { display: none; }
+    .ai-rev-card-main { padding: 30px 20px; }
+    .ai-write-btn-pill { width: 100%; padding: 15px; }
+  }
+
+  .ai-rev-left-col { text-align: center; }
+  .ai-rev-right-col { text-align: center; }
+
+  .ai-stars-outline { color: #f44336; font-size: 28px; letter-spacing: 2px; margin-bottom: 8px; font-weight: 300; }
+  .ai-rev-be-first { font-size: 13px; color: #333; font-weight: 400; }
+
+  .ai-write-btn-pill {
+    background: #2b2730; color: #fff; border: none; padding: 16px 45px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s;
+    white-space: nowrap; min-width: 200px; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .ai-write-btn-pill:hover { opacity: 0.9; transform: scale(1.02); }
+
+  /* SHOW REVIEWS DROPDOWN */
+  .ai-show-rev-toggle {
+    display: flex; align-items: center; justify-content: space-between; width: 100%;
+    background: #fff; border: 1px solid #eee; padding: 18px 30px; border-radius: 12px;
+    font-weight: 800; font-size: 15px; color: #000; cursor: pointer; margin-bottom: 20px;
+  }
+  .ai-show-rev-toggle span { transition: transform 0.3s; }
+  .ai-show-rev-toggle.active span { transform: rotate(180deg); }
+
+  /* FORM STYLES (Modern & Premium) */
+  .ai-global-rev-form {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 20px; padding: 45px; margin-top: 25px; display: none;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.08); margin-bottom: 40px;
+  }
+  .ai-global-rev-form.active { display: block; animation: fadeInReview 0.5s ease forwards; }
+  @keyframes fadeInReview { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  .ai-g-form-group { margin-bottom: 25px; }
+  .ai-g-label { display: block; font-weight: 700; font-size: 15px; margin-bottom: 10px; color: #111; }
+  .ai-g-input { 
+    width: 100% !important; border: 1px solid #eee; border-radius: 10px; padding: 15px 20px; font-size: 15px; 
+    transition: all 0.2s; outline: none; background: #fafafa; font-family: inherit; box-sizing: border-box;
+  }
+  .ai-g-input:focus { border-color: #000; background: #fff; box-shadow: 0 0 0 4px rgba(0,0,0,0.03); }
+
+  .ai-g-star-selector { display: flex; gap: 10px; font-size: 36px; color: #eee; cursor: pointer; margin-bottom: 25px; }
+  .ai-g-star-selector span.active { color: #fbbc05; }
+
+  .ai-g-upload-box {
+    border: 2px dashed #e0e0e0; border-radius: 15px; padding: 40px; text-align: center; cursor: pointer; position: relative; transition: background 0.2s;
+  }
+  .ai-g-upload-box:hover { background: #f9f9f9; border-color: #999; }
+  .ai-g-upload-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+  /* LIST STYLES */
+  .ai-global-rev-list { display: none; grid-template-columns: 1fr; gap: 30px; }
+  .ai-global-rev-list.active { display: grid; animation: fadeInReview 0.4s ease forwards; }
+  
+  .ai-g-rev-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 15px; padding: 25px; }
+  .ai-g-rev-user { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+  .ai-g-avatar { width: 45px; height: 45px; border-radius: 50%; background: #2b2730; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; flex-shrink: 0; }
+  .ai-g-username { font-weight: 800; font-size: 16px; color: #000; display: flex; align-items: center; flex-wrap: wrap; }
+  .ai-g-verified { background: #e6f4ea; color: #1e8e3e; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; margin-left: 10px; }
+{%- endstyle -%}
+
+<section class="section-{{ section.id }}-padding">
+  <div class="ai-global-rev-container">
+    
+    <div class="ai-rev-card-main">
+      <div class="ai-rev-title-center">Customer Reviews</div>
+      
+      <div class="ai-rev-summary-grid">
+        <!-- LEFT: STARS & TEXT -->
+        <div class="ai-rev-left-col">
+           <div class="ai-stars-outline">☆☆☆☆☆</div>
+           <div class="ai-rev-be-first">Be the first to write a review</div>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="ai-rev-divider-v"></div>
+
+        <!-- RIGHT: BUTTON -->
+        <div class="ai-rev-right-col">
+           <button class="ai-write-btn-pill" onclick="toggleForm('{{ section.id }}')">
+             Write a review
+           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLOBAL FORM -->
+    <div class="ai-global-rev-form" id="GlobalRevForm-{{ section.id }}">
+       <h3 style="margin:0 0 35px 0; font-size:28px; font-weight:800; text-align:center;">Share your feedback</h3>
+       
+       <div class="ai-g-form-group" style="text-align:center;">
+          <label class="ai-g-label">Your Overall Rating</label>
+          <div class="ai-g-star-selector" id="GStarInput-{{ section.id }}" style="justify-content:center;">
+             <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+          </div>
+       </div>
+
+       <div class="ai-g-form-group">
+          <label class="ai-g-label">Full Name</label>
+          {% if customer %}
+             <input type="text" class="ai-g-input" value="{{ customer.first_name }} {{ customer.last_name }}" readonly style="background:#f5f5f5;" id="GRevName-{{ section.id }}">
+          {% else %}
+             <input type="text" class="ai-g-input" placeholder="e.g. Anjali Sharma" id="GRevName-{{ section.id }}">
+          {% endif %}
+       </div>
+
+       <div class="ai-g-form-group">
+          <label class="ai-g-label">Your Review</label>
+          <textarea class="ai-g-input" rows="5" placeholder="What did you like or dislike?" id="GRevText-{{ section.id }}"></textarea>
+       </div>
+
+       <div class="ai-g-form-group">
+          <label class="ai-g-label">Add Photos</label>
+          <div class="ai-g-upload-box">
+             <div style="font-size:32px; margin-bottom:10px;">📸</div>
+             <div style="font-weight:800; font-size:16px;">Click to upload photos</div>
+             <div style="font-size:13px; color:#999; margin-top:5px;">Supports JPG, PNG</div>
+             <input type="file" multiple accept="image/*" onchange="previewGRevImgs(this, '{{ section.id }}')">
+          </div>
+          <div id="GImgPreview-{{ section.id }}" style="display:flex; gap:12px; margin-top:15px; flex-wrap:wrap; justify-content:center;"></div>
+       </div>
+
+       <div style="display:flex; gap:15px; margin-top:30px;">
+          <button class="ai-write-btn-pill" style="flex:1;" onclick="submitGlobalReview('{{ section.id }}')">Submit Review</button>
+          <button class="ai-write-btn-pill" style="background:#f5f5f5; color:#000; flex:1;" onclick="toggleForm('{{ section.id }}')">Cancel</button>
+       </div>
+    </div>
+
+    <!-- REVIEWS DROPDOWN TOGGLE -->
+    <button class="ai-show-rev-toggle" id="RevToggleBtn-{{ section.id }}" onclick="toggleReviews('{{ section.id }}')">
+       Show Reviews <span>▼</span>
+    </button>
+
+    <!-- GLOBAL LIST -->
+    <div class="ai-global-rev-list" id="GRevList-{{ section.id }}">
+       <!-- DEFAULT REVIEWS -->
+       <div class="ai-g-rev-card">
+          <div class="ai-g-rev-user">
+             <div class="ai-g-avatar">R</div>
+             <div>
+                <div class="ai-g-username">Rohan Gupta <span class="ai-g-verified">Verified Buyer</span></div>
+                <div style="font-size:12px; color:#999;">Published on April 22, 2026</div>
+             </div>
+          </div>
+          <div class="ai-g-rev-stars">★★★★★</div>
+          <div class="ai-g-rev-text">Absolutely stunning product. The packaging was very premium and the product itself has a great feel to it. Highly recommended for gifting.</div>
+          <div class="ai-g-rev-imgs">
+             <div class="ai-g-rev-img"><img src="{{ product.featured_image | image_url: width: 300 }}"></div>
+          </div>
+       </div>
+
+       <div class="ai-g-rev-card">
+          <div class="ai-g-rev-user">
+             <div class="ai-g-avatar">M</div>
+             <div>
+                <div class="ai-g-username">Meera Singh <span class="ai-g-verified">Verified Buyer</span></div>
+                <div style="font-size:12px; color:#999;">Published on April 20, 2026</div>
+             </div>
+          </div>
+          <div class="ai-g-rev-stars">★★★★★</div>
+          <div class="ai-g-rev-text">Fast delivery and excellent quality. I've been using this for a week now and I can definitely notice a difference in the atmosphere of my home.</div>
+       </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // STAR SELECTOR
+  document.querySelectorAll('#GStarInput-{{ section.id }} span').forEach(star => {
+     star.addEventListener('click', function() {
+        const val = this.getAttribute('data-val');
+        const parent = this.parentElement;
+        parent.querySelectorAll('span').forEach((s, idx) => {
+           if(idx < val) s.classList.add('active');
+           else s.classList.remove('active');
+        });
+        parent.setAttribute('data-selected', val);
+     });
+  });
+
+  function toggleForm(sid) {
+     const form = document.getElementById('GlobalRevForm-' + sid);
+     form.classList.toggle('active');
+  }
+
+  function toggleReviews(sid) {
+     const list = document.getElementById('GRevList-' + sid);
+     const btn = document.getElementById('RevToggleBtn-' + sid);
+     list.classList.toggle('active');
+     btn.classList.toggle('active');
+     
+     if(list.classList.contains('active')) {
+        btn.querySelector('span').innerText = '▲';
+        btn.innerHTML = 'Hide Reviews <span>▲</span>';
+     } else {
+        btn.querySelector('span').innerText = '▼';
+        btn.innerHTML = 'Show Reviews <span>▼</span>';
+     }
+  }
+
+  function previewGRevImgs(input, sid) {
+     const preview = document.getElementById('GImgPreview-' + sid);
+     preview.innerHTML = '';
+     if (input.files) {
+        Array.from(input.files).forEach(file => {
+           const reader = new FileReader();
+           reader.onload = function(e) {
+              const div = document.createElement('div');
+              div.style.width = '70px'; div.style.height = '70px'; div.style.borderRadius = '8px'; div.style.overflow = 'hidden'; div.style.border = '1px solid #eee';
+              div.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+              preview.appendChild(div);
+           }
+           reader.readAsDataURL(file);
+        });
+     }
+  }
+
+  function submitGlobalReview(sid) {
+     const name = document.getElementById('GRevName-' + sid).value;
+     const text = document.getElementById('GRevText-' + sid).value;
+     const stars = document.getElementById('GStarInput-' + sid).getAttribute('data-selected') || 5;
+
+     if(!name || !text) { alert('Please enter your name and feedback.'); return; }
+
+     const list = document.getElementById('GRevList-' + sid);
+     const card = document.createElement('div');
+     card.className = 'ai-g-rev-card';
+     card.style.animation = 'fadeInReview 0.5s ease';
+
+     let starsHtml = '';
+     for(let i=0; i<5; i++) starsHtml += (i < stars ? '★' : '☆');
+
+     card.innerHTML = `
+        <div class="ai-g-rev-user">
+           <div class="ai-g-avatar">${name.charAt(0).toUpperCase()}</div>
+           <div>
+              <div class="ai-g-username">${name} <span class="ai-g-verified" style="background:#e8f0fe; color:#1a73e8;">Just now</span></div>
+              <div style="font-size:12px; color:#999;">Review under moderation</div>
+           </div>
+        </div>
+        <div class="ai-g-rev-stars" style="color:#fbbc05;">${starsHtml}</div>
+        <div class="ai-g-rev-text">${text}</div>
+     `;
+
+     list.prepend(card);
+     document.getElementById('GlobalRevForm-' + sid).classList.remove('active');
+     // Reset
+     document.getElementById('GRevText-' + sid).value = '';
+     alert('Thank you! Your review has been submitted for approval.');
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Global Product Reviews",
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
+    { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 100, "step": 4, "default": 40, "unit": "px" },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 100, "step": 4, "default": 40, "unit": "px" }
+  ],
+  "presets": [
+    {
+      "name": "Global Product Reviews"
+    }
+  ]
+}
+{% endschema %}

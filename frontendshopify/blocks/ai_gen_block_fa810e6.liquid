@@ -1,0 +1,799 @@
+{% doc %}
+  @prompt
+    🚨 IMPORTANT (STRICT INSTRUCTION)
+    
+    DO NOT create a simple footer.
+    DO NOT create minimal links.
+    
+    Create a multi-column detailed footer exactly like a professional astrology website footer with multiple link groups and description.
+    
+    🧾 TOP CONTENT (ABOUT TEXT)
+    
+    Add a top full-width content area:
+    
+    Heading:
+    
+    About Astrojap
+    
+    Description:
+    
+    Astrojap is a trusted astrology platform providing accurate predictions and guidance. Talk to astrologers, generate kundli, and explore insights related to love, career, marriage, and health.
+    
+    👉 Add a thin divider line below this section.
+    
+    🧱 FOOTER GRID (MANDATORY)
+    
+    Create a 5-column layout (desktop)
+    
+    📂 COLUMN 1 – HOROSCOPE
+    
+    Heading:
+    Horoscope
+    
+    Links:
+    
+    Today’s Horoscope
+    
+    Today’s Love Horoscope
+    
+    Yesterday’s Horoscope
+    
+    Tomorrow’s Horoscope
+    
+    Weekly Horoscope
+    
+    Monthly Horoscope
+    
+    Yearly Horoscope
+    
+    Subheading:
+    Shubh Muhurat 2026
+    
+    Links:
+    
+    Annaprashan Muhurat 2026
+    
+    Naamkaran Muhurat 2026
+    
+    📂 COLUMN 2 – IMPORTANT LINKS
+    
+    Heading:
+    Important Links
+    
+    Links:
+    
+    Astromall
+    
+    Astrojap Store
+    
+    Today Panchang
+    
+    Live Astrologers
+    
+    How to read kundali
+    
+    Free Kundli
+    
+    Kundli Matching
+    
+    Chat with Astrologer
+    
+    Talk to Astrologer
+    
+    Astrojap Reviews
+    
+    📂 COLUMN 3 – SERVICES
+    
+    Heading:
+    Important Links
+    
+    Links:
+    
+    Collaboration
+    
+    Tarot
+    
+    Zodiac Signs
+    
+    Vastu Shastra
+    
+    Love Calculator
+    
+    Guru Purnima 2026
+    
+    Astrojap Sitemap
+    
+    Subheading:
+    Shop our products
+    
+    Links:
+    
+    Evil Eye
+    
+    Rudraksha
+    
+    📂 COLUMN 4 – ASTROLOGER
+    
+    Heading:
+    Astrologer
+    
+    Links:
+    
+    Astrologer Login
+    
+    Astrologer Registration
+    
+    Subheading:
+    Corporate Info
+    
+    Links:
+    
+    Refund & Cancellation Policy
+    
+    Terms & Conditions
+    
+    Privacy Policy
+    
+    Disclaimer
+    
+    About Us
+    
+    Pricing Policy
+    
+    📂 COLUMN 5 – CONTACT
+    
+    Heading:
+    Contact Us
+    
+    Add:
+    
+    Email
+    
+    Phone
+    
+    Address
+    
+    🎨 DESIGN STYLE (MATCH EXACT LOOK)
+    
+    Background: dark grey (#3a3a3a or similar)
+    
+    Text: light grey / white
+    
+    Headings:
+    
+    Bold
+    
+    Yellow underline accent
+    
+    Links:
+    
+    Light color
+    
+    Hover: change color
+    
+    Spacing:
+    
+    Clean and evenly spaced
+    
+    ⚙️ FULLY EDITABLE (VERY IMPORTANT)
+    
+    All content must be editable from Shopify customizer:
+    
+    Section description
+    
+    Column headings
+    
+    Links (add/remove/edit)
+    
+    Contact info
+    
+    Use:
+    
+    Blocks OR settings for each column
+    
+    📱 RESPONSIVE BEHAVIOR
+    
+    Convert to:
+    
+    2 columns (tablet)
+    
+    1 column (mobile)
+    
+    Maintain spacing
+    
+    Stack sections properly
+    
+    ⚙️ TECHNICAL REQUIREMENTS
+    
+    Use Shopify Liquid + schema
+    
+    Use grid or flexbox
+    
+    Optimize for performance
+    
+    🚀 GOAL
+    
+    Create a professional, information-rich footer that:
+    
+    Improves navigation
+    
+    Builds trust
+    
+    Matches premium astrology websites
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-astro-footer-{{ ai_gen_id }} {
+    display: block;
+    background-color: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+    padding: 60px 20px 30px;
+    width: 100%;
+  }
+
+  .ai-astro-footer__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-astro-footer__top-section-{{ ai_gen_id }} {
+    margin-bottom: 40px;
+  }
+
+  .ai-astro-footer__about-heading-{{ ai_gen_id }} {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 15px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-astro-footer__about-text-{{ ai_gen_id }} {
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-astro-footer__divider-{{ ai_gen_id }} {
+    height: 1px;
+    background-color: {{ block.settings.divider_color }};
+    margin: 40px 0;
+    border: none;
+  }
+
+  .ai-astro-footer__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .ai-astro-footer__column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-astro-footer__column-heading-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 20px;
+    color: {{ block.settings.heading_color }};
+    position: relative;
+    padding-bottom: 10px;
+  }
+
+  .ai-astro-footer__column-heading-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background-color: {{ block.settings.accent_color }};
+  }
+
+  .ai-astro-footer__subheading-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 20px 0 12px;
+    color: {{ block.settings.subheading_color }};
+  }
+
+  .ai-astro-footer__link-list-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ai-astro-footer__link-{{ ai_gen_id }} {
+    color: {{ block.settings.link_color }};
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+    display: inline-block;
+  }
+
+  .ai-astro-footer__link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.link_hover_color }};
+  }
+
+  .ai-astro-footer__contact-item-{{ ai_gen_id }} {
+    margin-bottom: 15px;
+  }
+
+  .ai-astro-footer__contact-label-{{ ai_gen_id }} {
+    font-weight: 600;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 5px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-astro-footer__contact-value-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-astro-footer__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-astro-footer-{{ ai_gen_id }} {
+      padding: 40px 15px 20px;
+    }
+
+    .ai-astro-footer__grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .ai-astro-footer__about-heading-{{ ai_gen_id }} {
+      font-size: 20px;
+    }
+
+    .ai-astro-footer__divider-{{ ai_gen_id }} {
+      margin: 30px 0;
+    }
+  }
+{% endstyle %}
+
+<astro-footer-{{ ai_gen_id }} class="ai-astro-footer-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-astro-footer__container-{{ ai_gen_id }}">
+    {% if block.settings.show_about_section %}
+      <div class="ai-astro-footer__top-section-{{ ai_gen_id }}">
+        {% if block.settings.about_heading != blank %}
+          <h2 class="ai-astro-footer__about-heading-{{ ai_gen_id }}">{{ block.settings.about_heading }}</h2>
+        {% endif %}
+        {% if block.settings.about_description != blank %}
+          <div class="ai-astro-footer__about-text-{{ ai_gen_id }}">{{ block.settings.about_description }}</div>
+        {% endif %}
+      </div>
+      <hr class="ai-astro-footer__divider-{{ ai_gen_id }}">
+    {% endif %}
+
+    <div class="ai-astro-footer__grid-{{ ai_gen_id }}">
+      <div class="ai-astro-footer__column-{{ ai_gen_id }}">
+        {% if block.settings.col1_heading != blank %}
+          <h3 class="ai-astro-footer__column-heading-{{ ai_gen_id }}">{{ block.settings.col1_heading }}</h3>
+        {% endif %}
+        {% if block.settings.col1_links != blank %}
+          <ul class="ai-astro-footer__link-list-{{ ai_gen_id }}">
+            {% assign links = block.settings.col1_links | newline_to_br | split: '<br />' %}
+            {% for link in links %}
+              {% assign link_parts = link | split: '|' %}
+              {% if link_parts.size == 2 %}
+                <li>
+                  <a href="{{ link_parts[1] | strip }}" class="ai-astro-footer__link-{{ ai_gen_id }}">
+                    {{ link_parts[0] | strip }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% if block.settings.col1_subheading != blank %}
+          <h4 class="ai-astro-footer__subheading-{{ ai_gen_id }}">{{ block.settings.col1_subheading }}</h4>
+        {% endif %}
+        {% if block.settings.col1_sublinks != blank %}
+          <ul class="ai-astro-footer__link-list-{{ ai_gen_id }}">
+            {% assign sublinks = block.settings.col1_sublinks | newline_to_br | split: '<br />' %}
+            {% for link in sublinks %}
+              {% assign link_parts = link | split: '|' %}
+              {% if link_parts.size == 2 %}
+                <li>
+                  <a href="{{ link_parts[1] | strip }}" class="ai-astro-footer__link-{{ ai_gen_id }}">
+                    {{ link_parts[0] | strip }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="ai-astro-footer__column-{{ ai_gen_id }}">
+        {% if block.settings.col2_heading != blank %}
+          <h3 class="ai-astro-footer__column-heading-{{ ai_gen_id }}">{{ block.settings.col2_heading }}</h3>
+        {% endif %}
+        {% if block.settings.col2_links != blank %}
+          <ul class="ai-astro-footer__link-list-{{ ai_gen_id }}">
+            {% assign links = block.settings.col2_links | newline_to_br | split: '<br />' %}
+            {% for link in links %}
+              {% assign link_parts = link | split: '|' %}
+              {% if link_parts.size == 2 %}
+                <li>
+                  <a href="{{ link_parts[1] | strip }}" class="ai-astro-footer__link-{{ ai_gen_id }}">
+                    {{ link_parts[0] | strip }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="ai-astro-footer__column-{{ ai_gen_id }}">
+        {% if block.settings.col3_heading != blank %}
+          <h3 class="ai-astro-footer__column-heading-{{ ai_gen_id }}">{{ block.settings.col3_heading }}</h3>
+        {% endif %}
+        {% if block.settings.col3_links != blank %}
+          <ul class="ai-astro-footer__link-list-{{ ai_gen_id }}">
+            {% assign links = block.settings.col3_links | newline_to_br | split: '<br />' %}
+            {% for link in links %}
+              {% assign link_parts = link | split: '|' %}
+              {% if link_parts.size == 2 %}
+                <li>
+                  <a href="{{ link_parts[1] | strip }}" class="ai-astro-footer__link-{{ ai_gen_id }}">
+                    {{ link_parts[0] | strip }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% if block.settings.col3_subheading != blank %}
+          <h4 class="ai-astro-footer__subheading-{{ ai_gen_id }}">{{ block.settings.col3_subheading }}</h4>
+        {% endif %}
+        {% if block.settings.col3_sublinks != blank %}
+          <ul class="ai-astro-footer__link-list-{{ ai_gen_id }}">
+            {% assign sublinks = block.settings.col3_sublinks | newline_to_br | split: '<br />' %}
+            {% for link in sublinks %}
+              {% assign link_parts = link | split: '|' %}
+              {% if link_parts.size == 2 %}
+                <li>
+                  <a href="{{ link_parts[1] | strip }}" class="ai-astro-footer__link-{{ ai_gen_id }}">
+                    {{ link_parts[0] | strip }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="ai-astro-footer__column-{{ ai_gen_id }}">
+        {% if block.settings.col4_heading != blank %}
+          <h3 class="ai-astro-footer__column-heading-{{ ai_gen_id }}">{{ block.settings.col4_heading }}</h3>
+        {% endif %}
+        {% if block.settings.col4_links != blank %}
+          <ul class="ai-astro-footer__link-list-{{ ai_gen_id }}">
+            {% assign links = block.settings.col4_links | newline_to_br | split: '<br />' %}
+            {% for link in links %}
+              {% assign link_parts = link | split: '|' %}
+              {% if link_parts.size == 2 %}
+                <li>
+                  <a href="{{ link_parts[1] | strip }}" class="ai-astro-footer__link-{{ ai_gen_id }}">
+                    {{ link_parts[0] | strip }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% if block.settings.col4_subheading != blank %}
+          <h4 class="ai-astro-footer__subheading-{{ ai_gen_id }}">{{ block.settings.col4_subheading }}</h4>
+        {% endif %}
+        {% if block.settings.col4_sublinks != blank %}
+          <ul class="ai-astro-footer__link-list-{{ ai_gen_id }}">
+            {% assign sublinks = block.settings.col4_sublinks | newline_to_br | split: '<br />' %}
+            {% for link in sublinks %}
+              {% assign link_parts = link | split: '|' %}
+              {% if link_parts.size == 2 %}
+                <li>
+                  <a href="{{ link_parts[1] | strip }}" class="ai-astro-footer__link-{{ ai_gen_id }}">
+                    {{ link_parts[0] | strip }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="ai-astro-footer__column-{{ ai_gen_id }}">
+        {% if block.settings.col5_heading != blank %}
+          <h3 class="ai-astro-footer__column-heading-{{ ai_gen_id }}">{{ block.settings.col5_heading }}</h3>
+        {% endif %}
+        {% if block.settings.contact_email != blank %}
+          <div class="ai-astro-footer__contact-item-{{ ai_gen_id }}">
+            <span class="ai-astro-footer__contact-label-{{ ai_gen_id }}">Email:</span>
+            <a href="mailto:{{ block.settings.contact_email }}" class="ai-astro-footer__link-{{ ai_gen_id }} ai-astro-footer__contact-value-{{ ai_gen_id }}">
+              {{ block.settings.contact_email }}
+            </a>
+          </div>
+        {% endif %}
+        {% if block.settings.contact_phone != blank %}
+          <div class="ai-astro-footer__contact-item-{{ ai_gen_id }}">
+            <span class="ai-astro-footer__contact-label-{{ ai_gen_id }}">Phone:</span>
+            <a href="tel:{{ block.settings.contact_phone }}" class="ai-astro-footer__link-{{ ai_gen_id }} ai-astro-footer__contact-value-{{ ai_gen_id }}">
+              {{ block.settings.contact_phone }}
+            </a>
+          </div>
+        {% endif %}
+        {% if block.settings.contact_address != blank %}
+          <div class="ai-astro-footer__contact-item-{{ ai_gen_id }}">
+            <span class="ai-astro-footer__contact-label-{{ ai_gen_id }}">Address:</span>
+            <div class="ai-astro-footer__contact-value-{{ ai_gen_id }}">
+              {{ block.settings.contact_address }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</astro-footer-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AstroFooter{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+      }
+    }
+
+    customElements.define('astro-footer-{{ ai_gen_id }}', AstroFooter{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Astrology footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "About section"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_about_section",
+      "label": "Show about section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "about_heading",
+      "label": "About heading",
+      "default": "About Astrojap"
+    },
+    {
+      "type": "textarea",
+      "id": "about_description",
+      "label": "About description",
+      "default": "Astrojap is a trusted astrology platform providing accurate predictions and guidance. Talk to astrologers, generate kundli, and explore insights related to love, career, marriage, and health."
+    },
+    {
+      "type": "header",
+      "content": "Column 1 - Horoscope"
+    },
+    {
+      "type": "text",
+      "id": "col1_heading",
+      "label": "Heading",
+      "default": "Horoscope"
+    },
+    {
+      "type": "textarea",
+      "id": "col1_links",
+      "label": "Links",
+      "info": "Format: Link Text|URL (one per line)",
+      "default": "Today's Horoscope|/horoscope/today\nToday's Love Horoscope|/horoscope/love\nYesterday's Horoscope|/horoscope/yesterday\nTomorrow's Horoscope|/horoscope/tomorrow\nWeekly Horoscope|/horoscope/weekly\nMonthly Horoscope|/horoscope/monthly\nYearly Horoscope|/horoscope/yearly"
+    },
+    {
+      "type": "text",
+      "id": "col1_subheading",
+      "label": "Subheading",
+      "default": "Shubh Muhurat 2026"
+    },
+    {
+      "type": "textarea",
+      "id": "col1_sublinks",
+      "label": "Sub-links",
+      "info": "Format: Link Text|URL (one per line)",
+      "default": "Annaprashan Muhurat 2026|/muhurat/annaprashan\nNaamkaran Muhurat 2026|/muhurat/naamkaran"
+    },
+    {
+      "type": "header",
+      "content": "Column 2 - Important links"
+    },
+    {
+      "type": "text",
+      "id": "col2_heading",
+      "label": "Heading",
+      "default": "Important Links"
+    },
+    {
+      "type": "textarea",
+      "id": "col2_links",
+      "label": "Links",
+      "info": "Format: Link Text|URL (one per line)",
+      "default": "Astromall|/astromall\nAstrojap Store|/store\nToday Panchang|/panchang\nLive Astrologers|/astrologers\nHow to read kundali|/kundali-guide\nFree Kundli|/kundli\nKundli Matching|/kundli-matching\nChat with Astrologer|/chat\nTalk to Astrologer|/talk\nAstrojap Reviews|/reviews"
+    },
+    {
+      "type": "header",
+      "content": "Column 3 - Services"
+    },
+    {
+      "type": "text",
+      "id": "col3_heading",
+      "label": "Heading",
+      "default": "Important Links"
+    },
+    {
+      "type": "textarea",
+      "id": "col3_links",
+      "label": "Links",
+      "info": "Format: Link Text|URL (one per line)",
+      "default": "Collaboration|/collaboration\nTarot|/tarot\nZodiac Signs|/zodiac\nVastu Shastra|/vastu\nLove Calculator|/love-calculator\nGuru Purnima 2026|/guru-purnima\nAstrojap Sitemap|/sitemap"
+    },
+    {
+      "type": "text",
+      "id": "col3_subheading",
+      "label": "Subheading",
+      "default": "Shop our products"
+    },
+    {
+      "type": "textarea",
+      "id": "col3_sublinks",
+      "label": "Sub-links",
+      "info": "Format: Link Text|URL (one per line)",
+      "default": "Evil Eye|/products/evil-eye\nRudraksha|/products/rudraksha"
+    },
+    {
+      "type": "header",
+      "content": "Column 4 - Astrologer"
+    },
+    {
+      "type": "text",
+      "id": "col4_heading",
+      "label": "Heading",
+      "default": "Astrologer"
+    },
+    {
+      "type": "textarea",
+      "id": "col4_links",
+      "label": "Links",
+      "info": "Format: Link Text|URL (one per line)",
+      "default": "Astrologer Login|/astrologer/login\nAstrologer Registration|/astrologer/register"
+    },
+    {
+      "type": "text",
+      "id": "col4_subheading",
+      "label": "Subheading",
+      "default": "Corporate Info"
+    },
+    {
+      "type": "textarea",
+      "id": "col4_sublinks",
+      "label": "Sub-links",
+      "info": "Format: Link Text|URL (one per line)",
+      "default": "Refund & Cancellation Policy|/policies/refund\nTerms & Conditions|/policies/terms\nPrivacy Policy|/policies/privacy\nDisclaimer|/policies/disclaimer\nAbout Us|/pages/about\nPricing Policy|/policies/pricing"
+    },
+    {
+      "type": "header",
+      "content": "Column 5 - Contact"
+    },
+    {
+      "type": "text",
+      "id": "col5_heading",
+      "label": "Heading",
+      "default": "Contact Us"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Email",
+      "default": "support@astrojap.com"
+    },
+    {
+      "type": "text",
+      "id": "contact_phone",
+      "label": "Phone",
+      "default": "+91 1234567890"
+    },
+    {
+      "type": "textarea",
+      "id": "contact_address",
+      "label": "Address",
+      "default": "123 Astrology Street, Mumbai, Maharashtra, India"
+    },
+    {
+      "type": "header",
+      "content": "Design settings"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#d4d4d4"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link color",
+      "default": "#d4d4d4"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link hover color",
+      "default": "#ffd700"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color (underline)",
+      "default": "#ffd700"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#5a5a5a"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrology footer"
+    }
+  ]
+}
+{% endschema %}

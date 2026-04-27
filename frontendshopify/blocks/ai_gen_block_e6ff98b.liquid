@@ -1,0 +1,585 @@
+{% assign id = block.id | default: section.id | replace: '_', '' | downcase %}
+{% assign c_bg = block.settings.bg_color | default: section.settings.bg_color | default: '#fafafa' %}
+{% assign c_prm = block.settings.primary_color | default: section.settings.primary_color | default: '#6366f1' %}
+{% assign c_sec = block.settings.secondary_color | default: section.settings.secondary_color | default: '#8b5cf6' %}
+{% assign c_tx = block.settings.text_color | default: section.settings.text_color | default: '#1e293b' %}
+
+{% style %}
+/* Root & Typography */
+.ast-daily-{{ id }} {
+  width: 100%;
+  padding: 80px 20px;
+  background: {{ c_bg }};
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: {{ c_tx }};
+  overflow: hidden;
+}
+
+.ast-daily-wrap-{{ id }} {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header */
+.ast-head-wrap-{{ id }} {
+  text-align: center;
+  margin-bottom: 50px;
+  position: relative;
+  z-index: 2;
+}
+.ast-daily-tt-{{ id }} {
+  font-size: 42px;
+  color: {{ c_tx }};
+  margin: 0 0 15px;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+.ast-daily-tt-{{ id }} span {
+  background: linear-gradient(135deg, {{ c_prm }}, {{ c_sec }});
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.ast-daily-sb-{{ id }} {
+  font-size: 18px;
+  color: #64748b;
+  margin: 0 auto;
+  line-height: 1.6;
+  max-width: 550px;
+}
+
+/* Zodiac Carousel / Grid */
+.ast-zodiac-scroll-{{ id }} {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 50px;
+  padding-bottom: 20px;
+}
+
+.ast-zodiac-grid-{{ id }} {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  padding: 10px;
+}
+
+.ast-zodiac-item-{{ id }} {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ast-zodiac-item-{{ id }}::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, {{ c_prm }}15, {{ c_sec }}15);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.ast-zodiac-item-{{ id }}:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+  border-color: {{ c_prm }};
+}
+.ast-zodiac-item-{{ id }}:hover::before { opacity: 1; }
+
+.ast-zodiac-item-{{ id }}.active {
+  background: linear-gradient(135deg, {{ c_prm }}, {{ c_sec }});
+  color: #ffffff;
+  border-color: transparent;
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px {{ c_prm }}40;
+}
+
+.ast-zodiac-item-{{ id }} img {
+  width: 45px;
+  height: 45px;
+  display: block;
+  filter: grayscale(1) opacity(0.6);
+  transition: all 0.4s ease;
+  z-index: 2;
+  position: relative;
+}
+.ast-zodiac-item-{{ id }}:hover img { filter: grayscale(0) opacity(1) drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+.ast-zodiac-item-{{ id }}.active img { filter: brightness(0) invert(1) drop-shadow(0 4px 8px rgba(0,0,0,0.2)); opacity: 1; transform: scale(1.1); }
+
+.ast-zodiac-title-{{ id }} {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 2;
+  position: relative;
+}
+.ast-zodiac-item-{{ id }}.active .ast-zodiac-title-{{ id }} { color: #ffffff; }
+
+/* Date Tabs */
+.ast-tabs-{{ id }} {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 35px;
+  justify-content: center;
+  width: 100%;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 50px;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ast-tab-btn-{{ id }} {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+.ast-tab-btn-{{ id }}:hover { color: {{ c_tx }}; }
+.ast-tab-btn-{{ id }}.active {
+  background: #ffffff;
+  color: {{ c_prm }};
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* Prediction Panel */
+.ast-pred-panel-{{ id }} {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 50px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 1000px;
+  display: none;
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ast-pred-header-{{ id }} {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.ast-pred-title-{{ id }} {
+  font-size: 32px;
+  font-weight: 900;
+  text-transform: capitalize;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: {{ c_tx }};
+}
+.ast-pred-title-{{ id }}::before {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 32px;
+  background: linear-gradient(to bottom, {{ c_prm }}, {{ c_sec }});
+  border-radius: 8px;
+}
+.ast-pred-date-{{ id }} {
+  font-size: 15px;
+  color: {{ c_prm }};
+  font-weight: 700;
+  background: {{ c_prm }}15;
+  padding: 8px 16px;
+  border-radius: 30px;
+}
+
+/* Data Grid Container */
+.ast-pred-grid-{{ id }} {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.ast-pred-cat-{{ id }} {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 25px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.ast-pred-cat-{{ id }}:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.ast-pred-cat-tt-{{ id }} {
+  font-size: 17px;
+  font-weight: 800;
+  color: {{ c_tx }};
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ast-ikn-{{ id }} {
+  width: 36px; height: 36px;
+  display: flex; justify-content: center; align-items: center;
+  background: linear-gradient(135deg, {{ c_prm }}15, {{ c_sec }}15);
+  color: {{ c_prm }};
+  border-radius: 10px;
+}
+.ast-ikn-{{ id }} svg { width: 20px; height: 20px; fill: currentColor; }
+
+.ast-pred-cat-txt-{{ id }} {
+  font-size: 16px;
+  color: #475569;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* States */
+.ast-loading-{{ id }} {
+  display: none; text-align: center; padding: 60px 0; width: 100%;
+}
+.ast-spinner-{{ id }} {
+  width: 50px; height: 50px;
+  border: 4px solid {{ c_prm }}30;
+  border-top: 4px solid {{ c_prm }};
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.ast-error-{{ id }} {
+  display: none; background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b;
+  padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; width: 100%;
+  max-width: 600px; font-weight: 600;
+}
+
+/* --- MOBILE RESPONSIVE ADAPTATIONS --- */
+@media(max-width: 991px){
+  .ast-zodiac-grid-{{ id }} { grid-template-columns: repeat(4, 1fr); }
+  .ast-daily-{{ id }} { padding: 60px 15px; }
+  .ast-pred-grid-{{ id }} { gap: 20px; }
+  .ast-pred-panel-{{ id }} { padding: 30px; }
+}
+
+@media(max-width: 767px){
+  .ast-daily-tt-{{ id }} { font-size: 32px; }
+  
+  /* Horizontal Scroll for Mobile */
+  .ast-zodiac-grid-{{ id }} { 
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    gap: 15px;
+    padding: 15px 5px 30px 5px;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .ast-zodiac-grid-{{ id }}::-webkit-scrollbar { display: none; }
+  .ast-zodiac-grid-{{ id }} { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .ast-zodiac-item-{{ id }} {
+    flex: 0 0 calc(35% - 10px);
+    scroll-snap-align: center;
+    padding: 20px 5px;
+  }
+  
+  .ast-pred-grid-{{ id }} { grid-template-columns: 1fr; }
+  .ast-pred-header-{{ id }} { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .ast-pred-title-{{ id }} { font-size: 26px; }
+  
+  .ast-tabs-{{ id }} { max-width: 100%; border-radius: 12px; padding: 4px; }
+  .ast-tab-btn-{{ id }} { padding: 10px; font-size: 13px; border-radius: 8px; }
+}
+
+@media(max-width: 480px){
+  .ast-zodiac-item-{{ id }} { flex: 0 0 calc(45% - 10px); }
+  .ast-daily-tt-{{ id }} { font-size: 28px; }
+  .ast-pred-panel-{{ id }} { padding: 20px; border-radius: 16px; }
+  .ast-pred-cat-{{ id }} { padding: 20px; }
+}
+{% endstyle %}
+
+<div class="ast-daily-{{ id }}">
+  <div class="ast-daily-wrap-{{ id }}">
+    
+    <div class="ast-head-wrap-{{ id }}">
+      <h2 class="ast-daily-tt-{{ id }}"><span>{{ section.settings.heading | default: "Cosmic Daily Insights" }}</span></h2>
+      <p class="ast-daily-sb-{{ id }}">{{ section.settings.subheading | default: "Discover what the universe has planned for you today. Select your zodiac sign below." }}</p>
+    </div>
+
+    <!-- Zodiac Selector Carousel -->
+    <div class="ast-zodiac-scroll-{{ id }}">
+      <div class="ast-zodiac-grid-{{ id }}" id="zg-{{ id }}">
+        {% assign signs = "aries,taurus,gemini,cancer,leo,virgo,libra,scorpio,sagittarius,capricorn,aquarius,pisces" | split: "," %}
+        
+        {% for sign in signs %}
+          <div class="ast-zodiac-item-{{ id }}" data-sign="{{ sign }}">
+            <img src="https://cdn.shopify.com/s/files/1/0805/7379/1199/files/{{ sign }}_icon.png?v=1733230485" alt="{{ sign | capitalize }}" onerror="this.style.display='none'">
+            <div class="ast-zodiac-title-{{ id }}">{{ sign | capitalize }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Timeframe Tabs -->
+    <div class="ast-tabs-{{ id }}" id="tabs-{{ id }}" style="display:none;">
+      <button class="ast-tab-btn-{{ id }}" data-day="previous">Yesterday</button>
+      <button class="ast-tab-btn-{{ id }} active" data-day="today">Today</button>
+      <button class="ast-tab-btn-{{ id }}" data-day="next">Tomorrow</button>
+    </div>
+
+    <!-- Messages -->
+    <div class="ast-loading-{{ id }}" id="loading-{{ id }}">
+      <div class="ast-spinner-{{ id }}"></div>
+      <div style="font-weight: 600; color: {{ c_prm }}; letter-spacing: 1px;">ALIGNING STARS...</div>
+    </div>
+    
+    <div class="ast-error-{{ id }}" id="err-{{ id }}"></div>
+
+    <!-- Prediction Panel -->
+    <div class="ast-pred-panel-{{ id }}" id="panel-{{ id }}">
+      <div class="ast-pred-header-{{ id }}">
+        <h3 class="ast-pred-title-{{ id }}">
+          <span id="p-sign-{{ id }}"></span> Horoscope
+        </h3>
+        <div class="ast-pred-date-{{ id }}" id="p-date-{{ id }}"></div>
+      </div>
+      
+      <!-- Content Grid -->
+      <div class="ast-pred-grid-{{ id }}">
+        <!-- Left Col -->
+        <div>
+          <div class="ast-pred-cat-{{ id }}">
+            <div class="ast-pred-cat-tt-{{ id }}">
+              <div class="ast-ikn-{{ id }}"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+              Personal Life
+            </div>
+            <div class="ast-pred-cat-txt-{{ id }}" id="txt-personal-{{ id }}"></div>
+          </div>
+          
+          <div class="ast-pred-cat-{{ id }}">
+            <div class="ast-pred-cat-tt-{{ id }}">
+              <div class="ast-ikn-{{ id }}"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg></div>
+              Profession
+            </div>
+            <div class="ast-pred-cat-txt-{{ id }}" id="txt-prof-{{ id }}"></div>
+          </div>
+          
+          <div class="ast-pred-cat-{{ id }}">
+            <div class="ast-pred-cat-tt-{{ id }}">
+              <div class="ast-ikn-{{ id }}"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm4.5-9H13V6.5c0-.28-.22-.5-.5-.5h-1c-.28 0-.5.22-.5.5V11H6.5c-.28 0-.5.22-.5.5v1c0 .28.22.5.5.5H11v4.5c0 .28.22.5.5.5h1c.28 0 .5-.22.5-.5V13h4.5c.28 0 .5-.22.5-.5v-1c0-.28-.22-.5-.5-.5z"/></svg></div>
+              Health
+            </div>
+            <div class="ast-pred-cat-txt-{{ id }}" id="txt-health-{{ id }}"></div>
+          </div>
+        </div>
+        
+        <!-- Right Col -->
+        <div>
+          <div class="ast-pred-cat-{{ id }}">
+            <div class="ast-pred-cat-tt-{{ id }}">
+              <div class="ast-ikn-{{ id }}"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></div>
+              Emotions
+            </div>
+            <div class="ast-pred-cat-txt-{{ id }}" id="txt-emo-{{ id }}"></div>
+          </div>
+          
+          <div class="ast-pred-cat-{{ id }}">
+            <div class="ast-pred-cat-tt-{{ id }}">
+              <div class="ast-ikn-{{ id }}"><svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1 0.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></div>
+              Travel
+            </div>
+            <div class="ast-pred-cat-txt-{{ id }}" id="txt-travel-{{ id }}"></div>
+          </div>
+          
+          <div class="ast-pred-cat-{{ id }}">
+            <div class="ast-pred-cat-tt-{{ id }}">
+              <div class="ast-ikn-{{ id }}"><svg viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg></div>
+              Luck
+            </div>
+            <div class="ast-pred-cat-txt-{{ id }}" id="txt-luck-{{ id }}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const BACKEND_URL = 'https://kundli-api-1.vercel.app/api/kundli';
+  // const BACKEND_URL = 'http://localhost:3000/api/kundli'; // Dev only
+  
+  const zodiacItems = document.querySelectorAll('.ast-zodiac-item-{{ id }}');
+  const tabs = document.getElementById('tabs-{{ id }}');
+  const tabBtns = document.querySelectorAll('.ast-tab-btn-{{ id }}');
+  const panel = document.getElementById('panel-{{ id }}');
+  const loading = document.getElementById('loading-{{ id }}');
+  const errBox = document.getElementById('err-{{ id }}');
+  
+  let currentSign = '';
+  let currentDay = 'today';
+  
+  const els = {
+    sign: document.getElementById('p-sign-{{ id }}'),
+    date: document.getElementById('p-date-{{ id }}'),
+    personal: document.getElementById('txt-personal-{{ id }}'),
+    prof: document.getElementById('txt-prof-{{ id }}'),
+    health: document.getElementById('txt-health-{{ id }}'),
+    emo: document.getElementById('txt-emo-{{ id }}'),
+    travel: document.getElementById('txt-travel-{{ id }}'),
+    luck: document.getElementById('txt-luck-{{ id }}')
+  };
+
+  function formatDate(dStr) {
+    if(!dStr) return '';
+    const parts = dStr.split('-');
+    if(parts.length !== 3) return dStr;
+    const d = new Date(parts[2], parts[1]-1, parts[0]);
+    return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  async function fetchPrediction(sign, day) {
+    // Reset animation securely
+    panel.style.animation = 'none';
+    panel.offsetHeight; // trigger reflow
+    panel.style.animation = null; 
+    
+    panel.style.display = 'none';
+    errBox.style.display = 'none';
+    loading.style.display = 'block';
+    
+    try {
+      let tz = 5.5; 
+      try { tz = -new Date().getTimezoneOffset() / 60; } catch(e){}
+
+      const res = await fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'daily',
+          payload: { zodiacName: sign, dayContext: day, timezone: tz }
+        })
+      });
+
+      if(!res.ok) throw new Error('Failed to fetch prediction.');
+      const data = await res.json();
+      
+      if(data.status !== true || !data.prediction) {
+        throw new Error(data.message || 'Data unavailable for this selection.');
+      }
+      
+      const p = data.prediction;
+      els.sign.textContent = sign;
+      els.date.textContent = formatDate(data.prediction_date);
+      
+      els.personal.textContent = p.personal_life || 'N/A';
+      els.prof.textContent = p.profession || 'N/A';
+      els.health.textContent = p.health || 'N/A';
+      els.emo.textContent = p.emotions || 'N/A';
+      els.travel.textContent = p.travel || 'N/A';
+      els.luck.textContent = p.luck || 'N/A';
+      
+      loading.style.display = 'none';
+      tabs.style.display = 'flex';
+      panel.style.display = 'block';
+      
+      const yOffset = -50; 
+      const element = document.getElementById('tabs-{{ id }}');
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({top: y, behavior: 'smooth'});
+
+    } catch (err) {
+      loading.style.display = 'none';
+      errBox.textContent = err.message;
+      errBox.style.display = 'block';
+    }
+  }
+
+  // Handle Sign Clicks
+  zodiacItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // Create scroll effect on mobile
+      item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      
+      zodiacItems.forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      
+      currentSign = item.dataset.sign;
+      
+      tabBtns.forEach(btn => btn.classList.remove('active'));
+      document.querySelector('.ast-tab-btn-{{ id }}[data-day="today"]').classList.add('active');
+      currentDay = 'today';
+      
+      fetchPrediction(currentSign, currentDay);
+    });
+  });
+
+  // Handle Tab Clicks
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(!currentSign || btn.classList.contains('active')) return;
+      
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      currentDay = btn.dataset.day;
+      fetchPrediction(currentSign, currentDay);
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Daily Horoscope VIP",
+  "settings": [
+    { "type": "header", "content": "Premium Colors" },
+    { "type": "color", "id": "bg_color", "label": "Section Background", "default": "#fafafa" },
+    { "type": "color", "id": "primary_color", "label": "Gradient Start & Bounds", "default": "#6366f1" },
+    { "type": "color", "id": "secondary_color", "label": "Gradient End", "default": "#8b5cf6" },
+    { "type": "color", "id": "text_color", "label": "Text Color", "default": "#1e293b" },
+    
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Cosmic Daily Insights" },
+    { "type": "textarea", "id": "subheading", "label": "Subtext", "default": "Discover what the universe has planned for you today. Select your zodiac sign below." }
+  ],
+  "presets": [{"name": "Daily Horoscope VIP"}]
+}
+{% endschema %}

@@ -1,0 +1,1044 @@
+{% doc %}
+  @prompt
+    You are an Expert Shopify Liquid Developer & UI/UX Engineer.
+    
+    Task: Build a fully responsive Shopify Liquid Section called "Astrologer Directory Map" that fetches products from a collection and matches the attached premium astrology directory UI.
+    
+    Architecture & Strict Rules:
+    
+    ONLY use pure HTML, CSS, and Vanilla JS inside the .liquid file. No jQuery.
+    Avoid putting Liquid tags {{ }} directly inside <style> blocks to bypass Shopify Linter errors.
+    Automatically map the data using a bulletproof looping system: {% assign my_collection = section.settings.collection %} fallback to collections[my_collection].products if the object is missing.
+    UI Components & Requirements:
+    
+    Top Toolbar:
+    A search bar (Input + Icon).
+    A horizontal scrollable list of pill-shaped tags (All, Love, Education, Career, Marriage, Health, Wealth) that turn Yellow when active.
+    Write custom Vanilla JS so that typing in the search bar or clicking a filter tag instantly filters the displayed cards without refreshing the page.
+    Grid Layout (3-Column Desktop, 1-Column Mobile):
+    Use CSS Grid with gap: 20px;.
+    Card Structure & Data Mapping:
+    Container: Flex layout (split left and right), white background, rounded corners (12px), subtle shadow on hover, light gray border.
+    Left Side (fixed width ~80px, center-aligned):
+    Circular avatar image pulled from product.featured_image (Yellow border).
+    5 static stars beneath the image.
+    Total orders text pulled from product.metafields.custom.orders (fallback to default string like "22826 orders").
+    Right Side (flex-grow):
+    Name Row: product.title in bold (Left) and a small green verified ✔ checkmark inside a green circle (Right).
+    Skills text: Pulled from product.type or custom metafields (fallback "Vedic, Tarot").
+    Languages text: Pulled from product.metafields.custom.languages (fallback "English, Hindi").
+    Bottom Meta Row: Displays "Exp: 8 Years" on top of the Price (product.price | money). Append visually smaller "/min" text right after the price.
+    Button: A green-outlined button that says "Chat", aligned to the bottom right of the card, tracking standard Shopify logic into a form method="post" action="/cart/add".
+    Schema: Create a simple Schema mapping the selection of a "Master Astrologer Collection"., in this i want that the payment will be done directly from here only no redirect to the cart and when i click to the chat the payment pop up appears  and can make payment 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% assign selected_collection = collections[block.settings.collection] %}
+
+{% style %}
+  .astro-directory-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+  }
+
+  .astro-directory-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .astro-toolbar-{{ ai_gen_id }} {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .astro-search-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .astro-search-input-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+  }
+
+  .astro-search-input-{{ ai_gen_id }}:focus {
+    border-color: #ffc107;
+  }
+
+  .astro-search-icon-{{ ai_gen_id }} {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+  }
+
+  .astro-filters-{{ ai_gen_id }} {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+
+  .astro-filters-{{ ai_gen_id }}::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .astro-filters-{{ ai_gen_id }}::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+  }
+
+  .astro-filter-tag-{{ ai_gen_id }} {
+    padding: 8px 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    background: white;
+    color: #333;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .astro-filter-tag-{{ ai_gen_id }}:hover {
+    border-color: #ffc107;
+  }
+
+  .astro-filter-tag-{{ ai_gen_id }}.active {
+    background: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+    font-weight: 600;
+  }
+
+  .astro-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .astro-card-{{ ai_gen_id }} {
+    display: flex;
+    background: white;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 15px;
+    transition: all 0.3s ease;
+  }
+
+  .astro-card-{{ ai_gen_id }}:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .astro-card-{{ ai_gen_id }}.hidden {
+    display: none;
+  }
+
+  .astro-card-left-{{ ai_gen_id }} {
+    width: 80px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 15px;
+  }
+
+  .astro-avatar-{{ ai_gen_id }} {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid #ffc107;
+    object-fit: cover;
+    margin-bottom: 8px;
+  }
+
+  .astro-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 5px;
+  }
+
+  .astro-star-{{ ai_gen_id }} {
+    width: 12px;
+    height: 12px;
+    fill: #ffc107;
+  }
+
+  .astro-orders-{{ ai_gen_id }} {
+    font-size: 11px;
+    color: #666;
+    text-align: center;
+  }
+
+  .astro-card-right-{{ ai_gen_id }} {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .astro-name-row-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .astro-name-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+  }
+
+  .astro-verified-{{ ai_gen_id }} {
+    width: 18px;
+    height: 18px;
+    background: #4caf50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .astro-verified-icon-{{ ai_gen_id }} {
+    width: 10px;
+    height: 10px;
+    fill: white;
+  }
+
+  .astro-skills-{{ ai_gen_id }},
+  .astro-languages-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  .astro-bottom-row-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+    padding-top: 10px;
+  }
+
+  .astro-meta-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .astro-experience-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 3px;
+  }
+
+  .astro-price-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .astro-price-unit-{{ ai_gen_id }} {
+    font-size: 12px;
+    font-weight: 400;
+    color: #666;
+  }
+
+  .astro-chat-btn-{{ ai_gen_id }} {
+    padding: 8px 20px;
+    border: 2px solid #4caf50;
+    background: white;
+    color: #4caf50;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .astro-chat-btn-{{ ai_gen_id }}:hover {
+    background: #4caf50;
+    color: white;
+  }
+
+  .astro-no-results-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 16px;
+    display: none;
+  }
+
+  .astro-no-results-{{ ai_gen_id }}.visible {
+    display: block;
+  }
+
+  .astro-payment-modal-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+
+  .astro-payment-modal-{{ ai_gen_id }}.active {
+    display: flex;
+  }
+
+  .astro-payment-content-{{ ai_gen_id }} {
+    background: white;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .astro-payment-header-{{ ai_gen_id }} {
+    padding: 25px;
+    border-bottom: 1px solid #e8e8e8;
+    position: relative;
+  }
+
+  .astro-payment-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #666;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .astro-payment-close-{{ ai_gen_id }}:hover {
+    background: #f5f5f5;
+    color: #000;
+  }
+
+  .astro-payment-title-{{ ai_gen_id }} {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    color: #000;
+  }
+
+  .astro-payment-subtitle-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+
+  .astro-payment-body-{{ ai_gen_id }} {
+    padding: 25px;
+  }
+
+  .astro-astrologer-info-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    margin-bottom: 25px;
+  }
+
+  .astro-modal-avatar-{{ ai_gen_id }} {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #ffc107;
+    object-fit: cover;
+    margin-right: 15px;
+  }
+
+  .astro-modal-info-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .astro-modal-name-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    color: #000;
+  }
+
+  .astro-modal-skills-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+  }
+
+  .astro-modal-price-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 700;
+    color: #4caf50;
+  }
+
+  .astro-form-group-{{ ai_gen_id }} {
+    margin-bottom: 20px;
+  }
+
+  .astro-form-label-{{ ai_gen_id }} {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .astro-form-input-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+
+  .astro-form-input-{{ ai_gen_id }}:focus {
+    border-color: #4caf50;
+  }
+
+  .astro-form-select-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+
+  .astro-form-select-{{ ai_gen_id }}:focus {
+    border-color: #4caf50;
+  }
+
+  .astro-payment-summary-{{ ai_gen_id }} {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .astro-summary-row-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .astro-summary-row-{{ ai_gen_id }}:last-child {
+    margin-bottom: 0;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .astro-payment-methods-{{ ai_gen_id }} {
+    margin-bottom: 25px;
+  }
+
+  .astro-payment-method-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .astro-payment-method-{{ ai_gen_id }}:hover {
+    border-color: #4caf50;
+  }
+
+  .astro-payment-method-{{ ai_gen_id }}.selected {
+    border-color: #4caf50;
+    background: #f0f8f4;
+  }
+
+  .astro-payment-radio-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    cursor: pointer;
+  }
+
+  .astro-payment-method-label-{{ ai_gen_id }} {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+  }
+
+  .astro-submit-payment-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 15px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .astro-submit-payment-{{ ai_gen_id }}:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  }
+
+  .astro-submit-payment-{{ ai_gen_id }}:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    .astro-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .astro-card-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .astro-card-left-{{ ai_gen_id }} {
+      width: 100%;
+      flex-direction: row;
+      justify-content: flex-start;
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+
+    .astro-avatar-{{ ai_gen_id }} {
+      margin-right: 15px;
+      margin-bottom: 0;
+    }
+
+    .astro-orders-{{ ai_gen_id }} {
+      text-align: left;
+    }
+
+    .astro-payment-content-{{ ai_gen_id }} {
+      max-height: 95vh;
+    }
+  }
+{% endstyle %}
+
+<astro-directory-{{ ai_gen_id }}
+  class="astro-directory-{{ ai_gen_id }}"
+  {% if block.settings.section_anchor_id != blank %}id="{{ block.settings.section_anchor_id }}"{% endif %}
+  {{ block.shopify_attributes }}
+>
+  <div class="astro-directory-container-{{ ai_gen_id }}">
+    <div class="astro-toolbar-{{ ai_gen_id }}">
+      <div class="astro-search-wrapper-{{ ai_gen_id }}">
+        <input 
+          type="text" 
+          class="astro-search-input-{{ ai_gen_id }}" 
+          placeholder="Search astrologers..."
+          data-search-input
+        >
+        <svg class="astro-search-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </div>
+
+      <div class="astro-filters-{{ ai_gen_id }}">
+        <button class="astro-filter-tag-{{ ai_gen_id }} active" data-filter="all">All</button>
+        <button class="astro-filter-tag-{{ ai_gen_id }}" data-filter="love">Love</button>
+        <button class="astro-filter-tag-{{ ai_gen_id }}" data-filter="education">Education</button>
+        <button class="astro-filter-tag-{{ ai_gen_id }}" data-filter="career">Career</button>
+        <button class="astro-filter-tag-{{ ai_gen_id }}" data-filter="marriage">Marriage</button>
+        <button class="astro-filter-tag-{{ ai_gen_id }}" data-filter="health">Health</button>
+        <button class="astro-filter-tag-{{ ai_gen_id }}" data-filter="wealth">Wealth</button>
+      </div>
+    </div>
+
+    <div class="astro-grid-{{ ai_gen_id }}" data-grid>
+      {% if selected_collection and selected_collection.products.size > 0 %}
+        {% for product in selected_collection.products %}
+          {% liquid
+            assign orders = product.metafields.custom.orders | default: '22826 orders'
+            assign skills = product.type | default: 'Vedic, Tarot'
+            assign languages = product.metafields.custom.languages | default: 'English, Hindi'
+            assign experience = product.metafields.custom.experience | default: '8 Years'
+            assign tags_string = product.tags | join: ',' | downcase
+          %}
+
+          <div 
+            class="astro-card-{{ ai_gen_id }}" 
+            data-card
+            data-name="{{ product.title | downcase }}"
+            data-skills="{{ skills | downcase }}"
+            data-tags="{{ tags_string }}"
+          >
+            <div class="astro-card-left-{{ ai_gen_id }}">
+              {% if product.featured_image %}
+                <img 
+                  src="{{ product.featured_image | image_url: width: 140 }}" 
+                  alt="{{ product.title | escape }}"
+                  class="astro-avatar-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="70"
+                  height="70"
+                >
+              {% else %}
+                <div class="astro-avatar-{{ ai_gen_id }}" style="background: #f0f0f0;"></div>
+              {% endif %}
+
+              <div class="astro-stars-{{ ai_gen_id }}">
+                {% for i in (1..5) %}
+                  <svg class="astro-star-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                {% endfor %}
+              </div>
+
+              <div class="astro-orders-{{ ai_gen_id }}">{{ orders }}</div>
+            </div>
+
+            <div class="astro-card-right-{{ ai_gen_id }}">
+              <div class="astro-name-row-{{ ai_gen_id }}">
+                <h3 class="astro-name-{{ ai_gen_id }}">{{ product.title }}</h3>
+                <div class="astro-verified-{{ ai_gen_id }}">
+                  <svg class="astro-verified-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="astro-skills-{{ ai_gen_id }}">Skills: {{ skills }}</div>
+              <div class="astro-languages-{{ ai_gen_id }}">Languages: {{ languages }}</div>
+
+              <div class="astro-bottom-row-{{ ai_gen_id }}">
+                <div class="astro-meta-{{ ai_gen_id }}">
+                  <div class="astro-experience-{{ ai_gen_id }}">Exp: {{ experience }}</div>
+                  <div class="astro-price-{{ ai_gen_id }}">
+                    {{ product.price | money }}<span class="astro-price-unit-{{ ai_gen_id }}">/min</span>
+                  </div>
+                </div>
+
+                <button 
+                  type="button" 
+                  class="astro-chat-btn-{{ ai_gen_id }}"
+                  data-open-payment
+                  data-product-id="{{ product.id }}"
+                  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                  data-product-title="{{ product.title | escape }}"
+                  data-product-price="{{ product.price | money }}"
+                  data-product-price-raw="{{ product.price }}"
+                  data-product-image="{{ product.featured_image | image_url: width: 120 }}"
+                  data-product-skills="{{ skills }}"
+                >
+                  Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #666;">
+          Please select a collection in the block settings
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="astro-no-results-{{ ai_gen_id }}" data-no-results>
+      No astrologers found matching your search
+    </div>
+  </div>
+
+  <div class="astro-payment-modal-{{ ai_gen_id }}" data-payment-modal>
+    <div class="astro-payment-content-{{ ai_gen_id }}">
+      <div class="astro-payment-header-{{ ai_gen_id }}">
+        <h2 class="astro-payment-title-{{ ai_gen_id }}">Complete Payment</h2>
+        <p class="astro-payment-subtitle-{{ ai_gen_id }}">Secure checkout for your consultation</p>
+        <button class="astro-payment-close-{{ ai_gen_id }}" data-close-modal aria-label="Close">&times;</button>
+      </div>
+
+      <div class="astro-payment-body-{{ ai_gen_id }}">
+        <div class="astro-astrologer-info-{{ ai_gen_id }}">
+          <img 
+            src="" 
+            alt="" 
+            class="astro-modal-avatar-{{ ai_gen_id }}"
+            data-modal-image
+          >
+          <div class="astro-modal-info-{{ ai_gen_id }}">
+            <h3 class="astro-modal-name-{{ ai_gen_id }}" data-modal-name></h3>
+            <p class="astro-modal-skills-{{ ai_gen_id }}" data-modal-skills></p>
+          </div>
+          <div class="astro-modal-price-{{ ai_gen_id }}" data-modal-price></div>
+        </div>
+
+        <form data-payment-form>
+          <div class="astro-form-group-{{ ai_gen_id }}">
+            <label class="astro-form-label-{{ ai_gen_id }}">Duration (minutes)</label>
+            <select class="astro-form-select-{{ ai_gen_id }}" data-duration required>
+              <option value="15">15 minutes</option>
+              <option value="30" selected>30 minutes</option>
+              <option value="45">45 minutes</option>
+              <option value="60">60 minutes</option>
+            </select>
+          </div>
+
+          <div class="astro-form-group-{{ ai_gen_id }}">
+            <label class="astro-form-label-{{ ai_gen_id }}">Full Name</label>
+            <input 
+              type="text" 
+              class="astro-form-input-{{ ai_gen_id }}" 
+              placeholder="Enter your full name"
+              data-customer-name
+              required
+            >
+          </div>
+
+          <div class="astro-form-group-{{ ai_gen_id }}">
+            <label class="astro-form-label-{{ ai_gen_id }}">Email Address</label>
+            <input 
+              type="email" 
+              class="astro-form-input-{{ ai_gen_id }}" 
+              placeholder="your@email.com"
+              data-customer-email
+              required
+            >
+          </div>
+
+          <div class="astro-form-group-{{ ai_gen_id }}">
+            <label class="astro-form-label-{{ ai_gen_id }}">Phone Number</label>
+            <input 
+              type="tel" 
+              class="astro-form-input-{{ ai_gen_id }}" 
+              placeholder="+91 XXXXX XXXXX"
+              data-customer-phone
+              required
+            >
+          </div>
+
+          <div class="astro-payment-summary-{{ ai_gen_id }}">
+            <div class="astro-summary-row-{{ ai_gen_id }}">
+              <span>Duration:</span>
+              <span data-summary-duration>30 minutes</span>
+            </div>
+            <div class="astro-summary-row-{{ ai_gen_id }}">
+              <span>Rate:</span>
+              <span data-summary-rate></span>
+            </div>
+            <div class="astro-summary-row-{{ ai_gen_id }}">
+              <span>Total Amount:</span>
+              <span data-summary-total></span>
+            </div>
+          </div>
+
+          <div class="astro-payment-methods-{{ ai_gen_id }}">
+            <label class="astro-form-label-{{ ai_gen_id }}">Payment Method</label>
+            
+            <label class="astro-payment-method-{{ ai_gen_id }} selected" data-payment-option>
+              <input 
+                type="radio" 
+                name="payment_method" 
+                value="upi" 
+                class="astro-payment-radio-{{ ai_gen_id }}"
+                checked
+              >
+              <span class="astro-payment-method-label-{{ ai_gen_id }}">UPI / PhonePe / Google Pay</span>
+            </label>
+
+            <label class="astro-payment-method-{{ ai_gen_id }}" data-payment-option>
+              <input 
+                type="radio" 
+                name="payment_method" 
+                value="card" 
+                class="astro-payment-radio-{{ ai_gen_id }}"
+              >
+              <span class="astro-payment-method-label-{{ ai_gen_id }}">Credit / Debit Card</span>
+            </label>
+
+            <label class="astro-payment-method-{{ ai_gen_id }}" data-payment-option>
+              <input 
+                type="radio" 
+                name="payment_method" 
+                value="netbanking" 
+                class="astro-payment-radio-{{ ai_gen_id }}"
+              >
+              <span class="astro-payment-method-label-{{ ai_gen_id }}">Net Banking</span>
+            </label>
+          </div>
+
+          <button type="submit" class="astro-submit-payment-{{ ai_gen_id }}">
+            Proceed to Payment
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</astro-directory-{{ ai_gen_id }}>
+
+<script>
+(function() {
+  class AstroDirectory{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+      this.currentProduct = null;
+    }
+
+    connectedCallback() {
+      this.searchInput = this.querySelector('[data-search-input]');
+      this.filterTags = this.querySelectorAll('.astro-filter-tag-{{ ai_gen_id }}');
+      this.cards = this.querySelectorAll('[data-card]');
+      this.noResults = this.querySelector('[data-no-results]');
+      this.activeFilter = 'all';
+
+      this.paymentModal = this.querySelector('[data-payment-modal]');
+      this.closeModalBtn = this.querySelector('[data-close-modal]');
+      this.paymentForm = this.querySelector('[data-payment-form]');
+      this.durationSelect = this.querySelector('[data-duration]');
+      this.paymentOptions = this.querySelectorAll('[data-payment-option]');
+
+      this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+      if (this.searchInput) {
+        this.searchInput.addEventListener('input', () => this.filterCards());
+      }
+
+      this.filterTags.forEach(tag => {
+        tag.addEventListener('click', (e) => {
+          this.filterTags.forEach(t => t.classList.remove('active'));
+          e.target.classList.add('active');
+          this.activeFilter = e.target.getAttribute('data-filter');
+          this.filterCards();
+        });
+      });
+
+      this.querySelectorAll('[data-open-payment]').forEach(btn => {
+        btn.addEventListener('click', (e) => this.openPaymentModal(e));
+      });
+
+      if (this.closeModalBtn) {
+        this.closeModalBtn.addEventListener('click', () => this.closePaymentModal());
+      }
+
+      if (this.paymentModal) {
+        this.paymentModal.addEventListener('click', (e) => {
+          if (e.target === this.paymentModal) {
+            this.closePaymentModal();
+          }
+        });
+      }
+
+      if (this.durationSelect) {
+        this.durationSelect.addEventListener('change', () => this.updatePaymentSummary());
+      }
+
+      this.paymentOptions.forEach(option => {
+        option.addEventListener('click', () => {
+          this.paymentOptions.forEach(opt => opt.classList.remove('selected'));
+          option.classList.add('selected');
+        });
+      });
+
+      if (this.paymentForm) {
+        this.paymentForm.addEventListener('submit', (e) => this.handlePaymentSubmit(e));
+      }
+    }
+
+    filterCards() {
+      const searchTerm = this.searchInput ? this.searchInput.value.toLowerCase() : '';
+      let visibleCount = 0;
+
+      this.cards.forEach(card => {
+        const name = card.getAttribute('data-name') || '';
+        const skills = card.getAttribute('data-skills') || '';
+        const tags = card.getAttribute('data-tags') || '';
+
+        const matchesSearch = name.includes(searchTerm) || skills.includes(searchTerm);
+        const matchesFilter = this.activeFilter === 'all' || tags.includes(this.activeFilter);
+
+        if (matchesSearch && matchesFilter) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (this.noResults) {
+        if (visibleCount === 0) {
+          this.noResults.classList.add('visible');
+        } else {
+          this.noResults.classList.remove('visible');
+        }
+      }
+    }
+
+    openPaymentModal(e) {
+      const btn = e.currentTarget;
+      this.currentProduct = {
+        id: btn.getAttribute('data-product-id'),
+        variantId: btn.getAttribute('data-variant-id'),
+        title: btn.getAttribute('data-product-title'),
+        price: btn.getAttribute('data-product-price'),
+        priceRaw: parseFloat(btn.getAttribute('data-product-price-raw')) / 100,
+        image: btn.getAttribute('data-product-image'),
+        skills: btn.getAttribute('data-product-skills')
+      };
+
+      const modalImage = this.querySelector('[data-modal-image]');
+      const modalName = this.querySelector('[data-modal-name]');
+      const modalSkills = this.querySelector('[data-modal-skills]');
+      const modalPrice = this.querySelector('[data-modal-price]');
+
+      if (modalImage) modalImage.src = this.currentProduct.image;
+      if (modalName) modalName.textContent = this.currentProduct.title;
+      if (modalSkills) modalSkills.textContent = this.currentProduct.skills;
+      if (modalPrice) modalPrice.textContent = this.currentProduct.price + '/min';
+
+      this.updatePaymentSummary();
+      this.paymentModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    closePaymentModal() {
+      this.paymentModal.classList.remove('active');
+      document.body.style.overflow = '';
+      if (this.paymentForm) {
+        this.paymentForm.reset();
+      }
+    }
+
+    updatePaymentSummary() {
+      if (!this.currentProduct) return;
+
+      const duration = parseInt(this.durationSelect.value);
+      const totalAmount = this.currentProduct.priceRaw * duration;
+
+      const summaryDuration = this.querySelector('[data-summary-duration]');
+      const summaryRate = this.querySelector('[data-summary-rate]');
+      const summaryTotal = this.querySelector('[data-summary-total]');
+
+      if (summaryDuration) summaryDuration.textContent = duration + ' minutes';
+      if (summaryRate) summaryRate.textContent = this.currentProduct.price + '/min';
+      if (summaryTotal) summaryTotal.textContent = '₹' + totalAmount.toFixed(2);
+    }
+
+    handlePaymentSubmit(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this.paymentForm);
+      const customerName = this.querySelector('[data-customer-name]').value;
+      const customerEmail = this.querySelector('[data-customer-email]').value;
+      const customerPhone = this.querySelector('[data-customer-phone]').value;
+      const duration = this.durationSelect.value;
+      const paymentMethod = formData.get('payment_method');
+
+      const submitBtn = this.paymentForm.querySelector('.astro-submit-payment-{{ ai_gen_id }}');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+
+      const cartData = {
+        items: [{
+          id: this.currentProduct.variantId,
+          quantity: 1,
+          properties: {
+            'Customer Name': customerName,
+            'Email': customerEmail,
+            'Phone': customerPhone,
+            'Duration': duration + ' minutes',
+            'Payment Method': paymentMethod
+          }
+        }]
+      };
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cartData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        window.location.href = '/checkout';
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Payment processing failed. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Proceed to Payment';
+      });
+    }
+  }
+
+  customElements.define('astro-directory-{{ ai_gen_id }}', AstroDirectory{{ ai_gen_id }});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Astrologer directory map",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Master astrologer collection"
+    },
+    {
+      "type": "header",
+      "content": "Anchor Link"
+    },
+    {
+      "type": "text",
+      "id": "section_anchor_id",
+      "label": "Section Anchor ID",
+      "placeholder": "e.g. astrologers",
+      "info": "Set a unique ID to link to this section from anywhere. Example: astrologers → link as /#astrologers"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Astrologer directory map"
+    }
+  ]
+}
+{% endschema %}

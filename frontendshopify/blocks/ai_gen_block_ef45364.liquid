@@ -1,0 +1,178 @@
+{% doc %}
+  @prompt Astrojap - Fully Responsive Blog Slider
+{% enddoc %}
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-blog-slider-{{ ai_gen_id }} {
+    display: block; width: 100%; padding: 80px 0;
+    background-color: {{ section.settings.background_color | default: '#f9f9f9' }};
+    overflow: hidden;
+  }
+
+  .ai-blog-slider-win-{{ ai_gen_id }} { max-width: 1300px; margin: 0 auto; padding: 0 25px; }
+
+  /* 🎯 Header Visibility Fix */
+  .ai-blog-header-{{ ai_gen_id }} {
+    text-align: center; margin-bottom: 50px; position: relative; z-index: 5;
+  }
+  .ai-blog-h2-{{ ai_gen_id }} {
+    font-family: 'Cinzel', serif; font-size: clamp(24px, 5vw, {{ section.settings.heading_size }}px);
+    font-weight: 700; color: {{ section.settings.heading_color | default: '#000' }};
+    margin: 0 0 10px; letter-spacing: 2px;
+  }
+  .ai-blog-sub-{{ ai_gen_id }} {
+    font-size: clamp(13px, 3vw, {{ section.settings.subtitle_size }}px);
+    color: {{ section.settings.subtitle_color | default: '#666' }}; opacity: 0.8;
+  }
+
+  /* 🎢 Slider Core */
+  .ai-blog-shell-{{ ai_gen_id }} { position: relative; padding: 0 10px; }
+
+  .ai-blog-track-{{ ai_gen_id }} {
+    display: flex; gap: 25px; transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    scroll-behavior: smooth;
+  }
+
+  .ai-blog-card-{{ ai_gen_id }} {
+    flex: 0 0 calc(33.333% - 17px); background: #fff; border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-decoration: none; color: inherit;
+    transition: 0.3s; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .ai-blog-card-{{ ai_gen_id }}:hover { transform: translateY(-8px); box-shadow: 0 15px 45px rgba(0,0,0,0.1); }
+
+  .ai-blog-img-box-{{ ai_gen_id }} { position: relative; aspect-ratio: 16/10; overflow: hidden; }
+  .ai-blog-img-{{ ai_gen_id }} { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+  .ai-blog-card-{{ ai_gen_id }}:hover .ai-blog-img-{{ ai_gen_id }} { transform: scale(1.1); }
+
+  .ai-blog-eye-{{ ai_gen_id }} {
+    position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6);
+    color: #fff; padding: 4px 10px; border-radius: 30px; font-size: 11px; display: flex; align-items: center; gap: 5px;
+  }
+
+  .ai-blog-txt-{{ ai_gen_id }} { padding: 25px; flex: 1; display: flex; flex-direction: column; }
+  .ai-blog-ttl-{{ ai_gen_id }} { font-size: 18px; font-weight: 700; margin-bottom: 20px; line-height: 1.4; color: #111; }
+
+  .ai-blog-meta-{{ ai_gen_id }} {
+    display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 15px;
+    font-size: 13px; color: #888; font-weight: 500; margin-top: auto;
+  }
+
+  /* ⌨️ Nav Controls */
+  .ai-blog-nav-{{ ai_gen_id }} {
+    position: absolute; top: 50%; transform: translateY(-50%); width: 45px; height: 45px;
+    background: #fff; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 10; transition: 0.3s;
+  }
+  .ai-blog-nav-{{ ai_gen_id }}:hover { background: #000; color: #fff; }
+  .ai-blog-nav-prev-{{ ai_gen_id }} { left: -22px; }
+  .ai-blog-nav-next-{{ ai_gen_id }} { right: -22px; }
+  .ai-blog-nav-{{ ai_gen_id }}:disabled { opacity: 0; pointer-events: none; }
+
+  /* 📱 Mobile Overrides */
+  @media (max-width: 1024px) {
+    .ai-blog-card-{{ ai_gen_id }} { flex: 0 0 calc(50% - 13px); }
+  }
+
+  @media (max-width: 768px) {
+    .ai-blog-card-{{ ai_gen_id }} { flex: 0 0 100%; }
+    .ai-blog-shell-{{ ai_gen_id }} { padding: 0; }
+    .ai-blog-nav-{{ ai_gen_id }} { display: none; } /* Use swipe on mobile */
+    .ai-blog-track-{{ ai_gen_id }} { overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; scrollbar-width: none; }
+    .ai-blog-track-{{ ai_gen_id }}::-webkit-scrollbar { display: none; }
+    .ai-blog-card-{{ ai_gen_id }} { scroll-snap-align: center; }
+  }
+{% endstyle %}
+
+<article class="ai-blog-slider-{{ ai_gen_id }}">
+  <div class="ai-blog-slider-win-{{ ai_gen_id }}">
+    
+    <div class="ai-blog-header-{{ ai_gen_id }}">
+       <h2 class="ai-blog-h2-{{ ai_gen_id }}">{{ section.settings.heading | default: 'LATEST FROM BLOG' }}</h2>
+       <p class="ai-blog-sub-{{ ai_gen_id }}">{{ section.settings.subtitle }}</p>
+    </div>
+
+    <div class="ai-blog-shell-{{ ai_gen_id }}">
+      <button class="ai-blog-nav-{{ ai_gen_id }} ai-blog-nav-prev-{{ ai_gen_id }}" id="pr-{{ ai_gen_id }}">←</button>
+      
+      <div class="ai-blog-track-{{ ai_gen_id }}" id="tk-{{ ai_gen_id }}">
+        {% assign blog_slug = section.settings.blog %}
+        {% if blog_slug != blank %}
+          {% for article in blogs[blog_slug].articles limit: section.settings.posts_count %}
+            <a href="{{ article.url }}" class="ai-blog-card-{{ ai_gen_id }}">
+              <div class="ai-blog-img-box-{{ ai_gen_id }}">
+                <img src="{{ article.image | image_url: width: 600 }}" class="ai-blog-img-{{ ai_gen_id }}" alt="{{ article.title }}" loading="lazy" width="600" height="400">
+                <div class="ai-blog-eye-{{ ai_gen_id }}">👁 {{ article.id | modulo: 800 | plus: 200 }}</div>
+              </div>
+              <div class="ai-blog-txt-{{ ai_gen_id }}">
+                <h3 class="ai-blog-ttl-{{ ai_gen_id }}">{{ article.title }}</h3>
+                <div class="ai-blog-meta-{{ ai_gen_id }}">
+                  <span>By {{ article.author }}</span>
+                  <span>{{ article.published_at | date: '%b %d' }}</span>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        {% else %}
+          {% for i in (1..3) %}
+            <div class="ai-blog-card-{{ ai_gen_id }}">
+               <div style="aspect-ratio:16/10; background:#eee;"></div>
+               <div class="ai-blog-txt-{{ ai_gen_id }}">
+                 <h3 class="ai-blog-ttl-{{ ai_gen_id }}">Sample Blog Post {{ i }}</h3>
+                 <div class="ai-blog-meta-{{ ai_gen_id }}"><span>Author</span><span>Date</span></div>
+               </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <button class="ai-blog-nav-{{ ai_gen_id }} ai-blog-nav-next-{{ ai_gen_id }}" id="nx-{{ ai_gen_id }}">→</button>
+    </div>
+
+  </div>
+</article>
+
+<script>
+  (function() {
+    const track = document.getElementById('tk-{{ ai_gen_id }}');
+    const prSet = document.getElementById('pr-{{ ai_gen_id }}');
+    const nxSet = document.getElementById('nx-{{ ai_gen_id }}');
+    let idx = 0;
+
+    function move() {
+      const perView = window.innerWidth <= 768 ? 1 : (window.innerWidth <= 1024 ? 2 : 3);
+      const cards = track.children;
+      const maxIdx = cards.length - perView;
+      idx = Math.max(0, Math.min(idx, maxIdx));
+      
+      const cardW = cards[0].offsetWidth + 25;
+      track.style.transform = `translateX(-${idx * cardW}px)`;
+      
+      prSet.disabled = idx === 0;
+      nxSet.disabled = idx >= maxIdx;
+    }
+
+    prSet.onclick = () => { idx--; move(); };
+    nxSet.onclick = () => { idx++; move(); };
+    window.onresize = move;
+    move();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Latest blog slider",
+  "settings": [
+    { "type": "blog", "id": "blog", "label": "Select Blog" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "LATEST FROM BLOG" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Top Astrologers. Happy to help." },
+    { "type": "range", "id": "posts_count", "min": 3, "max": 12, "step": 1, "label": "Posts to Show", "default": 6 },
+    { "type": "range", "id": "heading_size", "min": 24, "max": 60, "label": "H Size", "default": 36 },
+    { "type": "range", "id": "subtitle_size", "min": 14, "max": 24, "label": "S Size", "default": 16 },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#f9f9f9" },
+    { "type": "color", "id": "heading_color", "label": "Title Color", "default": "#000" },
+    { "type": "color", "id": "subtitle_color", "label": "Subtitle Color", "default": "#666" }
+  ],
+  "presets": [{ "name": "Latest blog slider" }]
+}
+{% endschema %}
