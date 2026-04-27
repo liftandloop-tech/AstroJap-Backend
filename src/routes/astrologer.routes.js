@@ -11,6 +11,7 @@ router.get('/:id/pricing',               c.getPricing);               // Live pr
 
 // ─── Onboarding (semi-public — validated by astrologer ID) ───────────────────
 router.put('/update-onboarding',          c.updateOnboarding);         // Save onboarding steps
+router.get('/profile-status/:id',         c.profileStatus);            // Check approval & step
 
 // ─── Authenticated Dashboard Routes ──────────────────────────────────────────
 router.get('/dashboard-stats/:id',        c.getDashboardStats);        // Real earnings data

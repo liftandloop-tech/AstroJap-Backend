@@ -63,7 +63,7 @@ exports.login = async (req, res) => {
 
     const { data: profile, error: profileError } = await supabase
       .from('astrologers')
-      .select('id, name, approval_status, rejection_reason, is_accepting_bookings, price_20_min, price_60_min')
+      .select('id, name, approval_status, onboarding_step, rejection_reason, is_accepting_bookings, price_20_min, price_60_min')
       .eq('id', authData.user.id)
       .single();
 
@@ -74,6 +74,7 @@ exports.login = async (req, res) => {
       return res.status(403).json({
         error:            'Your account is not yet approved.',
         status:           profile.approval_status,
+        onboarding_step:  profile.onboarding_step || 1,
         rejection_reason: profile.rejection_reason || null,
         userId:           authData.user.id
       });
@@ -105,9 +106,11 @@ exports.updateOnboarding = async (req, res) => {
       .update(details)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    if (!data) return res.status(404).json({ error: 'Astrologer record not found. Please try signing up again.' });
+    
     res.status(200).json({ message: 'Onboarding step saved', data });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -147,6 +150,22 @@ exports.getProfile = async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     res.status(404).json({ error: 'Astrologer not found' });
+  }
+};
+
+exports.profileStatus = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .select('approval_status, onboarding_step')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(404).json({ error: 'Not found' });
   }
 };
 
@@ -378,6 +397,14 @@ async function createShopifyCustomer({ id, name, email, mobile }) {
   }
 
   try {
+    // ── Sanitize Phone for Shopify (E.164 format required) ──
+    let cleanPhone = mobile.replace(/\s+/g, ''); // remove spaces
+    if (!cleanPhone.startsWith('+')) {
+      // Assuming India +91 if no prefix. Adjust if needed.
+      if (cleanPhone.length === 10) cleanPhone = '+91' + cleanPhone;
+      else if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) cleanPhone = '+' + cleanPhone;
+    }
+
     const res = await axios.post(
       `https://${shopName}/admin/api/2024-04/customers.json`,
       {
@@ -385,7 +412,7 @@ async function createShopifyCustomer({ id, name, email, mobile }) {
           first_name: name.split(' ')[0],
           last_name:  name.split(' ').slice(1).join(' ') || '',
           email,
-          phone:      mobile,
+          phone:      cleanPhone,
           tags:       'astrologer_pending',
           note:       `Astrologer application. Supabase ID: ${id}. Review profile at: https://astrojap-backend.vercel.app`,
           verified_email: false
