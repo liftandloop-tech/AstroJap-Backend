@@ -660,7 +660,7 @@
     const p20  = parseFloat(document.getElementById('setting-price-20').value);
     const p60  = parseFloat(document.getElementById('setting-price-60').value);
     const btn  = document.getElementById('save-pricing-btn');
-    if (!p20 || !p60 || p20 < 100 || p60 < 100) { toast('Minimum price is ₹100', 'error'); return; }
+    if (!p20 || !p60 || p20 < 1 || p60 < 1) { toast('Minimum price is ₹1', 'error'); return; }
 
     btn.disabled   = true;
     btn.textContent = 'Saving…';
