@@ -267,8 +267,8 @@
                 </div>
                 
                 <div style="display: flex; gap: 12px; margin-top: 5px;">
-                  <div class="astro-price">₹${p20 > 0 ? p20 : '—'} <span style="font-size:10px;">/ 20m</span></div>
-                  <div class="astro-price">₹${p60 > 0 ? p60 : '—'} <span style="font-size:10px;">/ 60m</span></div>
+                  <div class="astro-price">${p20 > 0 ? `₹${p20}` : '<span style="color:#22c55e;">FREE</span>'} <span style="font-size:10px;">/ 20m</span></div>
+                  <div class="astro-price">${p60 > 0 ? `₹${p60}` : '<span style="color:#22c55e;">FREE</span>'} <span style="font-size:10px;">/ 60m</span></div>
                 </div>
               </div>
               
@@ -304,15 +304,17 @@
     selectedAstroId = id;
     document.getElementById('modalAstroName').textContent = name;
     const container = document.getElementById('OptionsContainer');
+    const label20 = p20 > 0 ? `₹${p20}` : 'FREE';
+    const label60 = p60 > 0 ? `₹${p60}` : 'FREE';
     
     container.innerHTML = `
       <div class="duration-option" onclick="selectOption(this, ${p20}, 20)">
         <span class="option-label">20 Minutes Session</span>
-        <span class="option-price">₹${p20}</span>
+        <span class="option-price" style="${p20 === 0 ? 'color:#22c55e;' : ''}">${label20}</span>
       </div>
       <div class="duration-option" onclick="selectOption(this, ${p60}, 60)">
         <span class="option-label">60 Minutes Session</span>
-        <span class="option-price">₹${p60}</span>
+        <span class="option-price" style="${p60 === 0 ? 'color:#22c55e;' : ''}">${label60}</span>
       </div>
     `;
 

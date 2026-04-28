@@ -60,6 +60,32 @@ const AstroAPI = {
     return response.json();
   },
 
+  async getChatMessages(sessionId) {
+    const response = await fetch(`${API_BASE_URL}/sessions/messages`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ session_id: sessionId })
+    });
+    if (!response.ok) throw new Error('Failed to fetch messages');
+    return response.json();
+  },
+
+  async sendChatMessage(sessionId, senderId, senderType, text, isSystem = false) {
+    const response = await fetch(`${API_BASE_URL}/sessions/send-message`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        session_id: sessionId,
+        sender_id: senderId,
+        sender_type: senderType,
+        text: text,
+        is_system: isSystem
+      })
+    });
+    if (!response.ok) throw new Error('Failed to send message');
+    return response.json();
+  },
+
   async getWalletBalance(customerId) {
     const response = await fetch(`${API_BASE_URL}/wallet/balance`, {
       method:  'POST',

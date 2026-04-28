@@ -199,8 +199,8 @@ exports.updatePricing = async (req, res) => {
   if (price_60_min === undefined) return missingField(res, 'price_60_min');
 
   // Basic validation
-  if (price_20_min < 1 || price_60_min < 1) {
-    return res.status(400).json({ error: 'Minimum price is ₹1' });
+  if (price_20_min < 0 || price_60_min < 0) {
+    return res.status(400).json({ error: 'Minimum price is ₹0 (Free Session)' });
   }
 
   try {

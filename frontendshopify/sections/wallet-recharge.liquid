@@ -107,8 +107,8 @@ async function addToCart(quantity) {
         });
 
         if (response.ok) {
-            // Success! Send them to the checkout immediately
-            window.location.href = '/checkout';
+            // Success! Send them to the checkout and ask checkout to return to the wallet page
+            window.location.href = '/checkout?return_to=' + encodeURIComponent('/pages/wallet');
         } else {
             const data = await response.json();
             alert(`Error: ${data.description}`);

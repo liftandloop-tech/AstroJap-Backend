@@ -11,4 +11,8 @@ router.post('/get-chat-token',       sessionController.getChatToken);
 router.post('/expire-old',           sessionController.expireOldSessions);
 router.post('/create-manual',        sessionController.createManualSession); // Wallet flow
 
+// HTTP Polling Chat
+router.post('/messages',             sessionController.getChatMessages);
+router.post('/send-message',         sessionController.sendChatMessage);
+
 module.exports = router;

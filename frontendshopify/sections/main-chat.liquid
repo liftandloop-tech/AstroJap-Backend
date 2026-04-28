@@ -1,5 +1,4 @@
 {{ 'api.js' | asset_url | script_tag }}
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 {%- style -%}
   .chat-container {
@@ -194,7 +193,8 @@
 </div>
 
 <script>
-  let socket;
+  let pollInterval;
+  let renderedMessages = new Set();
   const urlParams = new URLSearchParams(window.location.search);
   const sessionId = urlParams.get('session_id');
   const customerId = '{{ customer.id }}';
@@ -204,6 +204,7 @@
   // Identify who is logging in
   const isAstrologer = !!astroToken;
   const currentUserId = isAstrologer ? astroId : customerId;
+  const currentUserType = isAstrologer ? 'astrologer' : 'customer';
 
   async function initChat() {
     if (!sessionId) {
@@ -228,59 +229,76 @@
       }
     } catch (e) { console.error('Failed to load session details', e); }
 
-    // Connect Socket
-    socket = io('https://astro-jap-backend.vercel.app');
+    // Start Polling for messages
+    pollMessages();
+    pollInterval = setInterval(pollMessages, 2000);
     
-    socket.on('connect', () => {
-      console.log('Connected to chat server');
-      socket.emit('join-chat', sessionId);
-      
-      // Notify the other party that we arrived
-      socket.emit('send-msg', {
-        sessionId: sessionId,
-        senderId: currentUserId,
-        senderType: isAstrologer ? 'astrologer' : 'customer',
-        text: isAstrologer ? 'Astrologer has joined the chat!' : 'Customer has joined the chat.',
-        system: true
-      });
-      
-      if (isAstrologer) {
-        document.getElementById('ChatStatus').textContent = '● Connected';
-        document.getElementById('ChatStatus').style.color = '#22c55e';
-      }
-    });
-
-    socket.on('receive-msg', (data) => {
-      // If system message from astrologer, update status
-      if (data.system && data.senderType === 'astrologer' && !isAstrologer) {
-        document.getElementById('ChatStatus').textContent = '● Connected';
-        document.getElementById('ChatStatus').style.color = '#22c55e';
-      }
-      
-      const isMine = data.senderId === currentUserId;
-      if (!isMine) {
-        appendMessage(data.text, 'received', data.system);
-      }
-    });
+    // Announce arrival
+    try {
+      await AstroAPI.sendChatMessage(
+        sessionId,
+        currentUserId,
+        currentUserType,
+        isAstrologer ? 'Astrologer has joined the chat.' : 'Customer has joined the chat.',
+        true
+      );
+    } catch(e) {}
 
     // Handle form
     const chatForm = document.getElementById('ChatForm');
     if (chatForm) {
-      chatForm.onsubmit = (e) => {
+      chatForm.onsubmit = async (e) => {
         e.preventDefault();
         const input = document.getElementById('MsgInput');
         if (!input.value.trim()) return;
         
-        const msg = input.value.trim();
-        appendMessage(msg, 'sent');
-        socket.emit('send-msg', { 
-          sessionId: sessionId,
-          senderId: currentUserId,
-          senderType: isAstrologer ? 'astrologer' : 'customer',
-          text: msg 
-        });
+        const msgText = input.value.trim();
         input.value = '';
+        
+        // Optimistically render
+        const tempId = 'temp_' + Date.now();
+        renderedMessages.add(tempId);
+        appendMessage(msgText, 'sent', false);
+
+        try {
+          await AstroAPI.sendChatMessage(sessionId, currentUserId, currentUserType, msgText, false);
+          pollMessages(); // Fetch to confirm
+        } catch(e) {
+          console.error("Failed to send message", e);
+        }
       };
+    }
+  }
+
+  async function pollMessages() {
+    try {
+      const messages = await AstroAPI.getChatMessages(sessionId);
+      if (!messages || !Array.isArray(messages)) return;
+      
+      let astrologerJoined = false;
+
+      messages.forEach(msg => {
+        if (!renderedMessages.has(msg.id)) {
+          renderedMessages.add(msg.id);
+          const isMine = msg.sender_id === currentUserId && msg.sender_type === currentUserType;
+          
+          if (!isMine || msg.is_system) {
+            appendMessage(msg.text, isMine ? 'sent' : 'received', msg.is_system);
+          }
+          
+          if (msg.is_system && msg.sender_type === 'astrologer') {
+            astrologerJoined = true;
+          }
+        }
+      });
+      
+      if (astrologerJoined || isAstrologer) {
+        document.getElementById('ChatStatus').textContent = '● Connected';
+        document.getElementById('ChatStatus').style.color = '#22c55e';
+      }
+
+    } catch(e) {
+      console.error("Poll error", e);
     }
   }
 

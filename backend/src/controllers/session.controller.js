@@ -349,3 +349,58 @@ exports.createManualSession = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// ─── POST /api/sessions/messages ─────────────────────────────────────────────
+// Get all messages for a session
+
+exports.getChatMessages = async (req, res) => {
+  const { session_id } = req.body;
+  if (!session_id) return missingField(res, 'session_id');
+
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('session_id', session_id)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      // If table doesn't exist yet, gracefully return empty array to prevent UI crashing
+      if (error.code === '42P01') return res.status(200).json([]);
+      throw error;
+    }
+    
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── POST /api/sessions/send-message ─────────────────────────────────────────
+// Send a message in a session
+
+exports.sendChatMessage = async (req, res) => {
+  const { session_id, sender_id, sender_type, text, is_system } = req.body;
+  if (!session_id) return missingField(res, 'session_id');
+  if (!sender_id) return missingField(res, 'sender_id');
+  if (!text) return missingField(res, 'text');
+
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .insert({
+        session_id,
+        sender_id,
+        sender_type: sender_type || 'system',
+        text,
+        is_system: is_system || false
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
