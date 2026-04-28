@@ -124,7 +124,7 @@ exports.getAllAstrologers = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('astrologers')
-      .select('id, name, profile_image, bio, specialization, languages, experience_years, price_20_min, price_60_min, rating, total_sessions, is_accepting_bookings, cometchat_uid')
+      .select('id, name, profile_image, bio, expertise, specialization, languages, experience_years, price_20_min, price_60_min, rating, total_sessions, is_accepting_bookings, cometchat_uid')
       .eq('approval_status', 'approved');
 
     if (error) throw error;
@@ -141,7 +141,7 @@ exports.getProfile = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('astrologers')
-      .select('id, name, profile_image, bio, specialization, languages, experience_years, price_20_min, price_60_min, rating, total_sessions, is_accepting_bookings, cometchat_uid')
+      .select('id, name, profile_image, bio, expertise, specialization, languages, experience_years, price_20_min, price_60_min, rating, total_sessions, is_accepting_bookings, cometchat_uid')
       .eq('id', id)
       .eq('approval_status', 'approved')
       .single();

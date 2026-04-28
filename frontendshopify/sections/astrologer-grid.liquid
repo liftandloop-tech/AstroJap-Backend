@@ -250,15 +250,20 @@
             </div>
             <div class="astro-info">
               <a href="/pages/astrologer-profile?id=${astro.id}" class="astro-name">${astro.name}</a>
-              <div class="astro-expertise">${astro.expertise ? (Array.isArray(astro.expertise) ? astro.expertise.join(', ') : astro.expertise) : 'Vedic Astrology'}</div>
+              <div class="astro-expertise">${astro.expertise && astro.expertise.length ? (Array.isArray(astro.expertise) ? astro.expertise.join(', ') : astro.expertise) : 'Vedic Astrology'}</div>
               
+              <div style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">
+                <div>🌐 ${astro.languages && astro.languages.length ? (Array.isArray(astro.languages) ? astro.languages.join(', ') : astro.languages) : 'Hindi, English'}</div>
+                <div>⭐ ${astro.experience_years || 0} Years Experience</div>
+              </div>
+
               <div class="astro-meta" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                 <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                   <div class="astro-rating">
                     <svg style="width:16px; height:16px;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                     ${Number(rating).toFixed(1)}
                   </div>
-                  <div style="font-size: 11px; color: #94a3b8;">450+ Consultations</div>
+                  <div style="font-size: 11px; color: #94a3b8;">${astro.total_sessions || 0} Consultations</div>
                 </div>
                 
                 <div style="display: flex; gap: 12px; margin-top: 5px;">
