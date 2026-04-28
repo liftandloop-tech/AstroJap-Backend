@@ -36,6 +36,16 @@
         </div>
       </div>
     </div>
+
+    <!-- My Bookings Section -->
+    <div class="bookings-section" style="margin-top: 40px; background: #fff; border-radius: 25px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+      <h3 style="margin: 0 0 10px; font-size: 1.5rem; color: #222;">My Upcoming Bookings</h3>
+      <p class="subtitle" style="margin-bottom: 20px;">Your scheduled advance sessions with astrologers</p>
+      
+      <div id="BookingsList" style="display: flex; flex-direction: column; gap: 15px;">
+        <div style="color: #64748b; font-size: 14px;">Loading bookings...</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -63,7 +73,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
         console.error("Failed to load balance", e);
     }
+
+    try {
+        await loadBookings();
+    } catch (e) {
+        console.error("Failed to load bookings", e);
+    }
 });
+
+async function loadBookings() {
+    const container = document.getElementById('BookingsList');
+    try {
+        const bookings = await AstroAPI.getCustomerBookings(customerId);
+        if (!bookings || bookings.length === 0) {
+            container.innerHTML = '<div style="color: #64748b; font-size: 14px; padding: 20px; background: #f8fafc; border-radius: 12px; text-align: center;">You have no upcoming bookings.</div>';
+            return;
+        }
+
+        container.innerHTML = bookings.map(b => {
+            const astro = b.astrologers;
+            const scheduledDate = new Date(b.scheduled_at);
+            const dateStr = scheduledDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            const timeStr = scheduledDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            
+            // Allow joining 5 mins before start time
+            const now = new Date();
+            const joinTime = new Date(scheduledDate.getTime() - 5 * 60000);
+            const canJoin = now >= joinTime;
+
+            return `
+              <div style="border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                  <img src="${astro.profile_image || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                  <div>
+                    <h4 style="margin: 0 0 5px; color: #1e293b;">${astro.name}</h4>
+                    <div style="font-size: 13px; color: #64748b; font-weight: 700;">📅 ${dateStr} at ${timeStr}</div>
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">⏳ ${b.duration_minutes} Mins</div>
+                  </div>
+                </div>
+                <div>
+                  ${canJoin 
+                    ? `<a href="/pages/chat?session_id=${b.id}" class="add-btn" style="text-decoration:none; padding:10px 20px; font-size:14px; background:#22c55e;">Join Chat</a>`
+                    : `<button class="add-btn" style="background:#94a3b8; padding:10px 20px; font-size:14px; cursor:not-allowed;" disabled>Join at ${timeStr}</button>`
+                  }
+                </div>
+              </div>
+            `;
+        }).join('');
+    } catch (e) {
+        container.innerHTML = '<div style="color: #ef4444; font-size: 14px;">Failed to load bookings.</div>';
+    }
+}
 
 function rechargePack(amount) {
     addToCart(amount);

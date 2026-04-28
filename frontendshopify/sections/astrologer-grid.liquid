@@ -143,6 +143,64 @@
     color: #94a3b8;
     cursor: not-allowed;
   }
+  
+  .consult-later-btn {
+    background: #f8fafc;
+    color: #3b82f6;
+    border: 1px solid #bfdbfe;
+  }
+  .consult-later-btn:hover {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+  }
+
+  /* ── Slot Selection Styling ── */
+  .slot-date-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+  }
+  .slot-date-tab {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+    border: 2px solid transparent;
+  }
+  .slot-date-tab.active {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #3b82f6;
+  }
+  .slot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .slot-block {
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .slot-block:hover { border-color: #3b82f6; }
+  .slot-block.selected {
+    background: #eff6ff;
+    border-color: #3b82f6;
+  }
+  .slot-time { font-weight: 700; color: #1e293b; font-size: 14px; }
+  .slot-dur { font-size: 11px; color: #64748b; }
 
   /* ── Modal Styling ── */
   .modal-overlay {
@@ -232,6 +290,40 @@
   </div>
 </div>
 
+<!-- Slot Selection Modal (Advance Booking) -->
+<div id="SlotModal" class="modal-overlay" onclick="if(event.target === this) closeSlotModal()">
+  <div class="modal-card" style="max-width: 500px;">
+    <h3 style="margin-bottom: 8px; font-weight:800;">Book a Scheduled Session</h3>
+    <p style="color: #64748b; font-size: 14px; margin-bottom: 24px;">Select an available time to consult with <span id="slotAstroName" style="color:#1e293b; font-weight:700;">...</span></p>
+    
+    <div id="SlotLoading" style="display:none; padding: 20px; color: #64748b;">Loading available slots...</div>
+    <div id="NoSlotsMsg" style="display:none; padding: 20px; color: #ef4444; background: #fef2f2; border-radius: 12px; margin-bottom: 20px;">No slots available for this astrologer right now. Please check back later.</div>
+    
+    <div id="SlotContentContainer" style="display:none; text-align: left;">
+      <div id="SlotDateTabs" class="slot-date-tabs"></div>
+      <div id="SlotGrid" class="slot-grid"></div>
+    </div>
+
+    <div id="SlotWalletStatus" style="margin: 20px 0; padding: 15px; background: #f8fafc; border-radius: 12px; display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">YOUR WALLET BALANCE</div>
+          <div id="SlotCurrentBalance" style="font-size: 18px; font-weight: 800; color: #1e293b;">₹0.00</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">SESSION PRICE</div>
+          <div id="SlotPrice" style="font-size: 18px; font-weight: 800; color: #f97316;">₹0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <button id="ConfirmSlotBtn" class="chat-btn" style="margin-top: 12px; background: #3b82f6;" disabled onclick="handleSlotBooking()">
+      Confirm Booking
+    </button>
+    <button onclick="closeSlotModal()" style="margin-top: 15px; color: #94a3b8; font-size: 13px; background:none; border:none; cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
 <script>
   async function loadAstrologers() {
     const grid = document.getElementById('AstroGrid');
@@ -301,12 +393,19 @@
                 </div>
               </div>
               
-              <button 
-                onclick="openDurationModal('${astro.id}', '${astro.name}', ${p20}, ${p60})"
-                class="chat-btn ${!isOnline ? 'disabled' : ''}" 
-                ${!isOnline ? 'disabled' : ''}>
-                ${isOnline ? 'Chat Now' : 'Consult Later'}
-              </button>
+              <div style="display:flex; gap:10px;">
+                <button 
+                  onclick="openDurationModal('${astro.id}', '${astro.name}', ${p20}, ${p60})"
+                  class="chat-btn ${!isOnline ? 'disabled' : ''}" 
+                  ${!isOnline ? 'disabled' : ''} style="flex:1;">
+                  Chat Now
+                </button>
+                <button 
+                  onclick="openSlotModal('${astro.id}', '${astro.name}', ${p20}, ${p60})"
+                  class="chat-btn consult-later-btn" style="flex:1;">
+                  Consult Later
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -421,6 +520,166 @@
       btn.disabled = false;
       btn.textContent = 'Confirm & Start Chat';
     }
+  }
+
+  }
+
+  // ─── Slot Booking Logic ───────────────────────────────────────────────────────
+  
+  let groupedSlots = {};
+  let currentSlotDates = [];
+  let selectedSlot = null;
+  let astroPriceMap = { 20: 0, 60: 0 };
+
+  async function openSlotModal(id, name, p20, p60) {
+    const customerId = '{{ customer.id }}';
+    if (!customerId) {
+      window.location.href = `/account/login?checkout_url=${window.location.pathname}`;
+      return;
+    }
+
+    selectedAstroId = id;
+    astroPriceMap[20] = p20;
+    astroPriceMap[60] = p60;
+    selectedSlot = null;
+    
+    document.getElementById('slotAstroName').textContent = name;
+    document.getElementById('SlotModal').style.display = 'flex';
+    document.getElementById('SlotLoading').style.display = 'block';
+    document.getElementById('SlotContentContainer').style.display = 'none';
+    document.getElementById('NoSlotsMsg').style.display = 'none';
+    document.getElementById('SlotWalletStatus').style.display = 'none';
+    
+    const btn = document.getElementById('ConfirmSlotBtn');
+    btn.disabled = true;
+    btn.textContent = 'Confirm Booking';
+    btn.style.background = '#94a3b8';
+
+    try {
+      // 1. Fetch user balance
+      const balRes = await AstroAPI.getWalletBalance(customerId);
+      userBalance = balRes.balance;
+      document.getElementById('SlotCurrentBalance').textContent = `₹${userBalance.toFixed(2)}`;
+
+      // 2. Fetch slots
+      const data = await AstroAPI.getAvailableSlots(id);
+      if (!data.available || !data.slots || data.slots.length === 0) {
+        document.getElementById('SlotLoading').style.display = 'none';
+        document.getElementById('NoSlotsMsg').style.display = 'block';
+        return;
+      }
+
+      // Group by date
+      groupedSlots = {};
+      data.slots.forEach(slot => {
+        const d = new Date(slot.start_time);
+        const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        if (!groupedSlots[dateStr]) groupedSlots[dateStr] = [];
+        groupedSlots[dateStr].push(slot);
+      });
+
+      currentSlotDates = Object.keys(groupedSlots);
+      
+      document.getElementById('SlotLoading').style.display = 'none';
+      document.getElementById('SlotContentContainer').style.display = 'block';
+      
+      renderSlotTabs(currentSlotDates[0]);
+    } catch (e) {
+      console.error(e);
+      document.getElementById('SlotLoading').style.display = 'none';
+      document.getElementById('NoSlotsMsg').textContent = "Failed to load availability.";
+      document.getElementById('NoSlotsMsg').style.display = 'block';
+    }
+  }
+
+  function renderSlotTabs(activeDate) {
+    const tabsContainer = document.getElementById('SlotDateTabs');
+    tabsContainer.innerHTML = currentSlotDates.map(date => `
+      <div class="slot-date-tab ${date === activeDate ? 'active' : ''}" onclick="renderSlotTabs('${date}')">
+        ${date}
+      </div>
+    `).join('');
+    
+    renderSlotGrid(activeDate);
+  }
+
+  function renderSlotGrid(dateStr) {
+    const grid = document.getElementById('SlotGrid');
+    const slots = groupedSlots[dateStr] || [];
+    
+    grid.innerHTML = slots.map(slot => {
+      const d = new Date(slot.start_time);
+      const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      return `
+        <div class="slot-block" id="slot-block-${slot.id}" onclick='selectSlot(${JSON.stringify(slot)})'>
+          <div class="slot-time">${timeStr}</div>
+          <div class="slot-dur">${slot.duration_min} Min</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function selectSlot(slot) {
+    document.querySelectorAll('.slot-block').forEach(el => el.classList.remove('selected'));
+    document.getElementById(`slot-block-${slot.id}`).classList.add('selected');
+    
+    selectedSlot = slot;
+    const reqPrice = astroPriceMap[slot.duration_min] || 0;
+    
+    document.getElementById('SlotPrice').textContent = reqPrice > 0 ? `₹${reqPrice}` : 'FREE';
+    document.getElementById('SlotWalletStatus').style.display = 'block';
+
+    const btn = document.getElementById('ConfirmSlotBtn');
+    if (userBalance < reqPrice) {
+      btn.textContent = `Recharge Wallet (₹${(reqPrice - userBalance).toFixed(0)} short)`;
+      btn.style.background = '#64748b';
+      btn.disabled = false;
+    } else {
+      btn.textContent = 'Confirm Booking';
+      btn.style.background = '#3b82f6';
+      btn.disabled = false;
+    }
+  }
+
+  async function handleSlotBooking() {
+    if (!selectedSlot) return;
+    const reqPrice = astroPriceMap[selectedSlot.duration_min] || 0;
+    
+    if (userBalance < reqPrice) {
+      window.location.href = '/pages/recharge';
+      return;
+    }
+
+    const btn = document.getElementById('ConfirmSlotBtn');
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+
+    try {
+      const customerId = '{{ customer.id }}';
+      const customerName = '{{ customer.name }}';
+      
+      const res = await AstroAPI.bookSlot(
+        selectedSlot.id,
+        customerId,
+        customerName,
+        selectedAstroId,
+        selectedSlot.duration_min
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Booking failed');
+
+      alert(data.message || 'Booking successful!');
+      closeSlotModal();
+    } catch (e) {
+      alert(e.message || 'Failed to book slot.');
+      btn.disabled = false;
+      btn.textContent = 'Confirm Booking';
+    }
+  }
+
+  function closeSlotModal() {
+    document.getElementById('SlotModal').style.display = 'none';
   }
 
   document.addEventListener('DOMContentLoaded', loadAstrologers);
