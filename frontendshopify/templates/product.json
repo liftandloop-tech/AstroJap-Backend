@@ -168,40 +168,9 @@
         "padding_top": 36,
         "padding_bottom": 28
       }
-    },
-    "blocks_eryWEV": {
-      "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_3fa7d50_mMrnjL": {
-          "type": "ai_gen_block_3fa7d50",
-          "settings": {
-            "heading": "Your heading here",
-            "heading_size": 36,
-            "heading_color": "#121212",
-            "heading_weight": "700",
-            "subheading": "Your subheading text goes here",
-            "subheading_size": 18,
-            "subheading_color": "#121212",
-            "subheading_weight": "400",
-            "text_alignment": "center",
-            "spacing": 12,
-            "desktop_width_percent": 100,
-            "padding_top": 40,
-            "padding_bottom": 40,
-            "padding_horizontal": 20
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_3fa7d50_mMrnjL"
-      ],
-      "name": "Heading and subheading",
-      "settings": {}
     }
   },
   "order": [
-    "blocks_eryWEV",
     "main",
     "17769364929e2f30ea",
     "17769367800fae3233",

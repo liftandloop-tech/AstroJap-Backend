@@ -38,9 +38,9 @@
     </div>
 
     <!-- My Bookings Section -->
-    <div class="bookings-section" style="margin-top: 40px; background: #fff; border-radius: 25px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+    <div class="bookings-section" style="margin-top: 40px; background: #fff; border-radius: 25px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
       <h3 style="margin: 0 0 10px; font-size: 1.5rem; color: #222;">My Upcoming Bookings</h3>
-      <p class="subtitle" style="margin-bottom: 20px;">Your scheduled advance sessions</p>
+      <p class="subtitle" style="margin-bottom: 20px;">Your scheduled advance sessions with astrologers</p>
       
       <div id="BookingsList" style="display: flex; flex-direction: column; gap: 15px;">
         <div style="color: #64748b; font-size: 14px;">Loading bookings...</div>
@@ -102,19 +102,19 @@ async function loadBookings() {
             const canJoin = now >= joinTime;
 
             return `
-              <div class="booking-item">
-                <div class="booking-info">
-                  <img src="${astro.profile_image || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}">
+              <div class="booking-card" style="border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                  <img src="${astro.profile_image || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
                   <div>
                     <h4 style="margin: 0 0 5px; color: #1e293b;">${astro.name}</h4>
                     <div style="font-size: 13px; color: #64748b; font-weight: 700;">📅 ${dateStr} at ${timeStr}</div>
                     <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">⏳ ${b.duration_minutes} Mins</div>
                   </div>
                 </div>
-                <div class="booking-action">
+                <div>
                   ${canJoin 
-                    ? `<a href="/pages/chat?session_id=${b.id}" class="add-btn" style="text-decoration:none; background:#22c55e;">Join Chat</a>`
-                    : `<button class="add-btn disabled-btn" disabled>Join at ${timeStr}</button>`
+                    ? `<a href="/pages/chat?session_id=${b.id}" class="add-btn" style="text-decoration:none; padding:10px 20px; font-size:14px; background:#22c55e;">Join Chat</a>`
+                    : `<button class="add-btn" style="background:#94a3b8; padding:10px 20px; font-size:14px; cursor:not-allowed;" disabled>Join at ${timeStr}</button>`
                   }
                 </div>
               </div>
@@ -286,27 +286,22 @@ async function addToCart(quantity) {
 .login-required { text-align: center; padding: 100px 20px; }
 .login-btn { display: inline-block; background: #1a1a2e; color: #fff; padding: 15px 40px; border-radius: 50px; text-decoration: none; margin-top: 20px; font-weight: bold; }
 
-.booking-item { border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
-.booking-info { display: flex; gap: 15px; align-items: center; }
-.booking-info img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-.disabled-btn { background: #94a3b8; cursor: not-allowed; }
-
-@media (max-width: 768px) {
-  .header-card, .recharge-options { padding: 20px; }
-  .custom-amount-box { flex-direction: column; gap: 10px; background: transparent; border: none; padding: 0; }
-  .custom-amount-box input { border: 2px solid #e2e8f0; border-radius: 12px; padding: 15px; background: #f1f3f5; }
-  .custom-amount-box .currency-symbol { display: none; }
-  .add-btn { width: 100%; padding: 15px; font-size: 16px; }
-  
-  .booking-item { flex-direction: column; align-items: flex-start; gap: 15px; }
-  .booking-action, .booking-action .add-btn { width: 100%; text-align: center; }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .packs-grid { grid-template-columns: 1fr; }
-  .header-card { padding: 20px; }
+  .header-card { padding: 25px; flex-direction: column; align-items: flex-start; gap: 15px; }
   .balance-info h2 { font-size: 2.2rem; }
-  .wallet-recharge-section { padding: 30px 10px; }
+  .wallet-icon { display: none; }
+  
+  .custom-amount-box { flex-direction: column; background: transparent; padding: 0; gap: 10px; border: none; margin-bottom: 30px; }
+  .custom-amount-box input { background: #f1f3f5; border-radius: 12px; padding: 15px; width: 100%; box-sizing: border-box; }
+  .currency-symbol { display: none; }
+  .add-btn { width: 100%; padding: 15px; box-sizing: border-box; text-align: center; display: block; }
+  
+  .recharge-options { padding: 25px 20px; }
+  .bookings-section { padding: 25px 20px !important; }
+  
+  .booking-card { flex-direction: column !important; align-items: flex-start !important; gap: 15px; }
+  .booking-card > div:last-child { width: 100%; }
 }
 </style>
 

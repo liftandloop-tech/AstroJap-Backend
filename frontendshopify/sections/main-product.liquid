@@ -36,42 +36,23 @@
   }
   .ai-info-col {
     min-width: 0;
-    max-width: 100%;
-    overflow-x: hidden;
   }
 
-  .product__title h1 {
-    word-wrap: break-word;
-    word-break: break-word;
-  }
-
-  .ai-cashback-badge {
-    position: absolute; top: 0; left: 15px; background: linear-gradient(180deg, #ffd700 0%, #ffcc00 100%);
-    width: 90px; z-index: 2; text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 88%, 0% 100%);
-    pointer-events: none;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 20px;
-  }
+  /* On mobile: single column, no sticky */
   @media (max-width: 749px) {
     .ai-product-layout {
       grid-template-columns: 1fr;
       gap: 20px;
+      overflow-x: hidden;
+      width: 100%;
     }
     .ai-gallery-col {
       position: static;
+      max-width: 100vw;
     }
-    .ai-why-premium {
-      grid-template-columns: 1fr;
+    .ai-custom-gallery {
+      max-width: 100vw;
     }
-    .ai-price-row {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
-    }
-    .ai-current-price { font-size: 28px; }
-    .ai-pin-input-group { flex-direction: column; border: none; }
-    .ai-pin-input-group input { width: 100%; border: 1.2px solid #ddd; border-radius: 8px; margin-bottom: 10px; padding-left: 40px; }
-    .ai-pin-check-btn { width: 100%; padding: 15px; border-radius: 8px; }
   }
 
   /* GALLERY */
@@ -348,7 +329,7 @@
             {%- when 'title' -%}
               <div class="product__title" {{ block.shopify_attributes }}>
                 <h1 style="margin:0; font-family: 'Inter', sans-serif !important; font-weight: 400; font-size: 32px; color: #111;">{{ product.title | escape }}</h1>
-                <!-- Subtitle removed as requested -->
+                <div style="font-weight:700; color: #666; font-size:16px; margin: 10px 0 15px 0;">|| {{ block.settings.dates }} ||</div>
                 
                 <div class="ai-tag-row" style="margin-top: 20px;">
                    <div class="ai-tag" style="background: {{ block.settings.tag_1_bg }}; font-size: 14px; padding: 10px 22px;">{{ block.settings.tag_1 }}</div>
