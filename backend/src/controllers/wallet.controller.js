@@ -99,18 +99,21 @@ exports.manualCredit = async (req, res) => {
       .eq('shopify_customer_id', customer_id.toString())
       .maybeSingle();
 
+    let currentBalance = 0;
     if (!wallet) {
-      // Create wallet if it doesn't exist
       await supabase.from('wallets').insert({
         shopify_customer_id: customer_id.toString(),
-        balance:             0
+        balance: 0
       });
+    } else {
+      currentBalance = parseFloat(wallet.balance) || 0;
     }
 
-    const { data: updated, error: updateError } = await supabase.rpc('increment_wallet', {
-      p_customer_id: customer_id.toString(),
-      p_amount:      parseFloat(amount)
-    });
+    const updated = currentBalance + parseFloat(amount);
+    const { error: updateError } = await supabase
+      .from('wallets')
+      .update({ balance: updated, updated_at: new Date().toISOString() })
+      .eq('shopify_customer_id', customer_id.toString());
 
     // Record the manual credit transaction
     await supabase.from('wallet_transactions').insert({
@@ -136,18 +139,21 @@ exports.creditWallet = async (customerId, amount, orderId) => {
     .eq('shopify_customer_id', customerId.toString())
     .maybeSingle();
 
+  let currentBalance = 0;
   if (!wallet) {
-    // Create wallet if it doesn't exist
     await supabase.from('wallets').insert({
       shopify_customer_id: customerId.toString(),
       balance: 0
     });
+  } else {
+    currentBalance = parseFloat(wallet.balance) || 0;
   }
 
-  const { data: updated, error: updateError } = await supabase.rpc('increment_wallet', {
-    p_customer_id: customerId.toString(),
-    p_amount:      parseFloat(amount)
-  });
+  const updated = currentBalance + parseFloat(amount);
+  const { error: updateError } = await supabase
+    .from('wallets')
+    .update({ balance: updated, updated_at: new Date().toISOString() })
+    .eq('shopify_customer_id', customerId.toString());
 
   if (updateError) throw updateError;
 
