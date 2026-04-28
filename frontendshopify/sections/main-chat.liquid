@@ -280,7 +280,7 @@
       const messages = await AstroAPI.getChatMessages(sessionId);
       if (!messages || !Array.isArray(messages)) return;
       
-      let astrologerJoined = false;
+      let astrologerJustJoined = false;
 
       messages.forEach(msg => {
         if (!renderedMessages.has(msg.id)) {
@@ -292,25 +292,24 @@
           }
           
           if (msg.is_system && msg.sender_type === 'astrologer') {
-            astrologerJoined = true;
+            astrologerJustJoined = true;
           }
         }
       });
       
-      if (astrologerJoined || isAstrologer) {
+      // Always sync timer with backend to guarantee it's perfectly accurate
+      const valRes = await AstroAPI.validateSession(sessionId);
+      
+      if (valRes && valRes.is_started) {
         document.getElementById('ChatStatus').textContent = '● Connected';
         document.getElementById('ChatStatus').style.color = '#22c55e';
       }
 
-      // Sync Timer with Backend
-      if (astrologerJoined || isAstrologer) {
-        const valRes = await AstroAPI.validateSession(sessionId);
-        if (valRes && valRes.remaining_seconds !== undefined) {
-          updateTimerDisplay(valRes.remaining_seconds);
-          if (valRes.remaining_seconds <= 0) {
-            alert("Session time is up!");
-            window.location.href = '/';
-          }
+      if (valRes && valRes.remaining_seconds !== undefined) {
+        updateTimerDisplay(valRes.remaining_seconds);
+        if (valRes.is_started && valRes.remaining_seconds <= 0) {
+          alert("Session time is up!");
+          window.location.href = '/';
         }
       }
 

@@ -128,6 +128,7 @@ exports.validateSession = async (req, res) => {
 
     const now     = new Date();
     const endTime = session.end_time ? new Date(session.end_time) : null;
+    const isStarted = !!session.start_time;
 
     if (session.status !== 'active' || (endTime && now > endTime)) {
       if (session.status === 'active' && endTime && now > endTime) {
@@ -143,7 +144,7 @@ exports.validateSession = async (req, res) => {
       ? Math.max(0, Math.floor((endTime - now) / 1000))
       : null;
 
-    res.status(200).json({ valid: true, remaining_seconds });
+    res.status(200).json({ valid: true, remaining_seconds, is_started: isStarted });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
