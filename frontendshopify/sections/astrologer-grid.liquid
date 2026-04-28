@@ -195,6 +195,18 @@
 {%- endstyle -%}
 
 <div class="astro-grid-container" id="AstrologerGridContainer">
+  <!-- Active Session Banner -->
+  <div id="ActiveSessionBanner" style="display:none; background: #fffbeb; border: 1px solid #fcd34d; padding: 15px 20px; border-radius: 12px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);">
+    <div>
+      <h4 style="margin: 0; color: #b45309; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:8px; height:8px; background:#f59e0b; border-radius:50%; animation: pulse 2s infinite;"></span>
+        Active Consultation
+      </h4>
+      <p style="margin: 4px 0 0; color: #92400e; font-size: 14px;">You have an ongoing chat session.</p>
+    </div>
+    <a href="#" id="ResumeChatBtn" class="btn-primary" style="background: #f59e0b; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 700; color: #fff;">Resume Chat</a>
+  </div>
+  
   <div id="AstroGrid" class="astro-grid">
     <div class="loading-state">Loading our expert astrologers...</div>
   </div>
@@ -223,6 +235,23 @@
 <script>
   async function loadAstrologers() {
     const grid = document.getElementById('AstroGrid');
+    const customerId = '{{ customer.id }}';
+    
+    // Check for active session first
+    if (customerId) {
+      try {
+        const activeRes = await AstroAPI.getActiveSession(customerId);
+        if (activeRes && activeRes.id) {
+          const banner = document.getElementById('ActiveSessionBanner');
+          const btn = document.getElementById('ResumeChatBtn');
+          btn.href = `/pages/chat?session_id=${activeRes.id}`;
+          banner.style.display = 'flex';
+        } else {
+          document.getElementById('ActiveSessionBanner').style.display = 'none';
+        }
+      } catch (e) { console.error('Error checking active session:', e); }
+    }
+
     try {
       const astrologers = await AstroAPI.getAstrologers();
       

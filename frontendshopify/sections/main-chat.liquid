@@ -235,11 +235,16 @@
     
     // Announce arrival
     try {
+      if (isAstrologer) {
+        // Start the session on the backend immediately when astrologer opens the chat!
+        await AstroAPI.startSession(sessionId);
+      }
+      
       await AstroAPI.sendChatMessage(
         sessionId,
         currentUserId,
         currentUserType,
-        isAstrologer ? 'Astrologer has joined the chat.' : 'Customer has joined the chat.',
+        isAstrologer ? 'Astrologer has joined the chat. Session has started!' : 'Customer has joined the chat.',
         true
       );
     } catch(e) {}
@@ -297,9 +302,33 @@
         document.getElementById('ChatStatus').style.color = '#22c55e';
       }
 
+      // Sync Timer with Backend
+      if (astrologerJoined || isAstrologer) {
+        const valRes = await AstroAPI.validateSession(sessionId);
+        if (valRes && valRes.remaining_seconds !== undefined) {
+          updateTimerDisplay(valRes.remaining_seconds);
+          if (valRes.remaining_seconds <= 0) {
+            alert("Session time is up!");
+            window.location.href = '/';
+          }
+        }
+      }
+
     } catch(e) {
       console.error("Poll error", e);
     }
+  }
+
+  function updateTimerDisplay(totalSeconds) {
+    const timerEl = document.getElementById('SessionTimer');
+    if (!timerEl) return;
+    if (totalSeconds <= 0) {
+      timerEl.textContent = "0:00";
+      return;
+    }
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = Math.floor(totalSeconds % 60);
+    timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
   function appendMessage(text, type, isSystem = false) {
@@ -325,19 +354,6 @@
     if (confirm('Are you sure you want to end this session?')) {
       window.location.href = '/';
     }
-  }
-
-  // Timer logic
-  const timerEl = document.getElementById('SessionTimer');
-  if (timerEl) {
-    let timeLeft = 1200; // 20 mins
-    setInterval(() => {
-      if (timeLeft <= 0) return;
-      timeLeft--;
-      const mins = Math.floor(timeLeft / 60);
-      const secs = timeLeft % 60;
-      timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-    }, 1000);
   }
 
   document.addEventListener('DOMContentLoaded', initChat);
