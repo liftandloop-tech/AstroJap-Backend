@@ -291,6 +291,7 @@
 
   let selectedAstroId = null;
   let selectedPrice = 0;
+  let selectedDuration = 0;
   let userBalance = 0;
 
   async function openDurationModal(id, name, p20, p60) {
@@ -305,11 +306,11 @@
     const container = document.getElementById('OptionsContainer');
     
     container.innerHTML = `
-      <div class="duration-option" onclick="selectOption(this, ${p20})">
+      <div class="duration-option" onclick="selectOption(this, ${p20}, 20)">
         <span class="option-label">20 Minutes Session</span>
         <span class="option-price">₹${p20}</span>
       </div>
-      <div class="duration-option" onclick="selectOption(this, ${p60})">
+      <div class="duration-option" onclick="selectOption(this, ${p60}, 60)">
         <span class="option-label">60 Minutes Session</span>
         <span class="option-price">₹${p60}</span>
       </div>
@@ -326,10 +327,11 @@
     document.getElementById('DurationModal').style.display = 'flex';
   }
 
-  function selectOption(el, price) {
+  function selectOption(el, price, duration) {
     document.querySelectorAll('.duration-option').forEach(opt => opt.classList.remove('selected'));
     el.classList.add('selected');
     selectedPrice = price;
+    selectedDuration = duration;
     
     const btn = document.getElementById('ProceedToPayBtn');
     btn.disabled = false;
@@ -361,22 +363,28 @@
     btn.textContent = 'Processing...';
 
     try {
-      // Deduct from wallet
-      const res = await AstroAPI.debitWallet(
+      // Create session & deduct from wallet atomically
+      const customerName = '{{ customer.name }}';
+      const res = await AstroAPI.createManualSession(
         customerId, 
-        selectedPrice, 
-        `Consultation with ${document.getElementById('modalAstroName').textContent}`,
-        `session_${Date.now()}`
+        customerName,
+        selectedAstroId, 
+        selectedDuration
       );
 
-      if (res.error === 'INSUFFICIENT_BALANCE') {
-        alert('Insufficient balance. Please recharge.');
-        window.location.href = '/pages/recharge';
-        return;
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.error === 'INSUFFICIENT_BALANCE') {
+          alert('Insufficient balance. Please recharge.');
+          window.location.href = '/pages/recharge';
+          return;
+        }
+        throw new Error(data.error);
       }
 
-      // Success -> Go to chat
-      window.location.href = `/pages/chat?id=${selectedAstroId}&price=${selectedPrice}`;
+      // Success -> Go to chat using the new session_id
+      window.location.href = `/pages/chat?session_id=${data.session_id}`;
     } catch (e) {
       alert('Payment failed. Please try again.');
       btn.disabled = false;

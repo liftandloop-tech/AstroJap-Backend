@@ -278,12 +278,14 @@ exports.getDashboardStats = async (req, res) => {
       .eq('status', 'completed');
 
     // 3. Upcoming scheduled sessions — must match the same filter as getUpcomingSessions
+    const now = new Date();
+    const bufferTime = new Date(now.getTime() - 15 * 60000).toISOString();
     const { count: upcomingCount } = await supabase
       .from('sessions')
       .select('*', { count: 'exact', head: true })
       .eq('astrologer_id', id)
       .in('status', ['active', 'scheduled'])
-      .gt('scheduled_at', new Date().toISOString());
+      .gte('scheduled_at', bufferTime);
 
 
     // 4. Today's earnings — from astrologer_transactions.
@@ -344,14 +346,18 @@ exports.getUpcomingSessions = async (req, res) => {
   const { id } = req.params;
   try {
     // Fetch all future sessions for this astrologer regardless of type.
-    // book_slot_atomic creates sessions — they have status 'active' until the session starts.
-    // We also accept 'scheduled' if set explicitly in future.
+    // Fetch sessions that are either 'active' (immediate chat waiting to start)
+    // or 'scheduled' for the future.
+    const now = new Date();
+    // 15 mins buffer in the past to ensure they don't disappear right at the start time
+    const bufferTime = new Date(now.getTime() - 15 * 60000).toISOString();
+    
     const { data, error } = await supabase
       .from('sessions')
       .select('id, scheduled_at, duration_minutes, status, user_id, type')
       .eq('astrologer_id', id)
       .in('status', ['active', 'scheduled'])
-      .gt('scheduled_at', new Date().toISOString())
+      .gte('scheduled_at', bufferTime)
       .order('scheduled_at', { ascending: true });
 
     if (error) throw error;

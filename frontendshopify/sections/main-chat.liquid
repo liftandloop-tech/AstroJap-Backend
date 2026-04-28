@@ -169,13 +169,13 @@
       <div class="chat-header">
         <div>
           <span style="font-weight:800;color:#1e293b;">Live Consultation</span>
-          <div id="ChatStatus" style="font-size:12px;color:#22c55e;">● Connected</div>
+          <div id="ChatStatus" style="font-size:12px;color:#f59e0b;">● Waiting for Astrologer...</div>
         </div>
         <button class="end-btn" onclick="confirmEndChat()">End Session</button>
       </div>
 
       <div class="chat-messages" id="ChatMessages">
-        <div class="msg msg-received">Namaste! How can I help you today?</div>
+        <div class="msg msg-received">Namaste! I will be joining shortly. Please wait...</div>
       </div>
 
       <form class="chat-input-area" id="ChatForm">
@@ -196,46 +196,71 @@
 <script>
   let socket;
   const urlParams = new URLSearchParams(window.location.search);
-  const astrologerId = urlParams.get('id');
+  const sessionId = urlParams.get('session_id');
   const customerId = '{{ customer.id }}';
   const astroToken = localStorage.getItem('astro_token');
+  const astroId = localStorage.getItem('astro_id');
+  
+  // Identify who is logging in
+  const isAstrologer = !!astroToken;
+  const currentUserId = isAstrologer ? astroId : customerId;
 
   async function initChat() {
-    if (!astrologerId) {
+    if (!sessionId) {
       alert('Invalid session. Returning to home.');
       window.location.href = '/';
       return;
     }
 
-    if (!customerId && !astroToken) {
-      console.log('Not logged in. Showing auth view.');
+    if (!isAstrologer && !customerId) {
       document.getElementById('LoginView').style.display = 'block';
       return;
     }
 
     document.getElementById('ChatView').style.display = 'flex';
 
-    // Load Astrologer Info
+    // Fetch session details to get Astrologer info
     try {
-      const astrologers = await AstroAPI.getAstrologers();
-      const astro = astrologers.find(a => a.id == astrologerId);
-      if (astro) {
-        document.getElementById('AstroName').textContent = astro.name;
-        document.getElementById('AstroImg').src = astro.profile_image || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+      const res = await AstroAPI.getSessionById(sessionId);
+      if (res && res.session && res.session.astrologers) {
+        document.getElementById('AstroName').textContent = isAstrologer ? "Customer" : res.session.astrologers.name;
+        document.getElementById('AstroImg').src = res.session.astrologers.profile_image || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error('Failed to load session details', e); }
 
     // Connect Socket
     socket = io('https://astro-jap-backend.vercel.app');
     
     socket.on('connect', () => {
       console.log('Connected to chat server');
-      const userId = astroToken ? 'astrologer_' + localStorage.getItem('astro_id') : 'customer_' + customerId;
-      socket.emit('join-chat', { astrologerId, userId });
+      socket.emit('join-chat', sessionId);
+      
+      // Notify the other party that we arrived
+      socket.emit('send-msg', {
+        sessionId: sessionId,
+        senderId: currentUserId,
+        senderType: isAstrologer ? 'astrologer' : 'customer',
+        text: isAstrologer ? 'Astrologer has joined the chat!' : 'Customer has joined the chat.',
+        system: true
+      });
+      
+      if (isAstrologer) {
+        document.getElementById('ChatStatus').textContent = '● Connected';
+        document.getElementById('ChatStatus').style.color = '#22c55e';
+      }
     });
 
-    socket.on('message', (data) => {
-      appendMessage(data.text, 'received');
+    socket.on('receive-msg', (data) => {
+      // If system message from astrologer, update status
+      if (data.system && data.senderType === 'astrologer' && !isAstrologer) {
+        document.getElementById('ChatStatus').textContent = '● Connected';
+        document.getElementById('ChatStatus').style.color = '#22c55e';
+      }
+      
+      const isMine = data.senderId === currentUserId;
+      if (!isMine) {
+        appendMessage(data.text, 'received', data.system);
+      }
     });
 
     // Handle form
@@ -248,17 +273,31 @@
         
         const msg = input.value.trim();
         appendMessage(msg, 'sent');
-        socket.emit('message', { astrologerId, text: msg });
+        socket.emit('send-msg', { 
+          sessionId: sessionId,
+          senderId: currentUserId,
+          senderType: isAstrologer ? 'astrologer' : 'customer',
+          text: msg 
+        });
         input.value = '';
       };
     }
   }
 
-  function appendMessage(text, type) {
+  function appendMessage(text, type, isSystem = false) {
     const container = document.getElementById('ChatMessages');
     if (!container) return;
     const div = document.createElement('div');
     div.className = `msg msg-${type}`;
+    if (isSystem) {
+      div.style.background = 'transparent';
+      div.style.color = '#64748b';
+      div.style.fontSize = '12px';
+      div.style.textAlign = 'center';
+      div.style.width = '100%';
+      div.style.maxWidth = '100%';
+      div.style.alignSelf = 'center';
+    }
     div.textContent = text;
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;

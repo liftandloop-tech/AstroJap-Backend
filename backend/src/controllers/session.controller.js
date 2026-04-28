@@ -301,7 +301,13 @@ exports.createManualSession = async (req, res) => {
     // 4. Create the session record (status: pending until payment processed)
     const { data: session, error: sessionError } = await supabase
       .from('sessions')
-      .insert({ user_id: customer_id.toString(), astrologer_id: astrologer_id, duration_minutes: durationInt, status: 'active' })
+      .insert({ 
+        user_id: customer_id.toString(), 
+        astrologer_id: astrologer_id, 
+        duration_minutes: durationInt, 
+        status: 'active',
+        scheduled_at: new Date().toISOString()
+      })
       .select().single();
 
     if (sessionError) throw sessionError;
