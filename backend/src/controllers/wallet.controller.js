@@ -129,5 +129,37 @@ exports.manualCredit = async (req, res) => {
 
 // Internal helper for webhooks
 exports.creditWallet = async (customerId, amount, orderId) => {
-  // Logic here...
+  // Check if wallet exists
+  const { data: wallet } = await supabase
+    .from('wallets')
+    .select('balance')
+    .eq('shopify_customer_id', customerId.toString())
+    .maybeSingle();
+
+  if (!wallet) {
+    // Create wallet if it doesn't exist
+    await supabase.from('wallets').insert({
+      shopify_customer_id: customerId.toString(),
+      balance: 0
+    });
+  }
+
+  const { data: updated, error: updateError } = await supabase.rpc('increment_wallet', {
+    p_customer_id: customerId.toString(),
+    p_amount:      parseFloat(amount)
+  });
+
+  if (updateError) throw updateError;
+
+  // Record the credit transaction
+  await supabase.from('wallet_transactions').insert({
+    shopify_customer_id: customerId.toString(),
+    amount:              parseFloat(amount),
+    type:                'credit',
+    description:         'Wallet recharge via Shopify Order',
+    reference_id:        orderId,
+    balance_after:       updated
+  });
+
+  return updated;
 };
