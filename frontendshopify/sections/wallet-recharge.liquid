@@ -43,7 +43,7 @@
 
 <script>
 const customerId = "{{ customer.id }}";
-const masterVariantId = "{{ section.settings.master_variant_id | default: '48321609400420' }}";
+const masterVariantId = "48321609400420"; // Forced Variant ID
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!customerId) {
