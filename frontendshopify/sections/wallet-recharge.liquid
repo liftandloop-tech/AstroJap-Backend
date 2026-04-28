@@ -92,7 +92,10 @@ async function addToCart(quantity) {
     const formData = {
         'items': [{
             'id': parseInt(masterVariantId),
-            'quantity': quantity
+            'quantity': quantity,
+            'properties': {
+                '_is_wallet_recharge': 'true'
+            }
         }]
     };
 
