@@ -119,7 +119,7 @@
   <div class="ai-cg-container-{{ ai_gen_id }}">
     
     <div class="ai-cg-items-{{ ai_gen_id }}" id="CategoryList-{{ ai_gen_id }}">
-      {% for i in (1..26) %}
+      {% for i in (1..24) %}
         {% assign enabled_key = 'category_' | append: i | append: '_enabled' %}
         {% assign image_key = 'category_' | append: i | append: '_image' %}
         {% assign label_key = 'category_' | append: i | append: '_label' %}
@@ -384,19 +384,7 @@
     { "type": "checkbox", "id": "category_24_enabled", "label": "Enable", "default": true },
     { "type": "image_picker", "id": "category_24_image", "label": "Image" },
     { "type": "text", "id": "category_24_label", "label": "Label", "default": "Crystal Dome Trees" },
-    { "type": "url", "id": "category_24_link", "label": "Link" },
-
-    { "type": "header", "content": "Category 25" },
-    { "type": "checkbox", "id": "category_25_enabled", "label": "Enable", "default": true },
-    { "type": "image_picker", "id": "category_25_image", "label": "Image" },
-    { "type": "text", "id": "category_25_label", "label": "Label", "default": "Frames" },
-    { "type": "url", "id": "category_25_link", "label": "Link", "default": "/pages/frame" },
-
-    { "type": "header", "content": "Category 26" },
-    { "type": "checkbox", "id": "category_26_enabled", "label": "Enable", "default": true },
-    { "type": "image_picker", "id": "category_26_image", "label": "Image" },
-    { "type": "text", "id": "category_26_label", "label": "Label", "default": "Rashi" },
-    { "type": "url", "id": "category_26_link", "label": "Link", "default": "/pages/rashi" }
+    { "type": "url", "id": "category_24_link", "label": "Link" }
   ],
   "presets": [
     {
