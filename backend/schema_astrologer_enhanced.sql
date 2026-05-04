@@ -67,7 +67,7 @@ BEGIN
 
     -- Administrative (Step 7)
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='astrologers' AND column_name='approval_status') THEN
-        ALTER TABLE astrologers ADD COLUMN approval_status TEXT DEFAULT 'pending' CHECK (approval_status IN ('pending', 'approved', 'rejected'));
+        ALTER TABLE astrologers ADD COLUMN approval_status TEXT DEFAULT 'processing' CHECK (approval_status IN ('processing', 'pending', 'approved', 'rejected', 'onboarding'));
     END IF;
 
     -- Cometchat fallback

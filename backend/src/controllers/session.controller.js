@@ -405,3 +405,43 @@ exports.sendChatMessage = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// ─── GET /api/sessions/admin/all ─────────────────────────────────────────────
+// Admin only: Get ALL sessions with participant details for monitoring
+exports.getAdminSessions = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('sessions')
+      .select(`
+        *,
+        astrologers (name, profile_image),
+        users (name, shopify_customer_id)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ─── GET /api/sessions/admin/messages/:sessionId ──────────────────────────────
+// Admin only: Get all messages for a specific session by ID
+exports.getAdminChatMessages = async (req, res) => {
+  const { sessionId } = req.params;
+  if (!sessionId) return missingField(res, 'sessionId');
+
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

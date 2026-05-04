@@ -15,4 +15,8 @@ router.post('/create-manual',        sessionController.createManualSession); // 
 router.post('/messages',             sessionController.getChatMessages);
 router.post('/send-message',         sessionController.sendChatMessage);
 
+// Admin Chat Monitoring
+router.get('/admin/all',             sessionController.getAdminSessions);
+router.get('/admin/messages/:sessionId', sessionController.getAdminChatMessages);
+
 module.exports = router;

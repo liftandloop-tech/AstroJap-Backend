@@ -29,7 +29,8 @@ exports.signup = async (req, res) => {
         email,
         name,
         mobile,
-        approval_status: 'pending'
+        approval_status: 'processing',
+        onboarding_step: 1
       }])
       .select()
       .single();
@@ -97,8 +98,14 @@ exports.updateOnboarding = async (req, res) => {
   if (!id) return missingField(res, 'id');
 
   // Prevent overwriting protected fields via this endpoint
-  delete details.approval_status;
   delete details.shopify_customer_id;
+
+  // If completing the final step, set status to pending for review
+  if (details.onboarding_step === 5) {
+    details.approval_status = 'pending';
+  } else {
+    delete details.approval_status;
+  }
 
   try {
     const { data, error } = await supabase
@@ -441,10 +448,114 @@ async function createShopifyCustomer({ id, name, email, mobile }) {
         .update({ shopify_customer_id: shopifyCustomerId })
         .eq('id', id);
 
-      console.log(`Shopify customer created: ${shopifyCustomerId} for astrologer ${id}`);
     }
   } catch (err) {
     // Non-fatal — log but don't block signup
     console.error('Shopify customer creation failed:', err.response?.data || err.message);
+  }
+}
+
+// ─── ADMIN FUNCTIONS ─────────────────────────────────────────────────────────
+
+exports.adminLogin = async (req, res) => {
+  const { id, password } = req.body;
+  const ADMIN_ID = 'admin';
+  const ADMIN_PASS = 'astrojap2026';
+
+  if (id && id.toLowerCase() === ADMIN_ID.toLowerCase() && password === ADMIN_PASS) {
+    // Return a simple token (in production use JWT)
+    res.status(200).json({ success: true, token: 'admin_secret_session_token_2026' });
+  } else {
+    res.status(401).json({ error: 'Invalid admin credentials' });
+  }
+};
+
+exports.getPendingAstrologers = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') return res.status(403).json({ error: 'Unauthorized' });
+
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .select('*')
+      .in('approval_status', ['pending', 'processing'])
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.approveAstrologer = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') return res.status(403).json({ error: 'Unauthorized' });
+
+  const { id } = req.body;
+  if (!id) return missingField(res, 'id');
+
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .update({ approval_status: 'approved', onboarding_step: 5 })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Update Shopify Customer Tag if exists
+    if (data.shopify_customer_id) {
+       updateShopifyCustomerStatus(data.shopify_customer_id, 'astrologer_approved');
+    }
+
+    res.status(200).json({ message: 'Astrologer approved successfully', data });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.rejectAstrologer = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') return res.status(403).json({ error: 'Unauthorized' });
+
+  const { id, reason } = req.body;
+  if (!id) return missingField(res, 'id');
+
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .update({ approval_status: 'rejected', rejection_reason: reason || 'Application does not meet our requirements.' })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Update Shopify Customer Tag if exists
+    if (data.shopify_customer_id) {
+       updateShopifyCustomerStatus(data.shopify_customer_id, 'astrologer_rejected');
+    }
+
+    res.status(200).json({ message: 'Astrologer rejected', data });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+async function updateShopifyCustomerStatus(shopifyId, newTag) {
+  const shopName = process.env.SHOPIFY_STORE_DOMAIN;
+  const adminKey = process.env.SHOPIFY_ADMIN_API_KEY;
+  if (!shopName || !adminKey) return;
+
+  try {
+    await axios.put(
+      `https://${shopName}/admin/api/2024-04/customers/${shopifyId}.json`,
+      { customer: { id: shopifyId, tags: newTag } },
+      { headers: { 'X-Shopify-Access-Token': adminKey } }
+    );
+  } catch (err) {
+    console.error('Shopify tag update failed:', err.message);
   }
 }
