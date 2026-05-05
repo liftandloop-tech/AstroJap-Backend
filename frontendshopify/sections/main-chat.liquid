@@ -230,24 +230,31 @@
     } catch (e) { console.error('Failed to load session details', e); }
 
     // Start Polling for messages
-    pollMessages();
+    await pollMessages(); // Fetch immediately
     pollInterval = setInterval(pollMessages, 2000);
     
-    // Announce arrival
+    // Announce arrival - ONLY if it hasn't been announced in this session history yet
     try {
-      if (isAstrologer) {
-        // Start the session on the backend immediately when astrologer opens the chat!
-        await AstroAPI.startSession(sessionId);
+      const existingMessages = await AstroAPI.getChatMessages(sessionId);
+      const joinText = isAstrologer ? 'Astrologer has joined' : 'Customer has joined';
+      const alreadyJoined = existingMessages.some(m => m.is_system && m.text.includes(joinText));
+
+      if (!alreadyJoined) {
+        if (isAstrologer) {
+          // Start the session on the backend immediately when astrologer opens the chat!
+          await AstroAPI.startSession(sessionId);
+        }
+
+        await AstroAPI.sendChatMessage(
+          sessionId,
+          currentUserId,
+          currentUserType,
+          isAstrologer ? 'Astrologer has joined the chat. Session has started!' : 'Customer has joined the chat.',
+          true
+        );
+        pollMessages();
       }
-      
-      await AstroAPI.sendChatMessage(
-        sessionId,
-        currentUserId,
-        currentUserType,
-        isAstrologer ? 'Astrologer has joined the chat. Session has started!' : 'Customer has joined the chat.',
-        true
-      );
-    } catch(e) {}
+    } catch(e) { console.error('Join check failed', e); }
 
     // Handle form
     const chatForm = document.getElementById('ChatForm');
@@ -280,17 +287,22 @@
       const messages = await AstroAPI.getChatMessages(sessionId);
       if (!messages || !Array.isArray(messages)) return;
       
-      let astrologerJustJoined = false;
+      const container = document.getElementById('ChatMessages');
+      
+      // If we have real messages from the DB, remove the initial "Namaste" placeholder
+      if (messages.length > 0) {
+        const welcomeMsg = container.querySelector('.msg-received:first-child');
+        if (welcomeMsg && welcomeMsg.textContent.includes('Namaste!')) {
+          welcomeMsg.remove();
+        }
+      }
 
       messages.forEach(msg => {
         if (!renderedMessages.has(msg.id)) {
           renderedMessages.add(msg.id);
-          const isMine = msg.sender_id === currentUserId && msg.sender_type === currentUserType;
+          // CAST TO STRING for robust comparison
+          const isMine = String(msg.sender_id) === String(currentUserId) && String(msg.sender_type) === String(currentUserType);
           appendMessage(msg.text, isMine ? 'sent' : 'received', msg.is_system);
-          
-          if (msg.is_system && msg.sender_type === 'astrologer') {
-            astrologerJustJoined = true;
-          }
         }
       });
       

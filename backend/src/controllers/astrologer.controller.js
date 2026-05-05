@@ -7,8 +7,6 @@ function missingField(res, field) {
   return res.status(400).json({ error: `${field} is required` });
 }
 
-// ─── POST /api/astrologers/signup ─────────────────────────────────────────────
-
 exports.signup = async (req, res) => {
   const { email, password, name, mobile } = req.body;
   if (!email)    return missingField(res, 'email');
@@ -17,34 +15,55 @@ exports.signup = async (req, res) => {
   if (!mobile)   return missingField(res, 'mobile');
 
   try {
-    // 1. Create Supabase Auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
-    if (authError) throw authError;
+    // 1. Check if astrologer already exists in our table
+    const { data: existingAstro } = await supabase
+      .from('astrologers')
+      .select('id, approval_status, onboarding_step')
+      .eq('email', email)
+      .maybeSingle();
 
-    // 2. Insert into astrologers table with pending status
+    if (existingAstro && existingAstro.approval_status === 'approved') {
+      return res.status(400).json({ error: 'An approved astrologer account already exists with this email. Please login.' });
+    }
+
+    let userId;
+    let authData;
+
+    // 2. Create or Sign In to Supabase Auth
+    const { data: signUpData, error: authError } = await supabase.auth.signUp({ email, password });
+    
+    if (authError) {
+      // If user already exists in Auth, try logging them in to get the ID
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) throw new Error('Auth error: ' + authError.message);
+      userId = signInData.user.id;
+    } else {
+      userId = signUpData.user.id;
+    }
+
+    // 3. Upsert into astrologers table
     const { data, error: insertError } = await supabase
       .from('astrologers')
-      .insert([{
-        id:              authData.user.id,
+      .upsert([{
+        id:              userId,
         email,
         name,
         mobile,
-        password_plain:  password, // Store for Admin visibility
-        approval_status: 'processing',
-        onboarding_step: 1
-      }])
+        password_plain:  password,
+        approval_status: existingAstro?.approval_status || 'processing',
+        onboarding_step: existingAstro?.onboarding_step || 1
+      }], { onConflict: 'email' })
       .select()
       .single();
 
     if (insertError) throw insertError;
 
-    // 3. Create a Shopify customer record so the Admin can see them
-    //    and tag them 'astrologer_pending' for easy filtering.
+    // 4. Shopify sync (non-fatal)
     await createShopifyCustomer({ id: data.id, name, email, mobile });
 
     res.status(201).json({
-      message: 'Signup successful. Please complete your profile. Your account will be reviewed.',
-      user: { id: data.id, name, email, approval_status: 'pending' }
+      message: 'Signup successful. Please complete your profile.',
+      user: { id: data.id, name, email, approval_status: data.approval_status, onboarding_step: data.onboarding_step }
     });
   } catch (error) {
     console.error('Signup error:', error);

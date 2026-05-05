@@ -278,7 +278,10 @@
 <!-- DETAILS MODAL -->
 <div id="DetailsModal" class="admin-modal">
   <div class="modal-content">
-    <h2 id="ModalName" style="margin-top:0;">Astrologer Name</h2>
+    <div style="text-align: center; margin-bottom: 20px;">
+      <img id="ModalProfileImg" src="" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--admin-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.1);" alt="Profile">
+    </div>
+    <h2 id="ModalName" style="margin-top:0; text-align: center;">Astrologer Name</h2>
     <div class="modal-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
       <div>
         <p class="form-label">Email</p>
@@ -443,6 +446,10 @@
   }
 
   function viewDetails(astro) {
+    const profileImg = document.getElementById('ModalProfileImg');
+    profileImg.src = astro.profile_image || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+    profileImg.style.display = 'block';
+    
     document.getElementById('ModalName').innerText = astro.name;
     document.getElementById('ModalEmail').innerText = astro.email;
     document.getElementById('ModalPhone').innerText = astro.mobile || 'N/A';
