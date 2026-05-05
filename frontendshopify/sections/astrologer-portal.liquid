@@ -808,7 +808,7 @@
         if (!selfieRes.ok) throw new Error(selfieData.error || 'Selfie Upload failed');
 
         // Save URLs to profile
-        payload.id_proof_url = idData.imageUrl;
+        payload.govt_id_url = idData.imageUrl;
         payload.selfie_url = selfieData.imageUrl;
         payload.onboarding_step = 4;
       } catch (e) {
