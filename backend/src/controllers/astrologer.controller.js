@@ -49,7 +49,6 @@ exports.signup = async (req, res) => {
         email,
         name,
         mobile,
-        password_plain:  password,
         approval_status: existingAstro?.approval_status || 'processing',
         onboarding_step: existingAstro?.onboarding_step || 1
       }], { onConflict: 'email' })
