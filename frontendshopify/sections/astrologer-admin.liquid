@@ -300,6 +300,14 @@
         <p id="ModalLangs" style="margin:0; font-weight:600;"></p>
       </div>
       <div>
+        <p class="form-label">Total Sessions</p>
+        <p id="ModalSessions" style="margin:0; font-weight:700; color:var(--admin-blue);">0</p>
+      </div>
+      <div>
+        <p class="form-label">Total Earnings</p>
+        <p id="ModalEarnings" style="margin:0; font-weight:700; color:#22c55e;">₹0.00</p>
+      </div>
+      <div>
         <p class="form-label">Current Status</p>
         <p id="ModalStatus" style="margin:0; font-weight:600; text-transform: capitalize;"></p>
       </div>
@@ -461,6 +469,9 @@
     
     document.getElementById('ModalStatus').style.color = astro.approval_status === 'pending' ? '#856404' : '#4a5568';
     
+    document.getElementById('ModalSessions').innerText = astro.total_sessions || 0;
+    document.getElementById('ModalEarnings').innerText = '₹' + Number(astro.total_earned || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
     // Populate Documents
     const idImg = document.getElementById('IdProofImg');
     const selfieImg = document.getElementById('SelfieImg');

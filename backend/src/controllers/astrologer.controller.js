@@ -1,5 +1,6 @@
 const supabase = require('../config/supabase');
 const axios    = require('axios');
+const { sendStatusNotification, notifyAdminNewSignup } = require('../services/notification.service');
 
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
@@ -27,7 +28,6 @@ exports.signup = async (req, res) => {
     }
 
     let userId;
-    let authData;
 
     // 2. Create or Sign In to Supabase Auth
     const { data: signUpData, error: authError } = await supabase.auth.signUp({ email, password });
@@ -57,7 +57,10 @@ exports.signup = async (req, res) => {
 
     if (insertError) throw insertError;
 
-    // 4. Shopify sync (non-fatal)
+    // 4. Send "Received" Email
+    sendStatusNotification(email, name, 'pending');
+
+    // 5. Shopify sync (non-fatal)
     await createShopifyCustomer({ id: data.id, name, email, mobile });
 
     res.status(201).json({
@@ -136,7 +139,12 @@ exports.updateOnboarding = async (req, res) => {
 
     if (error) throw error;
     if (!data) return res.status(404).json({ error: 'Astrologer record not found. Please try signing up again.' });
-    
+
+    // If they just finished onboarding and are now pending review, notify Admin
+    if (details.onboarding_step === 5) {
+      notifyAdminNewSignup(data.name, data.email);
+    }
+
     res.status(200).json({ message: 'Onboarding step saved', data });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -540,6 +548,9 @@ exports.approveAstrologer = async (req, res) => {
 
     if (error) throw error;
 
+    // Send Approval Email
+    sendStatusNotification(data.email, data.name, 'approved');
+
     // Update Shopify Customer Tag if exists
     if (data.shopify_customer_id) {
        updateShopifyCustomerStatus(data.shopify_customer_id, 'astrologer_approved');
@@ -567,6 +578,9 @@ exports.rejectAstrologer = async (req, res) => {
       .single();
 
     if (error) throw error;
+
+    // Send Rejection Email
+    sendStatusNotification(data.email, data.name, 'rejected', reason);
 
     // Update Shopify Customer Tag if exists
     if (data.shopify_customer_id) {
