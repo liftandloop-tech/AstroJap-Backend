@@ -10,11 +10,27 @@
 {
   "sections": {
     "main": {
-      "type": "main-chat",
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "blocks_MBRwDz": {
+      "type": "_blocks",
+      "name": "Kundli premium feature",
+      "settings": {}
+    },
+    "astrologer_admin_HzRUVa": {
+      "type": "astrologer-admin",
+      "name": "Astrologer Admin",
       "settings": {}
     }
   },
   "order": [
-    "main"
+    "main",
+    "blocks_MBRwDz",
+    "astrologer_admin_HzRUVa"
   ]
 }

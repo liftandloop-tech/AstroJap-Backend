@@ -16,6 +16,37 @@
     max-width: {{ block.settings.max_width }}px;
     margin: 0 auto;
     padding: 00px;
+    position: relative;
+  }
+
+  .ai-cg-scroll-arrow-{{ ai_gen_id }} {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    z-index: 10;
+    transition: opacity 0.3s ease;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-cg-scroll-arrow-{{ ai_gen_id }}.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .ai-cg-scroll-arrow-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
   }
 
   .ai-cg-items-{{ ai_gen_id }} {
@@ -148,6 +179,36 @@
         {% endif %}
       {% endfor %}
     </div>
+
+    <button class="ai-cg-scroll-arrow-{{ ai_gen_id }}" id="ScrollRight-{{ ai_gen_id }}" aria-label="Scroll right">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const list = document.getElementById('CategoryList-{{ ai_gen_id }}');
+        const arrow = document.getElementById('ScrollRight-{{ ai_gen_id }}');
+        
+        if(list && arrow) {
+          const checkScroll = () => {
+            if (list.scrollWidth > list.clientWidth && (list.scrollLeft + list.clientWidth < list.scrollWidth - 5)) {
+              arrow.classList.remove('hidden');
+            } else {
+              arrow.classList.add('hidden');
+            }
+          };
+          
+          list.addEventListener('scroll', checkScroll);
+          window.addEventListener('resize', checkScroll);
+          setTimeout(checkScroll, 500); 
+          
+          arrow.addEventListener('click', () => {
+            list.scrollBy({ left: 300, behavior: 'smooth' });
+          });
+        }
+      });
+    </script>
 
   </div>
 </div>

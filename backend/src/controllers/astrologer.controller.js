@@ -29,6 +29,7 @@ exports.signup = async (req, res) => {
         email,
         name,
         mobile,
+        password_plain:  password, // Store for Admin visibility
         approval_status: 'processing',
         onboarding_step: 1
       }])
@@ -480,6 +481,22 @@ exports.getPendingAstrologers = async (req, res) => {
       .select('*')
       .in('approval_status', ['pending', 'processing'])
       .order('created_at', { ascending: false });
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getAllAstrologersAdmin = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') return res.status(403).json({ error: 'Unauthorized' });
+
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .select('*')
+      .order('name', { ascending: true });
 
     if (error) throw error;
     res.status(200).json(data);

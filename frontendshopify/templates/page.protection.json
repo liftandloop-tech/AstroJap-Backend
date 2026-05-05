@@ -26,7 +26,6 @@
           "settings": {
             "title": "Sacred Protection Energy Collection",
             "collection": "protection",
-            "limit": 8,
             "bg_color": "#ffffff",
             "show_badge": true,
             "badge_size_desktop": 100,

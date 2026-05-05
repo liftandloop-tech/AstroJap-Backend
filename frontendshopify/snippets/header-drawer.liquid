@@ -145,8 +145,16 @@
             {% assign collection = link.object %}
             <a href="{{ link.url }}" class="at-circle-item">
               <div class="at-circle-img">
-                {% if collection and collection.image %}
-                  <img src="{{ collection.image | image_url: width: 150 }}" alt="{{ link.title }}">
+                {% liquid
+                  assign cat_img = collection.image | image_url: width: 150
+                  if link.title == 'Frames'
+                    assign cat_img = '1_10_9cc6c998-232f-4461-a803-ed88ef258b31.webp' | file_img_url: '150x'
+                  elsif link.title == 'Rashi'
+                    assign cat_img = '1_612fc11a-05c1-4fbb-822b-0874e67e83a5.webp' | file_img_url: '150x'
+                  endif
+                %}
+                {% if collection and collection.image or link.title == 'Frames' or link.title == 'Rashi' %}
+                  <img src="{{ cat_img }}" alt="{{ link.title }}">
                 {% else %}
                   <img src="https://astrotalk.com/assets/images/category_placeholder.png">
                 {% endif %}

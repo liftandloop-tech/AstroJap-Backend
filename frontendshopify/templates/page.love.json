@@ -26,7 +26,6 @@
           "settings": {
             "title": "Divine Products for Love & Relationships",
             "collection": "love",
-            "limit": 8,
             "bg_color": "#ffffff",
             "show_badge": true,
             "badge_size_desktop": 100,

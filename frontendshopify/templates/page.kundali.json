@@ -83,9 +83,9 @@
           "settings": {
             "cta_text": "<p>Connect with an Astrologer on Call or Chat for more personalised detailed predictions.</p>",
             "talk_button_label": "Talk to Astrologer",
-            "talk_button_link": "",
+            "talk_button_link": "https://astrojap.com/collections/astrologers",
             "chat_button_label": "Chat with Astrologer",
-            "chat_button_link": "https://astrojap.com/pages/astrologer",
+            "chat_button_link": "https://astrojap.com/collections/astrologers",
             "section_background_color": "#f3f3f3",
             "card_background_color": "#ffffff",
             "text_color": "#121212",

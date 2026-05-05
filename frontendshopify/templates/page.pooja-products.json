@@ -26,7 +26,6 @@
           "settings": {
             "title": "Pooja Essentials",
             "collection": "pooja",
-            "limit": 24,
             "bg_color": "#ffffff",
             "show_badge": true,
             "badge_size_desktop": 80,

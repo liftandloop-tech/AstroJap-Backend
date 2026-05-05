@@ -11,6 +11,7 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
       "custom_css": [],
       "settings": {
         "padding_top": 36,
@@ -140,7 +141,7 @@
             "card_1_title": "Talk to Astrologer",
             "card_1_description": "Get instant guidance from experts",
             "card_1_button_text": "Call Now",
-            "card_1_button_link": "https://astrojap.com/pages/astrologer",
+            "card_1_button_link": "https://astrojap.com/collections/astrologers",
             "card_2_enabled": false,
             "card_2_title": "Chat Support",
             "card_2_description": "Chat with our support team",

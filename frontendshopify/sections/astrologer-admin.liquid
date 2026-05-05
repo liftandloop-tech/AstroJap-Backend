@@ -1,0 +1,675 @@
+{% comment %}
+  ASTROLOGER ADMIN PORTAL
+  This template allows admins to approve or reject pending astrologer applications.
+  Access is gated by a hardcoded Admin ID and Password.
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+{%- style -%}
+  :root {
+    --admin-blue: #4361ee;
+    --admin-dark: #1a1c23;
+    --admin-bg: #f8f9fc;
+    --admin-card: #ffffff;
+    --admin-border: #e2e8f0;
+    --admin-text: #2d3748;
+    --admin-text-light: #718096;
+    --admin-success: #38a169;
+    --admin-error: #e53e3e;
+  }
+
+  #AstroAdmin {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--admin-bg);
+    min-height: 100vh;
+    padding: 60px 20px;
+    color: var(--admin-text);
+  }
+
+  .admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .admin-card {
+    background: var(--admin-card);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    border: 1px solid var(--admin-border);
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  .admin-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  /* LOGIN FORM */
+  .login-box {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; color: var(--admin-text-light); }
+  .form-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--admin-border);
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
+  }
+  .form-input:focus { border-color: var(--admin-blue); }
+
+  .btn-admin {
+    background: var(--admin-blue);
+    color: #fff;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    transition: 0.3s;
+  }
+  .btn-admin:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* TABLE */
+  .admin-table-container { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th { text-align: left; padding: 15px; border-bottom: 2px solid var(--admin-border); color: var(--admin-text-light); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 15px; border-bottom: 1px solid var(--admin-border); font-size: 15px; vertical-align: middle; }
+
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #edf2f7;
+    color: #4a5568;
+  }
+
+  .action-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    margin-right: 8px;
+    transition: 0.2s;
+  }
+  .btn-approve { background: var(--admin-success); color: #fff; }
+  .btn-reject { background: var(--admin-error); color: #fff; }
+  .btn-view { background: #eee; color: #444; }
+
+  /* MODAL */
+  .admin-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 24px;
+    padding: 40px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .hidden { display: none !important; }
+
+  @media screen and (max-width: 768px) {
+    #AstroAdmin { padding: 40px 15px; }
+    .admin-card { padding: 20px; border-radius: 16px; }
+    .admin-header { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 30px; }
+    .admin-title { font-size: 22px; }
+    .modal-content { padding: 25px; border-radius: 20px; }
+    th, td { padding: 12px 10px; font-size: 13px; }
+    .action-btn { padding: 6px 12px; font-size: 12px; margin-bottom: 5px; width: 100%; margin-right: 0; }
+    .admin-table-container { 
+      margin: 0 -10px;
+      padding: 0 10px;
+      width: calc(100% + 20px);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table { min-width: 600px; }
+    .modal-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+    .chat-modal-content { height: 95vh !important; width: 100% !important; padding: 15px !important; }
+    
+    .admin-header > div {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 100%;
+    }
+    .admin-header button {
+      flex: 1;
+      min-width: 100px;
+      padding: 10px 5px;
+      font-size: 12px;
+    }
+  }
+{%- endstyle -%}
+
+<div id="AstroAdmin">
+  <div class="admin-container">
+    
+    <!-- LOGIN VIEW -->
+    <div id="AdminLoginView" class="admin-card login-box">
+      <h2 style="text-align: center; margin-bottom: 30px;">Admin Access</h2>
+      <div class="form-group">
+        <label class="form-label">Admin ID</label>
+        <input type="text" id="AdminId" class="form-input" placeholder="Enter ID">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="AdminPass" class="form-input" placeholder="••••••••">
+      </div>
+      <button class="btn-admin" onclick="handleAdminLogin()">Login to Dashboard</button>
+      <p id="LoginError" style="color: var(--admin-error); font-size: 13px; text-align: center; margin-top: 15px;" class="hidden">Invalid credentials</p>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="AdminDashboardView" class="hidden">
+      <div class="admin-header">
+        <h1 class="admin-title">Admin Console</h1>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="switchTab('Approvals')" id="TabApprovals" class="action-btn" style="background: var(--admin-blue); color: #fff;">Approvals</button>
+          <button onclick="switchTab('Manage')" id="TabManage" class="action-btn" style="background: #eee;">Manage Astrologers</button>
+          <button onclick="switchTab('Monitoring')" id="TabMonitoring" class="action-btn" style="background: #eee;">Chat Monitoring</button>
+          <button onclick="adminLogout()" style="background: none; border: 1px solid #ccc; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Logout</button>
+        </div>
+      </div>
+
+      <!-- Approvals Tab -->
+      <div id="TabContentApprovals" class="admin-card">
+        <h3 style="margin-top:0;">Pending Approvals</h3>
+        <div class="admin-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Astrologer</th>
+                <th>Experience</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="PendingList">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Manage Tab -->
+      <div id="TabContentManage" class="admin-card hidden">
+        <h3 style="margin-top:0;">Master List (All Astrologers)</h3>
+        <div class="admin-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Astrologer Details</th>
+                <th>ID / Password</th>
+                <th>Status</th>
+                <th>Control</th>
+              </tr>
+            </thead>
+            <tbody id="MasterList">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Monitoring Tab -->
+      <div id="TabContentMonitoring" class="admin-card hidden">
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="margin:0;">Conversation Archives</h3>
+          <button onclick="fetchSessions()" class="action-btn" style="background:#edf2f7; color:#2d3748;">Refresh List</button>
+        </div>
+        <div class="admin-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Session ID</th>
+                <th>Participants</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="SessionList">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DETAILS MODAL -->
+<div id="DetailsModal" class="admin-modal">
+  <div class="modal-content">
+    <h2 id="ModalName" style="margin-top:0;">Astrologer Name</h2>
+    <div class="modal-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+      <div>
+        <p class="form-label">Email</p>
+        <p id="ModalEmail" style="margin:0; font-weight:600;"></p>
+      </div>
+      <div>
+        <p class="form-label">Mobile</p>
+        <p id="ModalPhone" style="margin:0; font-weight:600;"></p>
+      </div>
+      <div>
+        <p class="form-label">Experience</p>
+        <p id="ModalExp" style="margin:0; font-weight:600;"></p>
+      </div>
+      <div>
+        <p class="form-label">Languages</p>
+        <p id="ModalLangs" style="margin:0; font-weight:600;"></p>
+      </div>
+      <div>
+        <p class="form-label">Current Status</p>
+        <p id="ModalStatus" style="margin:0; font-weight:600; text-transform: capitalize;"></p>
+      </div>
+    </div>
+    
+    <p class="form-label">Expertise</p>
+    <p id="ModalExpertise" style="margin:0 0 20px; font-weight:600;"></p>
+
+    <p class="form-label">Short Bio</p>
+    <p id="ModalBio" style="line-height:1.6; color:#555; margin-bottom: 30px;"></p>
+
+    <div style="display:flex; gap:15px;">
+      <button id="ApproveBtn" class="action-btn btn-approve" style="flex:1; padding: 15px;">Approve Now</button>
+      <button id="RejectBtn" class="action-btn btn-reject" style="flex:1; padding: 15px;">Reject Application</button>
+      <button onclick="closeModal()" class="action-btn" style="background:#eee; padding: 15px;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT VIEWER MODAL -->
+<div id="ChatViewerModal" class="admin-modal">
+  <div class="modal-content chat-modal-content" style="max-width: 800px; display:flex; flex-direction:column; height:80vh;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2 id="ChatModalTitle" style="margin:0;">Chat Transcript</h2>
+      <button onclick="closeChatModal()" class="action-btn" style="background:#eee;">Close</button>
+    </div>
+    
+    <div id="ChatLogContainer" style="flex:1; overflow-y:auto; padding:20px; background:#f8f9fc; border-radius:16px; display:flex; flex-direction:column; gap:12px;">
+      <!-- Messages appear here -->
+    </div>
+    
+    <div style="margin-top:20px; text-align:center; color:#718096; font-size:13px;">
+      This is a read-only view of the consultation.
+    </div>
+  </div>
+</div>
+
+<script>
+  let API_BASE = 'https://astro-jap-backend.vercel.app/api/astrologers';
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    API_BASE = 'http://localhost:3001/api/astrologers';
+  }
+  console.log('AstroAdmin: API_BASE is', API_BASE);
+  let adminToken = localStorage.getItem('admin_token') || null;
+
+  window.onload = () => {
+    console.log('AstroAdmin: Page loaded, checking token...');
+    if (adminToken) {
+      showView('AdminDashboardView');
+      fetchPending();
+    }
+  };
+
+  function showView(viewId) {
+    document.getElementById('AdminLoginView').classList.add('hidden');
+    document.getElementById('AdminDashboardView').classList.add('hidden');
+    document.getElementById(viewId).classList.remove('hidden');
+  }
+
+  async function handleAdminLogin() {
+    const id = document.getElementById('AdminId').value;
+    const password = document.getElementById('AdminPass').value;
+    const errorEl = document.getElementById('LoginError');
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, password })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        adminToken = data.token;
+        localStorage.setItem('admin_token', adminToken);
+        showView('AdminDashboardView');
+        fetchPending();
+      } else {
+        errorEl.classList.remove('hidden');
+      }
+    } catch (e) {
+      alert('Login failed');
+    }
+  }
+
+  function adminLogout() {
+    localStorage.removeItem('admin_token');
+    location.reload();
+  }
+
+  async function fetchPending() {
+    try {
+      const res = await fetch(`${API_BASE}/admin/pending`, {
+        headers: { 'Authorization': adminToken }
+      });
+      const data = await res.json();
+      
+      const list = document.getElementById('PendingList');
+      list.innerHTML = '';
+
+      if (data.length === 0) {
+        list.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px; color: #888;">No pending applications found.</td></tr>';
+        return;
+      }
+
+      data.forEach(astro => {
+        const isPending = astro.approval_status === 'pending';
+        const statusLabel = isPending ? 'Pending Review' : 'Incomplete';
+        const statusClass = isPending ? 'background:#fff3cd; color:#856404;' : 'background:#edf2f7; color:#4a5568;';
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight:700;">${astro.name}</div>
+            <div style="font-size:12px; color:#888;">${astro.email}</div>
+          </td>
+          <td>${astro.experience_years || 0} Years</td>
+          <td><span class="status-badge" style="${statusClass}">${statusLabel}</span></td>
+          <td>
+            <button class="action-btn btn-view" onclick='viewDetails(${JSON.stringify(astro)})'>View Profile</button>
+          </td>
+        `;
+        list.appendChild(tr);
+      });
+    } catch (e) { console.error(e); }
+  }
+
+  function viewDetails(astro) {
+    document.getElementById('ModalName').innerText = astro.name;
+    document.getElementById('ModalEmail').innerText = astro.email;
+    document.getElementById('ModalPhone').innerText = astro.mobile || 'N/A';
+    document.getElementById('ModalExp').innerText = (astro.experience_years || 0) + ' Years';
+    document.getElementById('ModalLangs').innerText = (astro.languages || []).join(', ');
+    document.getElementById('ModalExpertise').innerText = (astro.expertise || []).join(', ');
+    document.getElementById('ModalBio').innerText = astro.bio || 'No bio provided.';
+    document.getElementById('ModalStatus').innerText = astro.approval_status;
+    
+    document.getElementById('ModalStatus').style.color = astro.approval_status === 'pending' ? '#856404' : '#4a5568';
+    
+    document.getElementById('ApproveBtn').onclick = () => processAction('approve', astro.id);
+    document.getElementById('RejectBtn').onclick = () => {
+      const reason = prompt('Reason for rejection?');
+      if (reason) processAction('reject', astro.id, reason);
+    };
+
+    document.getElementById('DetailsModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('DetailsModal').style.display = 'none';
+  }
+
+  async function processAction(type, id, reason = '') {
+    if (!confirm(`Are you sure you want to ${type} this application?`)) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/${type}`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': adminToken
+        },
+        body: JSON.stringify({ id, reason })
+      });
+
+      if (res.ok) {
+        alert(`Astrologer ${type}d successfully!`);
+        closeModal();
+        fetchPending();
+      } else {
+        alert('Action failed');
+      }
+    } catch (e) { alert('Network error'); }
+  }
+  function switchTab(tab) {
+    document.getElementById('TabContentApprovals').classList.add('hidden');
+    document.getElementById('TabContentManage').classList.add('hidden');
+    document.getElementById('TabContentMonitoring').classList.add('hidden');
+    
+    // Reset styles
+    const tabs = ['Approvals', 'Manage', 'Monitoring'];
+    tabs.forEach(t => {
+      const btn = document.getElementById('Tab' + t);
+      if (btn) {
+        btn.style.background = '#eee';
+        btn.style.color = '#333';
+      }
+    });
+
+    const activeBtn = document.getElementById('Tab' + tab);
+    if (activeBtn) {
+      activeBtn.style.background = 'var(--admin-blue)';
+      activeBtn.style.color = '#fff';
+    }
+
+    if (tab === 'Approvals') {
+      document.getElementById('TabContentApprovals').classList.remove('hidden');
+      fetchPending();
+    } else if (tab === 'Manage') {
+      document.getElementById('TabContentManage').classList.remove('hidden');
+      fetchMasterList();
+    } else {
+      document.getElementById('TabContentMonitoring').classList.remove('hidden');
+      fetchSessions();
+    }
+  }
+
+  async function fetchMasterList() {
+    try {
+      const res = await fetch(`${API_BASE}/admin/all`, {
+        headers: { 'Authorization': adminToken }
+      });
+      const data = await res.json();
+      const list = document.getElementById('MasterList');
+      list.innerHTML = '';
+
+      if (data.length === 0) {
+        list.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px; color:#888;">No astrologers found.</td></tr>';
+        return;
+      }
+
+      data.forEach(astro => {
+        const tr = document.createElement('tr');
+        const isApproved = astro.approval_status === 'approved';
+        const statusColor = isApproved ? 'var(--admin-success)' : 'var(--admin-error)';
+        
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight:700;">${astro.name}</div>
+            <div style="font-size:12px; color:#888;">${astro.email}</div>
+          </td>
+          <td style="font-family:monospace; font-size:12px;">
+            <div>ID: ${astro.id.substring(0,8)}...</div>
+            <div style="color:var(--admin-blue);">Pass: ${astro.password_plain || '********'}</div>
+          </td>
+          <td><span class="status-badge" style="background:${statusColor}22; color:${statusColor};">${astro.approval_status}</span></td>
+          <td>
+            <button class="action-btn" style="background:${isApproved ? 'var(--admin-error)' : 'var(--admin-success)'}; color:#fff;" 
+              onclick="toggleAstroStatus('${astro.id}', '${isApproved ? 'rejected' : 'approved'}')">
+              ${isApproved ? 'Disapprove' : 'Approve'}
+            </button>
+          </td>
+        `;
+        list.appendChild(tr);
+      });
+    } catch (e) { console.error('Fetch master list failed', e); }
+  }
+
+  async function toggleAstroStatus(id, newStatus) {
+    const action = newStatus === 'approved' ? 'approve' : 'reject';
+    if (!confirm(`Are you sure you want to ${action} this astrologer?`)) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/${action}`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': adminToken
+        },
+        body: JSON.stringify({ id, reason: 'Status toggled by admin' })
+      });
+
+      if (res.ok) {
+        alert('Status updated successfully!');
+        fetchMasterList();
+      } else {
+        alert('Update failed');
+      }
+    } catch (e) { alert('Network error'); }
+  }
+
+  // --- Monitoring Logic ---
+  async function fetchSessions() {
+    const sessionApi = API_BASE.replace('/astrologers', '/sessions');
+    try {
+      const res = await fetch(`${sessionApi}/admin/all`, {
+        headers: { 'Authorization': adminToken }
+      });
+      const sessions = await res.json();
+      const list = document.getElementById('SessionList');
+      list.innerHTML = '';
+
+      sessions.forEach(s => {
+        const tr = document.createElement('tr');
+        const date = new Date(s.created_at).toLocaleDateString();
+        const astroName = s.astrologers?.name || 'Unknown';
+        const userName = s.users?.name || `Customer #${s.user_id}`;
+        const statusColor = s.status === 'active' ? 'var(--admin-success)' : '#718096';
+
+        tr.innerHTML = `
+          <td style="font-family:monospace; font-size:11px;">${s.id.substring(0,8)}...</td>
+          <td>
+            <div style="font-weight:600;">${astroName}</div>
+            <div style="font-size:12px; color:#888;">with ${userName}</div>
+          </td>
+          <td>${date}</td>
+          <td><span class="status-badge" style="background:${statusColor}22; color:${statusColor};">${s.status}</span></td>
+          <td>
+            <button class="action-btn btn-view" onclick="openChatMonitor('${s.id}', '${astroName}')">View Transcript</button>
+          </td>
+        `;
+        list.appendChild(tr);
+      });
+    } catch (e) { console.error('Fetch sessions failed', e); }
+  }
+
+  let monitorInterval;
+  async function openChatMonitor(sessionId, astroName) {
+    document.getElementById('ChatModalTitle').innerText = `Chat with ${astroName}`;
+    document.getElementById('ChatViewerModal').style.display = 'flex';
+    document.getElementById('ChatLogContainer').innerHTML = '<p style="text-align:center; color:#888;">Loading history...</p>';
+    
+    await fetchChatHistory(sessionId);
+    
+    // If live, poll
+    clearInterval(monitorInterval);
+    monitorInterval = setInterval(() => fetchChatHistory(sessionId), 3000);
+  }
+
+  function closeChatModal() {
+    document.getElementById('ChatViewerModal').style.display = 'none';
+    clearInterval(monitorInterval);
+  }
+
+  async function fetchChatHistory(sessionId) {
+    const sessionApi = API_BASE.replace('/astrologers', '/sessions');
+    try {
+      const res = await fetch(`${sessionApi}/admin/messages/${sessionId}`, {
+        headers: { 'Authorization': adminToken }
+      });
+      const messages = await res.json();
+      const container = document.getElementById('ChatLogContainer');
+      
+      // Simplistic render: clear and redraw
+      container.innerHTML = '';
+      messages.forEach(m => {
+        const div = document.createElement('div');
+        const isAstro = m.sender_type === 'astrologer';
+        const isSystem = m.sender_type === 'system';
+        
+        div.style.padding = '10px 15px';
+        div.style.borderRadius = '12px';
+        div.style.maxWidth = '80%';
+        div.style.fontSize = '14px';
+        
+        if (isSystem) {
+          div.style.alignSelf = 'center';
+          div.style.background = 'transparent';
+          div.style.color = '#718096';
+          div.style.fontSize = '12px';
+        } else if (isAstro) {
+          div.style.alignSelf = 'flex-start';
+          div.style.background = '#edf2f7';
+          div.style.color = '#2d3748';
+          div.innerHTML = `<strong>Astro:</strong> ${m.text}`;
+        } else {
+          div.style.alignSelf = 'flex-end';
+          div.style.background = 'var(--admin-blue)';
+          div.style.color = '#fff';
+          div.innerHTML = `<strong>User:</strong> ${m.text}`;
+        }
+        container.appendChild(div);
+      });
+      container.scrollTop = container.scrollHeight;
+    } catch (e) { console.error('Fetch chat history failed', e); }
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Astrologer Admin",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Astrologer Admin"
+    }
+  ]
+}
+{% endschema %}

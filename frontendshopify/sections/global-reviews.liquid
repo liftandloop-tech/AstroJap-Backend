@@ -27,8 +27,11 @@
   @media (max-width: 749px) {
     .ai-rev-summary-grid { grid-template-columns: 1fr; gap: 20px; }
     .ai-rev-divider-v { display: none; }
-    .ai-rev-card-main { padding: 30px 20px; }
-    .ai-write-btn-pill { width: 100%; padding: 15px; }
+    .ai-rev-card-main { padding: 30px 15px; margin-bottom: 20px; border-radius: 10px; }
+    .ai-rev-title-center { margin-bottom: 25px; font-size: 18px; }
+    .ai-write-btn-pill { width: 100%; padding: 14px; min-width: unset; font-size: 14px; }
+    .ai-stars-outline { font-size: 24px; }
+    .ai-rev-be-first { font-size: 12px; }
   }
 
   .ai-rev-left-col { text-align: center; }
@@ -57,6 +60,14 @@
     background: #fff; border: 1px solid #e0e0e0; border-radius: 20px; padding: 45px; margin-top: 25px; display: none;
     box-shadow: 0 15px 45px rgba(0,0,0,0.08); margin-bottom: 40px;
   }
+  @media (max-width: 749px) {
+    .ai-global-rev-form { padding: 30px 15px; border-radius: 12px; margin-top: 15px; }
+    .ai-global-rev-form h3 { font-size: 22px !important; margin-bottom: 25px !important; }
+    .ai-g-upload-box { padding: 25px 15px; }
+    .ai-g-upload-box div:nth-child(2) { font-size: 14px !important; }
+    .ai-g-star-selector { font-size: 30px; gap: 8px; }
+    .ai-form-actions { flex-direction: column; }
+  }
   .ai-global-rev-form.active { display: block; animation: fadeInReview 0.5s ease forwards; }
   @keyframes fadeInReview { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
@@ -82,6 +93,13 @@
   .ai-global-rev-list.active { display: grid; animation: fadeInReview 0.4s ease forwards; }
   
   .ai-g-rev-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 15px; padding: 25px; }
+  @media (max-width: 749px) {
+    .ai-g-rev-card { padding: 20px 15px; }
+    .ai-g-username { font-size: 14px; }
+    .ai-g-verified { font-size: 9px; margin-left: 5px; }
+    .ai-g-rev-text { font-size: 13px; line-height: 1.5; }
+    .ai-show-rev-toggle { padding: 15px 20px; font-size: 14px; }
+  }
   .ai-g-rev-user { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
   .ai-g-avatar { width: 45px; height: 45px; border-radius: 50%; background: #2b2730; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; flex-shrink: 0; }
   .ai-g-username { font-weight: 800; font-size: 16px; color: #000; display: flex; align-items: center; flex-wrap: wrap; }
@@ -149,7 +167,7 @@
           <div id="GImgPreview-{{ section.id }}" style="display:flex; gap:12px; margin-top:15px; flex-wrap:wrap; justify-content:center;"></div>
        </div>
 
-       <div style="display:flex; gap:15px; margin-top:30px;">
+       <div class="ai-form-actions" style="display:flex; gap:15px; margin-top:30px;">
           <button class="ai-write-btn-pill" style="flex:1;" onclick="submitGlobalReview('{{ section.id }}')">Submit Review</button>
           <button class="ai-write-btn-pill" style="background:#f5f5f5; color:#000; flex:1;" onclick="toggleForm('{{ section.id }}')">Cancel</button>
        </div>

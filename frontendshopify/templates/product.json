@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -8,50 +17,96 @@
           "settings": {
             "dates": "22 Dec – 19 Jan",
             "tag_1": "Builds Inner Strength",
-            "tag_2": "Releases Emotional Heaviness"
+            "tag_1_bg": "#f3e05c",
+            "tag_2": "Releases Emotional Heaviness",
+            "tag_2_bg": "#eaeaff"
           }
         },
         "price": {
           "type": "price",
-          "settings": {}
+          "settings": {
+            "extra_discount_text": "off",
+            "timer_prefix": "Offer ends in"
+          }
         },
         "special_offer": {
           "type": "special_offer",
           "settings": {
+            "offer_title": "Akshaya Tritiya Special Offer",
+            "save_badge": "Save ₹500",
+            "button_text": "View offer",
             "offer_desc": "Flat ₹500 Cashback on all prepaid orders."
           }
         },
         "review_testimonial": {
           "type": "review_testimonial",
-          "settings": {}
+          "settings": {
+            "name_1": "Aman Gupta",
+            "text_1": "Excellent quality!",
+            "name_2": "Priya S.",
+            "text_2": "Beautiful bracelet."
+          }
         },
         "shop_by_rashi": {
           "type": "shop_by_rashi",
           "settings": {
-            "title": "Shop by Rashi"
+            "title": "Shop More",
+            "collection_picker": "evil-eye",
+            "view_more_link": ""
           }
         },
         "buy_buttons": {
           "type": "buy_buttons",
-          "settings": {}
+          "settings": {
+            "stock_text": "⏰ Last 21 Units Left ⏰",
+            "pincode_title": "Get estimated delivery date",
+            "pincode_sub": "Prepaid orders are priority.",
+            "placeholder": "Enter pincode",
+            "btn_text": "Check",
+            "trust_1_icon": "📦",
+            "trust_1_title": "₹500 Cashback",
+            "trust_1_sub": "Prepaid only",
+            "trust_2_icon": "🚚",
+            "trust_2_title": "FREE Shipping",
+            "trust_2_sub": "On all orders"
+          }
         },
         "description": {
           "type": "description",
-          "settings": {}
+          "settings": {
+            "show_love_heading": true,
+            "love_heading": "Loved by 15 lakh+ customers",
+            "font_size": 28
+          }
         },
         "benefit_cards": {
           "type": "benefit_cards",
-          "settings": {}
+          "settings": {
+            "icon_1": "⚖️",
+            "text_1": "Balances Zodiac Traits",
+            "icon_2": "✨",
+            "text_2": "Carefully Curated",
+            "icon_3": "💪",
+            "text_3": "Builds Confidence",
+            "icon_4": "🧘",
+            "text_4": "Inner Focus"
+          }
         },
         "trust_grid": {
           "type": "trust_grid",
-          "settings": {}
+          "settings": {
+            "heading": "Why Trust Astrojap?",
+            "img_1": "shopify://shop_images/1_13_6.webp",
+            "txt_1": "100% Authentic",
+            "img_2": "shopify://shop_images/1-2026-03-16T145811.364.webp",
+            "txt_2": "Lab Certified"
+          }
         },
         "benefits": {
           "type": "collapsible_tab",
           "settings": {
-             "heading": "Benefits",
-             "content": "<ul><li>Builds Inner Strength - Helps Capricorns feel strong, steady, and emotionally resilient.</li><li>Releases Emotional Heaviness - Supports letting go of stored stress.</li></ul>"
+            "heading": "Benefits",
+            "content": "<ul><li>Builds Inner Strength - Helps Capricorns feel strong, steady, and emotionally resilient.</li><li>Releases Emotional Heaviness - Supports letting go of stored stress.</li></ul>"
           }
         }
       },
@@ -71,6 +126,15 @@
         "cashback_amount": "500",
         "padding_top": 24,
         "padding_bottom": 24
+      }
+    },
+    "global_reviews_HRTP6b": {
+      "type": "global-reviews",
+      "name": "Global Product Reviews",
+      "settings": {
+        "bg_color": "#ffffff",
+        "padding_top": 40,
+        "padding_bottom": 40
       }
     },
     "17769364929e2f30ea": {
@@ -172,6 +236,7 @@
   },
   "order": [
     "main",
+    "global_reviews_HRTP6b",
     "17769364929e2f30ea",
     "17769367800fae3233",
     "1776938258b12fd716",

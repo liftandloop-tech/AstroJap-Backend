@@ -418,8 +418,9 @@
           </div>
         {% endif %}
 
-        <style>
-          .ai-header-search-wrapper-{{ ai_gen_id }} { position: relative; display: flex; align-items: center; }
+                <style>
+          .ai-astrojap-header__top-{{ ai_gen_id }} { position: relative; }
+          .ai-header-search-wrapper-{{ ai_gen_id }} { display: flex; align-items: center; }
           .ai-header-search-bar-{{ ai_gen_id }} {
             position: absolute;
             right: 0;
@@ -457,18 +458,19 @@
 
           @media screen and (max-width: 749px) {
             .ai-header-search-bar-{{ ai_gen_id }} {
-              position: fixed;
               top: 0;
               left: 0;
               right: 0;
+              bottom: 0;
               width: 100%;
-              height: 60px;
+              height: 100%;
               border-radius: 0;
-              transform: translateY(-100%);
-              transform-origin: top;
+              border: none;
+              transform: scaleX(0);
+              transform-origin: right;
             }
             .ai-header-search-bar-{{ ai_gen_id }}.active {
-              transform: translateY(0);
+              transform: scaleX(1);
             }
           }
         </style>
@@ -596,49 +598,67 @@
 
         <div class="at-mobile-drawer-wrap-{{ ai_gen_id }}">
           <h2 class="at-drawer-section-title-{{ ai_gen_id }}">Categories</h2>
-          <div class="at-circle-grid-{{ ai_gen_id }}">
+                    <div class="at-circle-grid-{{ ai_gen_id }}">
             {% assign category_menu = linklists['categories'] %}
             {% for link in category_menu.links %}
               {%- liquid
                 assign label = link.title
                 assign link_url = link.url
+                assign img_file = ""
 
                 # Manual override to ensure pages are used instead of collections
                 if label == "Rudraksha"
                   assign link_url = "/pages/rudraksha"
+                  assign img_file = "1_a2224045-1ac7-4829-a58c-9b162c7a830f.webp"
                 elsif label == "Bracelet" or label == "Bracelets"
                   assign link_url = "/pages/bracelets"
+                  assign img_file = "1_54_7624cb98-fa50-4522-9804-eb999af1e592.webp"
                 elsif label == "Pyrite"
                   assign link_url = "/pages/pyrite"
+                  assign img_file = "1_9b96c584-8ca6-4819-8383-3c1a88114477.webp"
                 elsif label == "Crystals" or label == "Dome Tree"
                   assign link_url = "/pages/crystals"
+                  assign img_file = "1_5_86d4f67c-7ade-499f-8ea8-866ca817c512.webp"
                 elsif label == "Gemstones"
                   assign link_url = "/pages/gemstones"
+                  assign img_file = "Pukhraj_c5630e67-c1c7-4ee3-ac35-619d1ce03ca5.webp"
                 elsif label == "Karungali"
                   assign link_url = "/pages/karungali"
+                  assign img_file = "1_4_6d5eecce-6d15-4ca5-ace3-415fa88cd1cf.webp"
                 elsif label == "Malas"
                   assign link_url = "/pages/malas"
-                elsif label == "Idols"
+                  assign img_file = "1_2_4.webp"
+                elsif label == "Idols" or label == "Murti"
                   assign link_url = "/pages/idols"
+                  assign img_file = "Untitled-11_38763bd6-55fe-4e1d-a256-dbc1c685d0c1.png"
                 elsif label == "Yantras" or label == "Yantra"
                   assign link_url = "/pages/yantra"
+                  assign img_file = "1_13_6.webp"
                 elsif label == "Our Combos" or label == "Combo"
                   assign link_url = "/pages/combo"
-                elsif label == "Tower and Tumbles"
+                  assign img_file = "Lakshmi_Yantra_Pyramid_Raw_Pyrite_Stone_FREE.webp"
+                elsif label == "Tower and Tumbles" or label == "Tower and Tumble"
                   assign link_url = "/pages/tower-and-tumbles"
+                  assign img_file = "1_4_800d89b5-4a6b-419d-a12a-df769e06564f.webp"
                 elsif label == "Kavach"
                   assign link_url = "/pages/kavach"
+                  assign img_file = "gold_hanumanji_pendant_1.webp"
                 elsif label == "Evil Eye"
                   assign link_url = "/pages/evil-eye"
-                elsif label == "Anklets"
+                  assign img_file = "evil_eye_0312a8ab-659c-4096-ac2a-6d33f9bade00.webp"
+                elsif label == "Anklets" or label == "Anklet"
                   assign link_url = "/pages/anklets"
+                  assign img_file = "1_4_12.webp"
                 elsif label == "Pyramid"
                   assign link_url = "/pages/pyramid"
+                  assign img_file = "Rose_Quartz_1b_7.webp"
                 endif
 
                 assign collection = link.object
                 assign img_url = "https://astrotalk.com/assets/images/category_placeholder.png"
-                if collection and collection.image
+                if img_file != blank
+                  assign img_url = img_file | file_url
+                elsif collection and collection.image
                   assign img_url = collection.image | image_url: width: 120
                 endif
               -%}
@@ -651,17 +671,18 @@
             {% endfor %}
             <a href="/pages/frame" class="at-circle-item-{{ ai_gen_id }}">
               <div class="at-circle-img-{{ ai_gen_id }}">
-                <img src="https://astrotalk.com/assets/images/category_placeholder.png" alt="Frames">
+                <img src="{{ '1_3_31.webp' | file_url }}" alt="Frames" onerror="this.src='https://astrotalk.com/assets/images/category_placeholder.png';">
               </div>
               <span class="at-circle-label-{{ ai_gen_id }}">Frames</span>
             </a>
             <a href="/pages/rashi" class="at-circle-item-{{ ai_gen_id }}">
               <div class="at-circle-img-{{ ai_gen_id }}">
-                <img src="https://astrotalk.com/assets/images/category_placeholder.png" alt="Rashi">
+                <img src="{{ '1_829c1964-80df-4151-bea0-03e447051ea9.webp' | file_url }}" alt="Rashi" onerror="this.src='https://astrotalk.com/assets/images/category_placeholder.png';">
               </div>
               <span class="at-circle-label-{{ ai_gen_id }}">Rashi</span>
             </a>
           </div>
+
 
         </div>
         <ul class="ai-mobile-menu-{{ ai_gen_id }}">

@@ -7,7 +7,7 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;600;800&family=Noto+Sans:wght@400;700&display=swap');
 
   .section-{{ section.id }}-padding {
     padding-top: {{ section.settings.padding_top }}px;
@@ -47,6 +47,11 @@
     .ai-gallery-col {
       position: static;
     }
+          .ai-offer-box { padding: 15px; margin: 15px 0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .ai-offer-header { margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+    .ai-offer-title { font-size: 14px; gap: 8px; flex: 1; min-width: 150px; }
+    .ai-offer-save { font-size: 10px; padding: 4px 12px; white-space: nowrap; }
+    .ai-offer-toggle { padding: 12px; font-size: 13px; border-radius: 10px; }
   }
 
   /* GALLERY */
@@ -221,15 +226,127 @@
   .ai-why-p-icon { width: 45px; height: 45px; flex-shrink: 0; }
   .ai-why-p-info h4 { margin: 0; font-size: 14px; font-weight: 800; line-height: 1.2; }
 
-  /* STICKY BAR */
+          /* STICKY BAR REDESIGN - COMPACT & RESPONSIVE */
   .ai-sticky-bar {
-    position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 12px 20px;
-    display: flex; align-items: center; justify-content: space-between; gap: 15px;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.08); z-index: 1000; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
+    z-index: 1000; transform: translateY(100%); transition: transform 0.3s ease;
+    border-top-left-radius: 15px; border-top-right-radius: 15px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.08); overflow: hidden;
+    display: block; padding: 0;
   }
   .ai-sticky-bar.visible { transform: translateY(0); }
-  .ai-sticky-btns { display: flex; gap: 8px; flex: 1; }
-  .ai-btn-s { background: #000; color: #fff; flex: 1; border: none; padding: 14px; font-weight: 900; font-size: 13px; border-radius: 6px; cursor: pointer; }
+  
+  .ai-sticky-banner {
+    background: #34a853; color: #fff; text-align: center; padding: 4px 8px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.3px;
+  }
+  .ai-sticky-content { 
+    padding: 10px 15px; 
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .ai-sticky-top-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .ai-sticky-img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; flex-shrink: 0; background: #f9f9f9; border: 1px solid #eee; }
+  .ai-sticky-info { display: flex; flex-direction: column; min-width: 0; }
+  .ai-sticky-title { font-size: 13px; font-weight: 700; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  
+  .ai-sticky-price-row { display: flex; align-items: baseline; gap: 8px; }
+  .ai-sticky-price { font-size: 16px; font-weight: 900; color: #000; }
+  .ai-sticky-old { font-size: 12px; color: #999; text-decoration: line-through; font-weight: 600; }
+  .ai-sticky-discount { font-size: 11px; color: #34a853; font-weight: 800; }
+  
+  .ai-sticky-btns { display: flex; gap: 8px; width: 100%; }
+  .ai-btn-atc, .ai-btn-buy {
+    flex: 1; border: none; padding: 12px; font-weight: 900; font-size: 12px;
+    border-radius: 8px; cursor: pointer; text-transform: uppercase; white-space: nowrap;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ai-btn-atc { background: #f3e05c; color: #000; }
+  .ai-btn-buy { background: #000; color: #fff; }
+
+  @media (min-width: 769px) {
+    .ai-sticky-content { 
+      flex-direction: row; 
+      align-items: center; 
+      justify-content: space-between; 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 12px 40px;
+      gap: 30px;
+    }
+    .ai-sticky-top-info { gap: 15px; }
+    .ai-sticky-img { width: 50px; height: 50px; }
+    .ai-sticky-title { font-size: 16px; }
+    .ai-sticky-price { font-size: 20px; }
+    .ai-sticky-btns { width: auto; min-width: 450px; gap: 15px; }
+    .ai-btn-atc, .ai-btn-buy { padding: 14px 30px; font-size: 14px; }
+    .ai-sticky-banner { font-size: 13px; padding: 6px 10px; }
+  }
+
+  /* WHY ASTROJAP LIST */
+  .ai-why-list-wrap { margin: 30px 0; background: #fffcf5; padding: 25px 20px; border-radius: 20px; }
+  .ai-why-list-head { position: relative; margin-bottom: 25px; }
+  .ai-why-list-head h3 { font-size: 26px; font-weight: 800; margin: 0; color: #000; }
+  .ai-why-list-head::after { content: ''; display: block; width: 120px; height: 6px; background: #f3e05c; border-radius: 10px; margin-top: 8px; opacity: 0.7; }
+  
+  .ai-why-list-item { display: flex; align-items: center; gap: 20px; padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #eee; background: #fff; transition: transform 0.2s; }
+  .ai-why-list-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+  
+  .ai-why-list-icon { width: 50px; height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+  .ai-why-list-icon svg { width: 28px; height: 28px; color: #000; }
+  
+  .ai-why-list-info { flex: 1; }
+  .ai-why-list-title { font-weight: 800; font-size: 16px; color: #000; margin-bottom: 4px; display: block; }
+  .ai-why-list-desc { font-size: 14px; color: #555; line-height: 1.4; }
+  .ai-why-list-desc b { color: #34a853; font-weight: 800; }
+
+  .ai-why-card-blue { border-color: #b3e5fc !important; background: #f1faff !important; }
+  .ai-why-card-purple { border-color: #e1bee7 !important; background: #fcf3ff !important; }
+  .ai-why-card-green { border-color: #c8e6c9 !important; background: #f1fdf1 !important; }
+  .ai-why-card-orange { border-color: #ffe0b2 !important; background: #fff8ee !important; }
+/* QUANTITY PACKS */
+  .ai-quantity-selector { margin: 25px 0; }
+  .ai-qs-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 15px; text-transform: uppercase; }
+  .ai-qs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .ai-qs-card {
+    border: 1.5px solid #eee;
+    border-radius: 16px;
+    padding: 20px 10px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fff;
+  }
+  .ai-qs-card.selected {
+    border-color: #fbbc05;
+    background: #fffdf5;
+    box-shadow: 0 4px 15px rgba(251, 188, 5, 0.15);
+  }
+  .ai-qs-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fbbc05;
+    color: #000;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .ai-qs-name { font-size: 14px; color: #444; margin-bottom: 5px; font-weight: 500; }
+  .ai-qs-price { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 5px; }
+  .ai-qs-saving { font-size: 11px; color: #2e7d32; font-weight: 700; }
+  
+  .ai-qs-timer { margin-top: 15px; font-weight: 700; font-size: 15px; }
+  .ai-qs-timer .prefix { color: #111; }
+  .ai-qs-timer .time { color: #d32f2f; margin-left: 5px; }
+
+  @media (max-width: 768px) {
+    .ai-qs-grid { gap: 8px; }
+
 {%- endstyle -%}
 
 <section class="section-{{ section.id }}-padding page-width">
@@ -268,7 +385,7 @@
           {%- case block.type -%}
             {%- when 'title' -%}
               <div class="product__title" {{ block.shopify_attributes }}>
-                <h1 style="margin:0; font-family: 'Inter', sans-serif !important; font-weight: 400; font-size: 32px; color: #111;">{{ product.title | escape }}</h1>
+                <h1 style="margin:0; font-family: 'Noto Sans', sans-serif !important; font-weight: 400; font-size: 24px; color: #111;">{{ product.title | escape }}</h1>
                 <div style="font-weight:700; color: #666; font-size:16px; margin: 10px 0 15px 0;">|| {{ block.settings.dates }} ||</div>
                 
                 <div class="ai-tag-row" style="margin-top: 20px;">
@@ -307,8 +424,93 @@
                 <span class="ai-discount-text">{{ percent }}% {{ block.settings.extra_discount_text }}</span>
                 {% endif %}
               </div>
-              <div class="ai-timer-box">
-                {{ block.settings.timer_prefix }} <span id="timer-display-{{ section.id }}">00 hr : 00 min : 00 sec</span>
+              {%- comment -%} Upper timer removed as requested {%- endcomment -%}
+
+            {%- when 'customer_reviews_app' -%}
+                <div class="ai-global-rev-container" {{ block.shopify_attributes }} style="margin-top: 25px;">
+                   <div class="ai-rev-card-main" style="padding: 25px; margin-bottom: 20px; background: #fff; border: 1px solid #eee; border-radius: 12px;">
+                      <div class="ai-rev-title-center" style="font-size: 18px; margin-bottom: 25px; font-weight: 800; text-align: center;">Customer Reviews</div>
+                      <div class="ai-rev-summary-grid" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+                         <div class="ai-rev-left-col">
+                            <div class="ai-stars-outline" style="color: #fbbc05; font-size: 24px; margin-bottom: 5px;">★★★★★</div>
+                            <div class="ai-rev-be-first" style="font-size: 13px;">Based on 1.5 Lakh+ reviews</div>
+                         </div>
+                         <div class="ai-rev-right-col">
+                            <button class="ai-write-btn-pill" style="padding: 10px 25px; font-size: 14px; background: #000; color: #fff; border: none; border-radius: 50px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('GlobalRevForm-{{ section.id }}').classList.toggle('active')">
+                              Write a review
+                            </button>
+                         </div>
+                      </div>
+                   </div>
+
+                   <!-- FORM -->
+                   <div class="ai-global-rev-form" id="GlobalRevForm-{{ section.id }}" style="display:none; padding: 20px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 20px; background: #fff;">
+                      <h4 style="margin:0 0 15px 0; font-size:18px;">Share your feedback</h4>
+                      <div class="ai-g-star-selector" id="GStarInput-{{ section.id }}" style="display:flex; gap:5px; font-size:24px; color:#ddd; cursor:pointer; margin-bottom:15px;">
+                         <span data-val="1" onclick="setGStars(this, 1)">★</span><span data-val="2" onclick="setGStars(this, 2)">★</span><span data-val="3" onclick="setGStars(this, 3)">★</span><span data-val="4" onclick="setGStars(this, 4)">★</span><span data-val="5" onclick="setGStars(this, 5)">★</span>
+                      </div>
+                      <input type="text" class="ai-g-input" placeholder="Your Name" id="GRevName-{{ section.id }}" style="width:100%; margin-bottom:10px; padding:10px; border:1px solid #eee; border-radius:6px; box-sizing: border-box;">
+                      <textarea class="ai-g-input" rows="3" placeholder="Your Review" id="GRevText-{{ section.id }}" style="width:100%; margin-bottom:15px; padding:10px; border:1px solid #eee; border-radius:6px; box-sizing: border-box;"></textarea>
+                      <button class="ai-write-btn-pill" style="width:100%; background: #000; color: #fff; border: none; padding: 12px; border-radius: 50px; font-weight: 700; cursor: pointer;" onclick="submitGlobalReview('{{ section.id }}')">Submit Review</button>
+                   </div>
+
+                   <!-- DROPDOWN -->
+                   <button class="ai-show-rev-toggle" onclick="document.getElementById('GRevList-{{ section.id }}').classList.toggle('active')" style="width:100%; background:#fff; border:1px solid #eee; padding:12px; border-radius:8px; font-weight:700; cursor:pointer; display:flex; justify-content:space-between; align-items: center;">
+                      Show Reviews <span>▼</span>
+                   </button>
+                   
+                   <div class="ai-global-rev-list" id="GRevList-{{ section.id }}" style="display:none; margin-top:15px; flex-direction: column; gap:15px;">
+                      <div class="ai-g-rev-card" style="padding:15px; border:1px solid #f0f0f0; border-radius:10px; background:#fff;">
+                         <div style="font-weight:800; font-size:14px; margin-bottom:5px;">Rohan G. <span style="background:#e6f4ea; color:#1e8e3e; font-size:9px; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">✓ Verified</span></div>
+                         <div style="color:#fbbc05; font-size:12px; margin-bottom:8px;">★★★★★</div>
+                         <div style="font-size:13px; line-height:1.4; color:#444;">Excellent product, very satisfied with the purchase!</div>
+                      </div>
+                      <div class="ai-g-rev-card" style="padding:15px; border:1px solid #f0f0f0; border-radius:10px; background:#fff;">
+                         <div style="font-weight:800; font-size:14px; margin-bottom:5px;">Meera S. <span style="background:#e6f4ea; color:#1e8e3e; font-size:9px; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">✓ Verified</span></div>
+                         <div style="color:#fbbc05; font-size:12px; margin-bottom:8px;">★★★★★</div>
+                         <div style="font-size:13px; line-height:1.4; color:#444;">Fast delivery and great quality. Highly recommended.</div>
+                      </div>
+                   </div>
+                </div>
+                <style>
+                  .ai-global-rev-form.active { display: block !important; }
+                  .ai-global-rev-list.active { display: flex !important; }
+                  .ai-g-star-selector span.active { color: #fbbc05 !important; }
+                </style>
+
+            {%- when 'quantity_packs' -%}
+              <div class="ai-quantity-selector" {{ block.shopify_attributes }}>
+                <h3 class="ai-qs-title">{{ block.settings.title }}</h3>
+                <div class="ai-qs-grid">
+                  {%- for i in (1..3) -%}
+                    {%- capture p_name_key -%}p{{ i }}_name{%- endcapture -%}
+                    {%- capture p_price_key -%}p{{ i }}_price{%- endcapture -%}
+                    {%- capture p_badge_key -%}p{{ i }}_badge{%- endcapture -%}
+                    {%- assign p_name = block.settings[p_name_key] -%}
+                    {%- assign p_price = block.settings[p_price_key] -%}
+                    {%- assign p_badge = block.settings[p_badge_key] -%}
+                    
+                    {%- assign base_price = block.settings.p1_price -%}
+                    {%- assign original_total = base_price | times: i -%}
+                    {%- assign saving = original_total | minus: p_price -%}
+
+                    <div class="ai-qs-card {% if i == 2 %}selected{% endif %}" onclick="selectPack(this, {{ i }})" data-price="{{ p_price }}">
+                      {% if p_badge != blank %}
+                        <div class="ai-qs-badge">{{ p_badge }}</div>
+                      {% endif %}
+                      <div class="ai-qs-name">{{ p_name }}</div>
+                      <div class="ai-qs-price">₹{{ p_price }}</div>
+                      {% if saving > 0 %}
+                        <div class="ai-qs-saving">Extra ₹{{ saving }} Off</div>
+                      {% endif %}
+                    </div>
+                  {%- endfor -%}
+                </div>
+                
+                <div class="ai-qs-timer">
+                  <span class="prefix">{{ block.settings.timer_prefix }}</span>
+                  <span id="pack-timer-{{ section.id }}" class="time">11 hr : 59 min : 59 sec</span>
+                </div>
               </div>
 
             {%- when 'special_offer' -%}
@@ -420,35 +622,38 @@
                  {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id %}
                </div>
 
-               <!-- PINCODE -->
-               <div class="ai-pincode-wrap">
-                  <div style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:13px;">
-                     <img src="https://cdn-icons-png.flaticon.com/512/3201/3201921.png" style="width:18px;">
-                     {{ block.settings.pincode_title }}
-                  </div>
-                  <div style="font-size:10px; color:#666; margin:4px 0 0 28px;">{{ block.settings.pincode_sub }}</div>
-                  <div class="ai-pin-input-group">
-                     
-                     <input type="text" placeholder="{{ block.settings.placeholder }}">
-                     <button class="ai-pin-check-btn">{{ block.settings.btn_text }}</button>
-                  </div>
-                  <div class="ai-trust-row" style="display:flex; justify-content:space-between; margin-top:15px; border-top:1px solid #eee; padding-top:15px;">
-                     <div class="ai-trust-item" style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-size:24px;">{{ block.settings.trust_1_icon }}</span>
-                        <div style="line-height:1.2;">
-                           <span style="display:block; font-weight:700; font-size:12px;">{{ block.settings.trust_1_title }}</span>
-                           <span style="display:block; font-size:9px; color:#666;">{{ block.settings.trust_1_sub }}</span>
-                        </div>
-                     </div>
-                     <div class="ai-trust-item" style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-size:24px;">{{ block.settings.trust_2_icon }}</span>
-                        <div style="line-height:1.2;">
-                           <span style="display:block; font-weight:700; font-size:12px;">{{ block.settings.trust_2_title }}</span>
-                           <span style="display:block; font-size:9px; color:#666;">{{ block.settings.trust_2_sub }}</span>
-                        </div>
-                     </div>
-                  </div>
-               </div>
+                <!-- PINCODE -->
+                <div class="ai-pincode-wrap" {{ block.shopify_attributes }}>
+                   <div style="display:flex; align-items:center; gap:12px;">
+                      <div style="width:28px; height:28px; border-radius:50%; background:rgba(67, 97, 238, 0.1); color:#4361ee; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800;">⊕</div>
+                      <div style="font-weight:800; font-size:16px; color:#333;">{{ block.settings.pincode_title }}</div>
+                   </div>
+                   <div style="font-size:13px; color:#666; margin:6px 0 0 40px;">{{ block.settings.pincode_sub }}</div>
+                   
+                   <div class="ai-pin-input-group">
+                      
+                      <input type="text" placeholder="{{ block.settings.placeholder }}" id="PincodeInput-{{ section.id }}">
+                      <button class="ai-pin-check-btn" onclick="checkPincode('{{ section.id }}')">{{ block.settings.btn_text }}</button>
+                   </div>
+                   <div class="ai-delivery-msg" id="DeliveryMsg-{{ section.id }}"></div>
+
+                   <div class="ai-trust-row">
+                      <div class="ai-trust-item">
+                         <img src="https://cdn-icons-png.flaticon.com/512/2331/2331941.png" class="ai-trust-icon" alt="Cashback">
+                         <div class="ai-trust-info">
+                            <span style="display:block; font-weight:800; font-size:14px;">{{ block.settings.trust_1_title }}</span>
+                            <span style="display:block; font-size:11px; color:#666;">{{ block.settings.trust_1_sub }}</span>
+                         </div>
+                      </div>
+                      <div class="ai-trust-item">
+                         <img src="https://cdn-icons-png.flaticon.com/512/2769/2769339.png" class="ai-trust-icon" alt="Free Shipping">
+                         <div class="ai-trust-info">
+                            <span style="display:block; font-weight:800; font-size:14px;">{{ block.settings.trust_2_title }}</span>
+                            <span style="display:block; font-size:11px; color:#666;">{{ block.settings.trust_2_sub }}</span>
+                         </div>
+                      </div>
+                   </div>
+                </div>
 
             {%- when 'description' -%}
               <div class="product__description rte" {{ block.shopify_attributes }} style="margin:25px 0;">
@@ -504,6 +709,54 @@
                    </div>
                 </div>
 
+            
+            {%- when 'trust_cards_stack' -%}
+                <div class="ai-trust-stack-wrap" {{ block.shopify_attributes }}>
+                   <h3 class="ai-squiggle-title f-premium">{{ block.settings.heading }}</h3>
+                   <div class="ai-trust-stack">
+                      <!-- CARD 1 -->
+                      <div class="ai-trust-card ai-t-card-blue">
+                         <div class="ai-t-card-icon">
+                            {% if block.settings.icon_1 != blank %}{{ block.settings.icon_1 | image_url: width: 100 | image_tag }}{% else %}<img src="https://cdn-icons-png.flaticon.com/512/3126/3126647.png">{% endif %}
+                         </div>
+                         <div class="ai-t-card-info">
+                            <div class="ai-t-card-title">{{ block.settings.title_1 }}</div>
+                            <div class="ai-t-card-desc">{{ block.settings.desc_1 }}</div>
+                         </div>
+                      </div>
+                      <!-- CARD 2 -->
+                      <div class="ai-trust-card ai-t-card-purple">
+                         <div class="ai-t-card-icon">
+                            {% if block.settings.icon_2 != blank %}{{ block.settings.icon_2 | image_url: width: 100 | image_tag }}{% else %}<img src="https://cdn-icons-png.flaticon.com/512/10433/10433042.png">{% endif %}
+                         </div>
+                         <div class="ai-t-card-info">
+                            <div class="ai-t-card-title">{{ block.settings.title_2 }}</div>
+                            <div class="ai-t-card-desc">{{ block.settings.desc_2 }}</div>
+                         </div>
+                      </div>
+                      <!-- CARD 3 -->
+                      <div class="ai-trust-card ai-t-card-green">
+                         <div class="ai-t-card-icon">
+                            {% if block.settings.icon_3 != blank %}{{ block.settings.icon_3 | image_url: width: 100 | image_tag }}{% else %}<img src="https://cdn-icons-png.flaticon.com/512/10709/10709674.png">{% endif %}
+                         </div>
+                         <div class="ai-t-card-info">
+                            <div class="ai-t-card-title">{{ block.settings.title_3 }}</div>
+                            <div class="ai-t-card-desc">{{ block.settings.desc_3 }}</div>
+                         </div>
+                      </div>
+                      <!-- CARD 4 -->
+                      <div class="ai-trust-card ai-t-card-red">
+                         <div class="ai-t-card-icon">
+                            {% if block.settings.icon_4 != blank %}{{ block.settings.icon_4 | image_url: width: 100 | image_tag }}{% else %}<img src="https://cdn-icons-png.flaticon.com/512/2311/2311991.png">{% endif %}
+                         </div>
+                         <div class="ai-t-card-info">
+                            <div class="ai-t-card-title">{{ block.settings.title_4 }}</div>
+                            <div class="ai-t-card-desc">{{ block.settings.desc_4 }}</div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+
             {%- when 'collapsible_tab' -%}
                 <div class="ai-acc-item" {{ block.shopify_attributes }}>
                    <button class="ai-acc-header" onclick="toggleAcc(this)">
@@ -515,9 +768,139 @@
                    </div>
                 </div>
 
+            {%- when 'customer_reviews_app' -%}
+                <div class="ai-cust-reviews-wrap" {{ block.shopify_attributes }}>
+                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                      <h3 class="f-premium" style="margin:0; font-size:24px;">Customer Reviews</h3>
+                      <button class="ai-write-rev-btn" onclick="document.getElementById('ReviewForm-{{ section.id }}').classList.toggle('visible')">Write a review</button>
+                   </div>
+
+                   <div class="ai-rev-summary">
+                      <div class="ai-rev-big-num">4.9</div>
+                      <div class="ai-rev-summary-info">
+                         <div class="ai-rev-summary-stars">★★★★★</div>
+                         <div class="ai-rev-count-txt">Based on 1.5 Lakh+ reviews</div>
+                      </div>
+                   </div>
+
+                   <!-- SUBMISSION FORM -->
+                   <div class="ai-rev-form-card" id="ReviewForm-{{ section.id }}">
+                      <h4 style="margin:0 0 20px 0; font-size:18px;">Share your experience</h4>
+                      
+                      <div class="ai-form-group">
+                         <label class="ai-form-label">Overall Rating</label>
+                         <div class="ai-star-rating-input" id="StarInput-{{ section.id }}">
+                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+                         </div>
+                      </div>
+
+                      <div class="ai-form-group">
+                         <label class="ai-form-label">Your Name</label>
+                         {% if customer %}
+                            <input type="text" class="ai-form-input" value="{{ customer.first_name }} {{ customer.last_name }}" readonly id="RevName-{{ section.id }}" style="background:#eee;">
+                            <small style="color:#888;">Logged in as {{ customer.email }}</small>
+                         {% else %}
+                            <input type="text" class="ai-form-input" placeholder="e.g. Rahul Sharma" id="RevName-{{ section.id }}">
+                         {% endif %}
+                      </div>
+
+                      <div class="ai-form-group">
+                         <label class="ai-form-label">Your Review</label>
+                         <textarea class="ai-form-input" rows="4" placeholder="Write your comments here..." id="RevText-{{ section.id }}"></textarea>
+                      </div>
+
+                      <div class="ai-form-group">
+                         <label class="ai-form-label">Upload Photos</label>
+                         <div class="ai-img-upload-wrap">
+                            <span style="font-size:14px; color:#666;">Click to upload or drag and drop</span>
+                            <input type="file" multiple accept="image/*" id="RevImgs-{{ section.id }}" onchange="previewRevImgs(this)">
+                         </div>
+                         <div class="ai-img-preview-row" id="ImgPreview-{{ section.id }}"></div>
+                      </div>
+
+                      <button class="ai-offer-toggle" style="width:100%; background:#000; color:#fff;" onclick="submitMockReview('{{ section.id }}')">Submit Review</button>
+                   </div>
+
+                   <!-- REVIEWS LIST -->
+                   <div class="ai-reviews-list" id="RevList-{{ section.id }}">
+                      <!-- MOCK REVIEW 1 -->
+                      <div class="ai-review-item">
+                         <div class="ai-review-user-row">
+                            <div class="ai-review-avatar">A</div>
+                            <div class="ai-review-user-info">
+                               <span class="ai-review-user-name">Aditya Verma <span class="ai-verified-badge">Verified ✓</span></span>
+                               <span class="ai-review-date">2 days ago</span>
+                            </div>
+                         </div>
+                         <div class="ai-review-stars">★★★★★</div>
+                         <div style="font-weight:800; font-size:14px; margin-bottom:5px;">Amazing Positive Energy!</div>
+                         <div class="ai-review-text">Ever since I started wearing this, I feel much more balanced and calm. The quality of the stones is exceptional.</div>
+                         <div class="ai-review-imgs">
+                            <div class="ai-review-img-thumb"><img src="{{ product.featured_image | image_url: width: 200 }}"></div>
+                         </div>
+                      </div>
+                      <!-- MOCK REVIEW 2 -->
+                      <div class="ai-review-item">
+                         <div class="ai-review-user-row">
+                            <div class="ai-review-avatar">S</div>
+                            <div class="ai-review-user-info">
+                               <span class="ai-review-user-name">Sneha Kapoor <span class="ai-verified-badge">Verified ✓</span></span>
+                               <span class="ai-review-date">5 days ago</span>
+                            </div>
+                         </div>
+                         <div class="ai-review-stars">★★★★★</div>
+                         <div style="font-weight:800; font-size:14px; margin-bottom:5px;">Beautiful and Effective</div>
+                         <div class="ai-review-text">It's beautiful enough to wear as jewelry but also has a very powerful aura. Definitely recommend it for meditation.</div>
+                      </div>
+                   </div>
+                </div>
+          {%- when 'why_astrojap_list' -%}
+                <div class="ai-why-list-wrap" {{ block.shopify_attributes }}>
+                   <div class="ai-why-list-head">
+                      <h3>{{ block.settings.heading }}</h3>
+                   </div>
+                   
+                   <div class="ai-why-list-item ai-why-card-blue">
+                      <div class="ai-why-list-icon">
+                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                      </div>
+                      <div class="ai-why-list-info">
+                         <span class="ai-why-list-title">Happy Customers</span>
+                         <span class="ai-why-list-desc">More than <b>15 Lakh+</b> users have trusted us</span>
+                      </div>
+                   </div>
+
+                   <div class="ai-why-list-item ai-why-card-purple">
+                      <div class="ai-why-list-icon">
+                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                      </div>
+                      <div class="ai-why-list-info">
+                         <span class="ai-why-list-title">100% Original & Certified</span>
+                         <span class="ai-why-list-desc">Certified by top labs in India.</span>
+                      </div>
+                   </div>
+
+                   <div class="ai-why-list-item ai-why-card-green">
+                      <div class="ai-why-list-icon">
+                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                      </div>
+                      <div class="ai-why-list-info">
+                         <span class="ai-why-list-title">Return & Exchange</span>
+                         <span class="ai-why-list-desc">Easy 7-day return & exchange process.</span>
+                      </div>
+                   </div>
+
+                   <div class="ai-why-list-item ai-why-card-orange">
+                      <div class="ai-why-list-icon">
+                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                      </div>
+                      <div class="ai-why-list-info">
+                         <span class="ai-why-list-title">Free Shipping</span>
+                         <span class="ai-why-list-desc">Free shipping all over India.</span>
+                      </div>
+                   </div>
           {%- endcase -%}
         {%- endfor -%}
-
       </div>
     </div>
   </div>
@@ -525,18 +908,44 @@
 
 <!-- STICKY BOTTOM BAR -->
 <div class="ai-sticky-bar" id="StickyBar-{{ section.id }}">
-   <div class="ai-sticky-info">
-      <img src="{{ product.featured_image | image_url: width: 100 }}" alt="prod">
-      <div>
-         <div class="ai-sticky-title">{{ product.title }}</div>
-         <div class="ai-sticky-price">{{ product.price | money }} <s style="font-size:10px; color:#999;">{{ product.compare_at_price | money }}</s></div>
+   <div class="ai-sticky-banner">₹{{ section.settings.cashback_amount | default: '500' }} Cashback on all prepaid orders*🥳</div>
+   <div class="ai-sticky-content">
+      <div class="ai-sticky-top-info">
+         <img src="{{ product.featured_image | image_url: width: 150 }}" class="ai-sticky-img" alt="{{ product.title | escape }}">
+         <div class="ai-sticky-info">
+            <div class="ai-sticky-title">{{ product.title }}</div>
+            <div class="ai-sticky-price-row">
+               <span class="ai-sticky-price">
+                  {% assign p_money = product.price | money %}
+                  {% if p_money contains '₹' or p_money contains 'Rs.' %}
+                    ₹{{ product.price | divided_by: 100.00 | round }}
+                  {% else %}
+                    {{ product.price | money }}
+                  {% endif %}
+               </span>
+               {% if product.compare_at_price > product.price %}
+                  <span class="ai-sticky-old">
+                     {% assign cp_money = product.compare_at_price | money %}
+                     {% if cp_money contains '₹' or cp_money contains 'Rs.' %}
+                       ₹{{ product.compare_at_price | divided_by: 100.00 | round }}
+                     {% else %}
+                       {{ product.compare_at_price | money }}
+                     {% endif %}
+                  </span>
+                  {% assign diff = product.compare_at_price | minus: product.price %}
+                  {% assign percent = diff | times: 100.0 | divided_by: product.compare_at_price | round %}
+                  <span class="ai-sticky-discount">{{ percent }}% + Extra 20% OFF</span>
+               {% endif %}
+            </div>
+         </div>
+      </div>
+      <div class="ai-sticky-btns">
+         <button class="ai-btn-atc" onclick="document.querySelector('.product-form__submit').click()">ADD TO CART</button>
+         <button class="ai-btn-buy" onclick="document.querySelector('.product-form__submit').click()">BUY NOW</button>
       </div>
    </div>
-   <div class="ai-sticky-btns">
-      <button class="ai-btn-atc" onclick="document.querySelector('.product-form__submit').click()">ADD TO CART</button>
-      <button class="ai-btn-buy" onclick="document.querySelector('.product-form__submit').click()">BUY NOW</button>
-   </div>
 </div>
+
 
 <script>
   let curMediaIdx = 0;
@@ -592,22 +1001,19 @@
      }
   }, 4000);
 
-  // Sticky Bar Logic
+      // Sticky Bar Logic
   window.addEventListener('scroll', () => {
      const bar = document.getElementById('StickyBar-{{ section.id }}');
      const atc = document.querySelector('.product-form__buttons');
      if(!atc || !bar) return;
      const atcTop = atc.getBoundingClientRect().top;
-     if(window.innerWidth < 768) {
-        if(atcTop < 0) bar.classList.add('visible');
-        else bar.classList.remove('visible');
-     }
+     if(atcTop < 0) bar.classList.add('visible');
+     else bar.classList.remove('visible');
   });
 
   // Timer Logic
   (function() {
     function updateTimer() {
-      const display = document.getElementById('timer-display-{{ section.id }}');
       if(!display) return;
       const now = new Date();
       const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
@@ -619,17 +1025,204 @@
     }
     setInterval(updateTimer, 1000); updateTimer();
   })();
+
+    // REVIEWS STAR INPUT
+    document.querySelectorAll('#StarInput-{{ section.id }} span').forEach(star => {
+       star.addEventListener('click', function() {
+          const val = this.getAttribute('data-val');
+          const parent = this.parentElement;
+          parent.querySelectorAll('span').forEach((s, idx) => {
+             if(idx < val) s.classList.add('active');
+             else s.classList.remove('active');
+          });
+          parent.setAttribute('data-selected', val);
+       });
+    });
+
+    function previewRevImgs(input) {
+       const preview = document.getElementById('ImgPreview-{{ section.id }}');
+       preview.innerHTML = '';
+       if (input.files) {
+          Array.from(input.files).forEach(file => {
+             const reader = new FileReader();
+             reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'ai-img-preview-item';
+                div.innerHTML = `<img src="${e.target.result}">`;
+                preview.appendChild(div);
+             }
+             reader.readAsDataURL(file);
+          });
+       }
+    }
+
+    function submitMockReview(sid) {
+       const nameInput = document.getElementById('RevName-'+sid);
+       const name = nameInput.value;
+       const text = document.getElementById('RevText-'+sid).value;
+       const stars = document.getElementById('StarInput-'+sid).getAttribute('data-selected') || 5;
+       
+       if(!name || !text) { alert('Please fill in your name and review text.'); return; }
+
+       const list = document.getElementById('RevList-'+sid);
+       const newItem = document.createElement('div');
+       newItem.className = 'ai-review-item';
+       newItem.style.animation = 'slideDown 0.4s ease';
+       
+       let starsHtml = '';
+       for(let i=0; i<5; i++) starsHtml += (i < stars ? '★' : '☆');
+
+       newItem.innerHTML = `
+          <div class="ai-review-user-row">
+             <div class="ai-review-avatar">${name.charAt(0).toUpperCase()}</div>
+             <div class="ai-review-user-info">
+                <span class="ai-review-user-name">${name} <span class="ai-verified-badge">Just now ✓</span></span>
+                <span class="ai-review-date">Today</span>
+             </div>
+          </div>
+          <div class="ai-review-stars" style="color:#fbbc05;">${starsHtml}</div>
+          <div class="ai-review-text">${text}</div>
+          <div style="margin-top:10px; color:#34a853; font-weight:800; font-size:12px;">Review submitted successfully!</div>
+       `;
+       
+       list.prepend(newItem);
+       document.getElementById('ReviewForm-'+sid).classList.remove('visible');
+       // Clear form
+       if(!nameInput.hasAttribute('readonly')) nameInput.value = '';
+       document.getElementById('RevText-'+sid).value = '';
+
+       // Save to LocalStorage to "make it working" for this browser
+       const existing = JSON.parse(localStorage.getItem('my_reviews') || '[]');
+       existing.push({ name, text, stars, date: 'Today' });
+       localStorage.setItem('my_reviews', JSON.stringify(existing));
+    }
+
+    function checkPincode(sid) {
+       const pin = document.getElementById('PincodeInput-'+sid).value;
+       const msg = document.getElementById('DeliveryMsg-'+sid);
+       if(pin.length < 6) { alert('Please enter a valid 6-digit pincode'); return; }
+       
+       const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 3);
+       const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+       const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+       
+       msg.style.display = 'block';
+       msg.innerText = `Expected delivery by ${days[tomorrow.getDay()]}, ${tomorrow.getDate()} ${months[tomorrow.getMonth()]}`;
+    }
+// QUANTITY PACK SELECTOR LOGIC
+    window.selectPack = function(el, qty) {
+      // Toggle visual state
+      document.querySelectorAll('.ai-qs-card').forEach(card => card.classList.remove('selected'));
+      el.classList.add('selected');
+
+      // Update Shopify Quantity Input
+      const qtyInput = document.querySelector('input[name="quantity"]');
+      if (qtyInput) qtyInput.value = qty;
+
+      // Update Shopify Variant (based on index)
+      const variantSelect = document.querySelector('select[name="id"]');
+      if (variantSelect && variantSelect.options[qty - 1]) {
+        variantSelect.selectedIndex = qty - 1;
+        variantSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      
+      // Update Price display (optional sync)
+      const priceVal = el.getAttribute('data-price');
+      const priceDisplay = document.querySelector('.ai-current-price');
+      if (priceDisplay) priceDisplay.innerText = priceVal;
+    };
+
+    // URGENCY TIMER LOGIC
+    function initPackTimer() {
+      const timerId = 'pack-timer-{{ section.id }}';
+      const storageKey = 'astro_pack_timer_end';
+      let endTime = localStorage.getItem(storageKey);
+
+      if (!endTime) {
+        const hours = {{ block.settings.timer_hours | default: 12 }};
+        endTime = new Date().getTime() + (hours * 60 * 60 * 1000);
+        localStorage.setItem(storageKey, endTime);
+      }
+
+      function updateTimer() {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+
+        if (distance < 0) {
+          // Reset timer if ended
+          const hours = {{ block.settings.timer_hours | default: 12 }};
+          endTime = new Date().getTime() + (hours * 60 * 60 * 1000);
+          localStorage.setItem(storageKey, endTime);
+          return;
+        }
+
+        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const display = document.getElementById(timerId);
+        if (display) {
+          display.innerHTML = `${h} hr : ${m} min : ${s} sec`;
+        }
+      }
+
+      setInterval(updateTimer, 1000);
+      updateTimer();
+    }
+    
+    // Auto-select Pack 2 on load and init timer
+    document.addEventListener('DOMContentLoaded', () => {
+      const pack2 = document.querySelector('.ai-qs-card:nth-child(2)');
+      if (pack2) pack2.click();
+      initPackTimer();
+    });
+// GLOBAL REVIEW HELPERS
+    window.setGStars = function(el, val) {
+       const parent = el.parentElement;
+       parent.querySelectorAll('span').forEach((s, idx) => {
+          if(idx < val) s.classList.add('active');
+          else s.classList.remove('active');
+       });
+       parent.setAttribute('data-selected', val);
+    };
+
+    window.submitGlobalReview = function(sid) {
+       const name = document.getElementById('GRevName-' + sid).value;
+       const text = document.getElementById('GRevText-' + sid).value;
+       const stars = document.getElementById('GStarInput-' + sid).getAttribute('data-selected') || 5;
+       if(!name || !text) { alert('Please enter your name and feedback.'); return; }
+       const list = document.getElementById('GRevList-' + sid);
+       const card = document.createElement('div');
+       card.className = 'ai-g-rev-card';
+       card.style.cssText = 'padding:15px; border:1px solid #f0f0f0; border-radius:10px; background:#fff; margin-bottom:15px;';
+       let starsHtml = '';
+       for(let i=0; i<5; i++) starsHtml += (i < stars ? '★' : '☆');
+       card.innerHTML = `
+          <div style="font-weight:800; font-size:14px; margin-bottom:5px;">${name} <span style="background:#e8f0fe; color:#1a73e8; font-size:9px; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">Just now</span></div>
+          <div style="color:#fbbc05; font-size:12px; margin-bottom:8px;">${starsHtml}</div>
+          <div style="font-size:13px; line-height:1.4; color:#444;">${text}</div>
+       `;
+       list.prepend(card);
+       list.classList.add('active');
+       document.getElementById('GlobalRevForm-' + sid).classList.remove('active');
+       alert('Thank you! Your review has been submitted.');
+    };
 </script>
 
 {% schema %}
 {
-  "name": "Astro Premium Product",
+  "name": "Product: Karungali",
   "settings": [
     { "type": "text", "id": "cashback_amount", "label": "Cashback Amount", "default": "500" },
     { "type": "range", "id": "padding_top", "label": "Top Padding", "min": 0, "max": 100, "step": 4, "default": 24, "unit": "px" },
     { "type": "range", "id": "padding_bottom", "label": "Bottom Padding", "min": 0, "max": 100, "step": 4, "default": 24, "unit": "px" }
   ],
   "blocks": [
+    { "type": "why_astrojap_list", "name": "Why AstroJap List", "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Why AstroJap ?" }
+      ]
+    },
     { "type": "title", "name": "Title & Tags", "limit": 1,
       "settings": [
          { "type": "text", "id": "dates", "label": "Date Range", "default": "22 Dec – 19 Jan" },
@@ -693,6 +1286,27 @@
         { "type": "text", "id": "txt_2", "label": "Proof Text 2", "default": "Lab Certified" }
       ]
     },
+    { "type": "trust_cards_stack", "name": "Trust Cards (Image Style)", "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Why AstroJap?" },
+        { "type": "header", "content": "Card 1" },
+        { "type": "image_picker", "id": "icon_1", "label": "Icon" },
+        { "type": "text", "id": "title_1", "label": "Title", "default": "Happy Customers" },
+        { "type": "richtext", "id": "desc_1", "label": "Description", "default": "<p>More than <b>15 Lakh+</b> users have trusted us</p>" },
+        { "type": "header", "content": "Card 2" },
+        { "type": "image_picker", "id": "icon_2", "label": "Icon" },
+        { "type": "text", "id": "title_2", "label": "Title", "default": "100% Original & Certified" },
+        { "type": "richtext", "id": "desc_2", "label": "Description", "default": "<p>Certified by top labs in India.</p>" },
+        { "type": "header", "content": "Card 3" },
+        { "type": "image_picker", "id": "icon_3", "label": "Icon" },
+        { "type": "text", "id": "title_3", "label": "Title", "default": "Return & Exchange" },
+        { "type": "richtext", "id": "desc_3", "label": "Description", "default": "<p>Easy 7-day return & exchange process.</p>" },
+        { "type": "header", "content": "Card 4" },
+        { "type": "image_picker", "id": "icon_4", "label": "Icon" },
+        { "type": "text", "id": "title_4", "label": "Title", "default": "Free Shipping" },
+        { "type": "richtext", "id": "desc_4", "label": "Description", "default": "<p>Free shipping all over India.</p>" }
+      ]
+    },
     { "type": "buy_buttons", "name": "Buy Buttons & Pincode", "limit": 1,
       "settings": [
          { "type": "text", "id": "stock_text", "label": "Stock Warning", "default": "⏰ Last 21 Units Left ⏰" },
@@ -721,9 +1335,32 @@
         { "type": "text", "id": "heading", "label": "Heading", "default": "Details" },
         { "type": "richtext", "id": "content", "label": "Content" }
       ]
+    },
+    { "type": "customer_reviews_app", "name": "User Reviews & Ratings", "limit": 1,
+      "settings": [
+        { "type": "paragraph", "content": "This block adds an interactive review system where users can submit ratings and upload images." }
+      ]
+    },
+    { "type": "quantity_packs", "name": "Quantity Pack Selector", "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "SELECT QUANTITY" },
+        { "type": "header", "content": "Pack 1" },
+        { "type": "text", "id": "p1_name", "label": "Name", "default": "Pack of 1" },
+        { "type": "number", "id": "p1_price", "label": "Price (₹)", "default": 699 },
+        { "type": "header", "content": "Pack 2 (Popular)" },
+        { "type": "text", "id": "p2_name", "label": "Name", "default": "Pack of 2" },
+        { "type": "number", "id": "p2_price", "label": "Price (₹)", "default": 999 },
+        { "type": "text", "id": "p2_badge", "label": "Badge Text", "default": "Most Popular" },
+        { "type": "header", "content": "Pack 3" },
+        { "type": "text", "id": "p3_name", "label": "Name", "default": "Pack of 3" },
+        { "type": "number", "id": "p3_price", "label": "Price (₹)", "default": 1499 },
+        { "type": "header", "content": "Urgency Timer" },
+        { "type": "text", "id": "timer_prefix", "label": "Timer Prefix", "default": "Offer ends in" },
+        { "type": "number", "id": "timer_hours", "label": "Timer Hours", "default": 12 }
+      ]
     }
   ],
-  "presets": [{ "name": "Astro Premium Product" }]
+  "presets": [{ "name": "Product: Karungali" }]
 }
 {% endschema %}
 

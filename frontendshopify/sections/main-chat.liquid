@@ -286,10 +286,7 @@
         if (!renderedMessages.has(msg.id)) {
           renderedMessages.add(msg.id);
           const isMine = msg.sender_id === currentUserId && msg.sender_type === currentUserType;
-          
-          if (!isMine || msg.is_system) {
-            appendMessage(msg.text, isMine ? 'sent' : 'received', msg.is_system);
-          }
+          appendMessage(msg.text, isMine ? 'sent' : 'received', msg.is_system);
           
           if (msg.is_system && msg.sender_type === 'astrologer') {
             astrologerJustJoined = true;

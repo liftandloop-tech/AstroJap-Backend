@@ -121,6 +121,7 @@
             "desktop_height": 650,
             "speed": 10,
             "title_color": "#ffffff",
+            "btn_text": "Shop Now",
             "overlay_color": "#000000",
             "overlay_opacity": 40,
             "image_1_d": "shopify://shop_images/Group_36.png",
@@ -182,12 +183,12 @@
             "card_1_icon_bg": "#e8f5e9",
             "card_1_title": "Chat with Astrologer",
             "card_1_subtitle": "",
-            "card_1_link": "/pages/astrologer#template--21323044847716__blocks_pMyVeY",
+            "card_1_link": "https://astrojap.com/collections/astrologers",
             "card_2_image": "shopify://shop_images/Screenshot_2026-04-01_at_9.27.13_AM.png",
             "card_2_icon_bg": "#fff3e0",
             "card_2_title": "Talk to Astrologer",
             "card_2_subtitle": "",
-            "card_2_link": "shopify://collections/astrologers",
+            "card_2_link": "https://astrojap.com/collections/astrologers",
             "card_3_image": "shopify://shop_images/Screenshot_2026-04-01_at_9.28.36_AM.png",
             "card_3_icon_bg": "#fce4ec",
             "card_3_title": "Astrojab Shop",
@@ -197,7 +198,7 @@
             "card_4_icon_bg": "#e3f2fd",
             "card_4_title": "Book Appointment",
             "card_4_subtitle": "",
-            "card_4_link": "shopify://collections/astrologers"
+            "card_4_link": "https://astrojap.com/collections/astrologers"
           },
           "blocks": {}
         },
@@ -382,7 +383,7 @@
         "image_q4bwRf": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/WhatsApp_Image_2026-04-05_at_10.56.28.jpg"
+            "image": "shopify://shop_images/rudraksha-mala.png"
           }
         },
         "product_JjqUqB": {

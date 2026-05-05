@@ -23,6 +23,7 @@ router.patch('/toggle-availability',      c.toggleAvailability);       // ON/OFF
 // ─── Admin Routes (Protected by Admin Credentials) ───────────────────────────
 router.post('/admin/login',               c.adminLogin);               // Admin ID/Pass Login
 router.get('/admin/pending',              c.getPendingAstrologers);    // List all pending
+router.get('/admin/all',                  c.getAllAstrologersAdmin);   // List ALL (including approved)
 router.post('/admin/approve',             c.approveAstrologer);        // Approve application
 router.post('/admin/reject',              c.rejectAstrologer);         // Reject application
 
