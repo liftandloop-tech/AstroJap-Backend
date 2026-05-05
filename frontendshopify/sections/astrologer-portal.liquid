@@ -777,8 +777,49 @@
       payload.specialization = spec;
       payload.onboarding_step = 3;
     } else if(step === 3) {
-      // Documents marked for review
-      payload.onboarding_step = 4;
+      const govtIdFile = document.getElementById('GovtId').files[0];
+      const selfieFile = document.getElementById('Selfie').files[0];
+      
+      if (!govtIdFile || !selfieFile) {
+        showAlert('Please upload both ID proof and selfie to proceed.', 'error');
+        return;
+      }
+
+      const btn = document.querySelector('#StepSection3 .btn-primary');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Uploading documents...';
+
+      try {
+        // Upload ID Proof
+        const idFormData = new FormData();
+        idFormData.append('image', govtIdFile);
+        idFormData.append('id', currentUser.id);
+        const idRes = await fetch(`${API_BASE}/upload-image`, { method: 'POST', body: idFormData });
+        const idData = await idRes.json();
+        if (!idRes.ok) throw new Error(idData.error || 'ID Upload failed');
+
+        // Upload Selfie
+        const selfieFormData = new FormData();
+        selfieFormData.append('image', selfieFile);
+        selfieFormData.append('id', currentUser.id);
+        const selfieRes = await fetch(`${API_BASE}/upload-image`, { method: 'POST', body: selfieFormData });
+        const selfieData = await selfieRes.json();
+        if (!selfieRes.ok) throw new Error(selfieData.error || 'Selfie Upload failed');
+
+        // Save URLs to profile
+        payload.id_proof_url = idData.imageUrl;
+        payload.selfie_url = selfieData.imageUrl;
+        payload.onboarding_step = 4;
+      } catch (e) {
+        showAlert(e.message, 'error');
+        btn.disabled = false;
+        btn.textContent = originalText;
+        return;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
     } else if(step === 4) {
       payload.bank_account_name = document.getElementById('BankName').value;
       payload.bank_account_number = document.getElementById('BankAcc').value;

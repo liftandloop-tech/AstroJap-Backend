@@ -576,3 +576,46 @@ async function updateShopifyCustomerStatus(shopifyId, newTag) {
     console.error('Shopify tag update failed:', err.message);
   }
 }
+
+exports.uploadProfileImage = async (req, res) => {
+  const { id } = req.body;
+  const file = req.file;
+  if (!id) return missingField(res, 'id');
+  if (!file) return missingField(res, 'image');
+
+  try {
+    const fileExt = file.originalname.split('.').pop();
+    const fileName = `${id}-${Date.now()}.${fileExt}`;
+    const filePath = `profiles/${fileName}`;
+
+    // 1. Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('astrologers') // Changed bucket name to 'astrologers' to match table
+      .upload(filePath, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true
+      });
+
+    if (uploadError) throw uploadError;
+
+    // 2. Get Public URL
+    const { data: urlData } = supabase.storage
+      .from('astrologers')
+      .getPublicUrl(filePath);
+
+    const imageUrl = urlData.publicUrl;
+
+    // 3. Update Astrologer Record
+    const { error: updateError } = await supabase
+      .from('astrologers')
+      .update({ profile_image: imageUrl })
+      .eq('id', id);
+
+    if (updateError) throw updateError;
+
+    res.status(200).json({ message: 'Image uploaded successfully', imageUrl });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};

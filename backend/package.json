@@ -21,6 +21,7 @@
     "express": "^5.2.1",
     "ioredis": "^5.10.1",
     "luxon": "^3.7.2",
+    "multer": "^2.1.1",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {

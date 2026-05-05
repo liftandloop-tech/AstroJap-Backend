@@ -1,6 +1,8 @@
 const express = require('express');
 const router  = express.Router();
 const c       = require('../controllers/astrologer.controller');
+const multer  = require('multer');
+const upload  = multer({ storage: multer.memoryStorage() });
 
 // ─── Public Routes ────────────────────────────────────────────────────────────
 router.get('/',                           c.getAllAstrologers);        // List approved+available
@@ -19,6 +21,7 @@ router.get('/upcoming-sessions/:id',      c.getUpcomingSessions);      // Upcomi
 router.get('/session-history/:id',        c.getSessionHistory);        // Past sessions + earnings
 router.patch('/update-pricing',           c.updatePricing);            // Set custom prices
 router.patch('/toggle-availability',      c.toggleAvailability);       // ON/OFF booking switch
+router.post('/upload-image', upload.single('image'), c.uploadProfileImage);
 
 // ─── Admin Routes (Protected by Admin Credentials) ───────────────────────────
 router.post('/admin/login',               c.adminLogin);               // Admin ID/Pass Login

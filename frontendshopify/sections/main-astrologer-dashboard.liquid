@@ -404,6 +404,19 @@
     <!-- ── Profile Details Tab ── -->
     <div id="profile" class="tab-pane">
       <div class="dashboard-header"><h1>Profile Details</h1></div>
+      
+      <div class="section-card" style="margin-bottom: 24px; text-align: center; padding: 30px;">
+        <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 20px;">
+          <img id="profile-pic-preview" src="https://cdn.shopify.com/s/files/1/0872/1118/0346/files/user_1.png?v=1715015000" 
+               style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          <label for="profile-pic-input" style="position: absolute; bottom: 0; right: 0; background: #f97316; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff;">
+            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </label>
+          <input type="file" id="profile-pic-input" hidden accept="image/*" onchange="uploadProfilePic(this)">
+        </div>
+        <p id="upload-status" style="font-size: 12px; color: #64748b; margin: 0;">JPG, PNG or GIF. Max 2MB.</p>
+      </div>
+
       <div class="section-card">
         <h3>Edit Your Public Profile</h3>
         <p style="color:#64748b; font-size:13px; margin-bottom:20px;">This information will be visible to users on the Astrologer Grid.</p>
@@ -687,8 +700,52 @@
         document.getElementById('prof-languages').value = Array.isArray(data.languages) ? data.languages.join(', ') : (data.languages || '');
         document.getElementById('prof-experience').value = data.experience_years || 0;
         document.getElementById('prof-bio').value = data.bio || '';
+        
+        if (data.profile_image) {
+          document.getElementById('profile-pic-preview').src = data.profile_image;
+        }
       }
     } catch(e) { console.error('Failed to load profile', e); }
+  }
+
+  async function uploadProfilePic(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    if (file.size > 2 * 1024 * 1024) { toast('Image size must be less than 2MB', 'error'); return; }
+
+    const statusEl = document.getElementById('upload-status');
+    const previewEl = document.getElementById('profile-pic-preview');
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('id', ASTRO_ID);
+
+    statusEl.textContent = 'Uploading...';
+    statusEl.style.color = '#f97316';
+
+    try {
+      const res = await fetch(`${API}/astrologers/upload-image`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      
+      previewEl.src = data.imageUrl;
+      statusEl.textContent = '✅ Upload successful!';
+      statusEl.style.color = '#22c55e';
+      toast('Profile picture updated!');
+      
+      // Update local storage name if needed, but usually just the image
+      const user = JSON.parse(localStorage.getItem('astro_user') || '{}');
+      user.profile_image = data.imageUrl;
+      localStorage.setItem('astro_user', JSON.stringify(user));
+
+    } catch (e) {
+      statusEl.textContent = '❌ ' + e.message;
+      statusEl.style.color = '#ef4444';
+      toast(e.message, 'error');
+    }
   }
 
   async function saveProfileDetails() {
