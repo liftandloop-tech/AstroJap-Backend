@@ -1,5 +1,6 @@
 const supabase = require('../config/supabase');
 const { notifyAstrologer } = require('../services/socket.service');
+const { notifyAstrologerNewBooking } = require('../services/notification.service');
 
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
@@ -219,7 +220,7 @@ exports.bookSlot = async (req, res) => {
     // Step 2: Get astrologer pricing
     const { data: astrologer, error: astroError } = await supabase
       .from('astrologers')
-      .select('name, price_20_min, price_60_min, is_accepting_bookings, approval_status')
+      .select('name, email, price_20_min, price_60_min, is_accepting_bookings, approval_status')
       .eq('id', astrologer_id)
       .single();
 
@@ -305,6 +306,17 @@ exports.bookSlot = async (req, res) => {
       scheduled_at:  slot.start_time,
       price
     });
+
+    // Step 9: Notify astrologer via Email
+    if (astrologer.email) {
+      notifyAstrologerNewBooking(
+        astrologer.email,
+        astrologer.name,
+        customer_name || 'A Customer',
+        dur,
+        slot.start_time
+      );
+    }
 
     res.status(200).json({
       success:       true,

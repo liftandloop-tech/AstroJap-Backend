@@ -57,3 +57,45 @@ exports.notifyAdminNewSignup = async (astroName, astroEmail) => {
     console.error('[Notification] Admin notify failed:', error);
   }
 };
+
+exports.notifyAstrologerNewBooking = async (astroEmail, astroName, customerName, duration, scheduledAt) => {
+  if (!process.env.SMTP_USER || !astroEmail) return;
+
+  const dateStr = new Date(scheduledAt).toLocaleString('en-IN', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+
+  try {
+    await transporter.sendMail({
+      from: '"AstroJap Bookings" <noreply@astrojap.com>',
+      to: astroEmail,
+      subject: 'New Booking Confirmed - AstroJap',
+      text: `Namaste ${astroName},\n\nA new session has been booked with you!\n\nCustomer: ${customerName}\nDuration: ${duration} minutes\nScheduled For: ${dateStr}\n\nPlease be online 5 minutes before the session starts.\n\nView your bookings: https://astrojap.com/pages/astrologer-portal`,
+    });
+    console.log(`[Notification] Booking email sent to ${astroEmail}`);
+  } catch (error) {
+    console.error('[Notification] Booking email failed:', error);
+  }
+};
+
+exports.notifyAstrologerChatRequest = async (astroEmail, astroName, customerName, duration) => {
+  if (!process.env.SMTP_USER || !astroEmail) return;
+
+  try {
+    await transporter.sendMail({
+      from: '"AstroJap Chat" <noreply@astrojap.com>',
+      to: astroEmail,
+      subject: 'URGENT: New Chat Request - AstroJap',
+      text: `Namaste ${astroName},\n\nYou have an immediate chat request!\n\nCustomer: ${customerName}\nDuration: ${duration} minutes\n\nPlease join the chat immediately from your dashboard: https://astrojap.com/pages/astrologer-portal`,
+    });
+    console.log(`[Notification] Chat request email sent to ${astroEmail}`);
+  } catch (error) {
+    console.error('[Notification] Chat request email failed:', error);
+  }
+};

@@ -1,6 +1,7 @@
 const crypto  = require('crypto');
 const axios   = require('axios');
 const supabase = require('../config/supabase');
+const { sendStatusNotification } = require('../services/notification.service');
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -145,9 +146,8 @@ exports.handleCustomerUpdated = async (req, res) => {
       await provisionCometChatUser(astrologer);
     }
 
-    // Step 8: Send notification email via Shopify (optional — uses admin API email)
-    // We log for now; email integration goes in Phase 6
-    console.log(`[EMAIL TODO] Send '${newStatus}' email to ${astrologer.email}`);
+    // Step 8: Send notification email
+    sendStatusNotification(astrologer.email, astrologer.name, newStatus);
 
     return res.status(200).json({ success: true, status: newStatus, astrologer_id: astrologer.id });
 

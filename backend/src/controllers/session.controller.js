@@ -1,6 +1,7 @@
 const axios    = require('axios');
 const supabase = require('../config/supabase');
 const { notifyAstrologer } = require('../services/socket.service');
+const { notifyAstrologerChatRequest } = require('../services/notification.service');
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -305,7 +306,7 @@ exports.createManualSession = async (req, res) => {
     // 1. Validate astrologer + get pricing
     const { data: astrologer, error: astroError } = await supabase
       .from('astrologers')
-      .select('id, name, price_20_min, price_60_min')
+      .select('id, name, email, price_20_min, price_60_min')
       .eq('id', astrologer_id)
       .single();
 
@@ -378,6 +379,16 @@ exports.createManualSession = async (req, res) => {
       duration: durationInt,
       scheduledAt: session.scheduled_at
     });
+
+    // 8. Notify Astrologer via Email
+    if (astrologer.email) {
+      notifyAstrologerChatRequest(
+        astrologer.email,
+        astrologer.name,
+        customer_name || 'A Customer',
+        durationInt
+      );
+    }
 
     res.status(200).json({
       session_id:      session.id,
