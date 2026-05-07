@@ -60,6 +60,15 @@ const AstroAPI = {
     return response.json();
   },
 
+  async endSession(sessionId) {
+    const response = await fetch(`${API_BASE_URL}/sessions/end-session`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ session_id: sessionId })
+    });
+    return response.json();
+  },
+
   async getChatMessages(sessionId) {
     const response = await fetch(`${API_BASE_URL}/sessions/messages`, {
       method:  'POST',

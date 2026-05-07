@@ -30,7 +30,7 @@ exports.getActiveSession = async (req, res) => {
   if (!customer_id) return missingField(res, 'customer_id');
 
   try {
-    const { data, error } = await supabase
+    const { data: session, error } = await supabase
       .from('sessions')
       .select('*, astrologers(cometchat_uid, name, profile_image)')
       .eq('user_id', customer_id.toString())
@@ -40,7 +40,20 @@ exports.getActiveSession = async (req, res) => {
       .maybeSingle();
 
     if (error) throw error;
-    res.status(200).json(data);
+    if (!session) return res.status(200).json(null);
+
+    // Auto-expire if time is up
+    const now = new Date();
+    const endTime = session.end_time ? new Date(session.end_time) : null;
+    if (endTime && now > endTime) {
+      await supabase
+        .from('sessions')
+        .update({ status: 'completed' })
+        .eq('id', session.id);
+      return res.status(200).json(null);
+    }
+
+    res.status(200).json(session);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -146,6 +159,25 @@ exports.validateSession = async (req, res) => {
       : null;
 
     res.status(200).json({ valid: true, remaining_seconds, is_started: isStarted });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.endSession = async (req, res) => {
+  const { session_id } = req.body;
+  if (!session_id) return missingField(res, 'session_id');
+
+  try {
+    const { data, error } = await supabase
+      .from('sessions')
+      .update({ status: 'completed' })
+      .eq('id', session_id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(200).json({ success: true, message: 'Session ended' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

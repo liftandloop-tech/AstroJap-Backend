@@ -309,6 +309,12 @@
       // Always sync timer with backend to guarantee it's perfectly accurate
       const valRes = await AstroAPI.validateSession(sessionId);
       
+      if (valRes && valRes.valid === false) {
+        alert("Session has ended or is no longer valid.");
+        window.location.href = '/';
+        return;
+      }
+
       if (valRes && valRes.is_started) {
         document.getElementById('ChatStatus').textContent = '● Connected';
         document.getElementById('ChatStatus').style.color = '#22c55e';
@@ -317,6 +323,7 @@
       if (valRes && valRes.remaining_seconds !== undefined) {
         updateTimerDisplay(valRes.remaining_seconds);
         if (valRes.is_started && valRes.remaining_seconds <= 0) {
+          await AstroAPI.endSession(sessionId);
           alert("Session time is up!");
           window.location.href = '/';
         }

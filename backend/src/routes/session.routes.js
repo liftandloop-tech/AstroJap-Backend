@@ -7,6 +7,7 @@ router.post('/get-session-by-id',    sessionController.getSessionById);
 router.post('/get-customer-sessions', sessionController.getCustomerSessions);
 router.post('/validate-session',     sessionController.validateSession);
 router.post('/start-session',        sessionController.startSession);
+router.post('/end-session',          sessionController.endSession);
 router.post('/get-chat-token',       sessionController.getChatToken);
 router.post('/expire-old',           sessionController.expireOldSessions);
 router.post('/create-manual',        sessionController.createManualSession); // Wallet flow

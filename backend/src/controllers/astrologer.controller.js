@@ -388,14 +388,23 @@ exports.getUpcomingSessions = async (req, res) => {
     
     const { data, error } = await supabase
       .from('sessions')
-      .select('id, scheduled_at, duration_minutes, status, user_id, type')
+      .select('id, scheduled_at, end_time, duration_minutes, status, user_id, type')
       .eq('astrologer_id', id)
       .in('status', ['active', 'scheduled'])
       .gte('scheduled_at', bufferTime)
       .order('scheduled_at', { ascending: true });
 
     if (error) throw error;
-    res.status(200).json(data || []);
+
+    // Filter out sessions that have an end_time in the past
+    const filtered = (data || []).filter(s => {
+      if (s.status === 'active' && s.end_time) {
+        return new Date(s.end_time) > now;
+      }
+      return true;
+    });
+
+    res.status(200).json(filtered);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
