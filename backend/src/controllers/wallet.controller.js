@@ -169,3 +169,66 @@ exports.creditWallet = async (customerId, amount, orderId) => {
 
   return updated;
 };
+// ─── ADMIN ENDPOINTS ─────────────────────────────────────────────────────────
+
+// GET /api/wallet/admin/balances
+// Returns all user wallets with names
+exports.getAdminWalletStatus = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') return res.status(403).json({ error: 'Unauthorized' });
+
+  try {
+    const { data, error } = await supabase
+      .from('wallets')
+      .select(`
+        *,
+        users:shopify_customer_id (name)
+      `)
+      .order('balance', { ascending: false });
+
+    if (error) throw error;
+    
+    // Flatten result to be more friendly for frontend
+    const results = (data || []).map(w => ({
+      shopify_customer_id: w.shopify_customer_id,
+      balance:             w.balance,
+      currency:            w.currency,
+      updated_at:          w.updated_at,
+      user_name:           w.users?.name || 'Unknown User'
+    }));
+
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// GET /api/wallet/admin/recharges
+// Returns all credit transactions (Add Money history)
+exports.getAdminRecharges = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') return res.status(403).json({ error: 'Unauthorized' });
+
+  try {
+    const { data, error } = await supabase
+      .from('wallet_transactions')
+      .select(`
+        *,
+        users:shopify_customer_id (name)
+      `)
+      .eq('type', 'credit')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+
+    const results = (data || []).map(t => ({
+      ...t,
+      user_name: t.users?.name || 'Unknown User'
+    }));
+
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

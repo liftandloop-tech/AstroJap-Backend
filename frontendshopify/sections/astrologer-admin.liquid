@@ -203,6 +203,7 @@
           <button onclick="switchTab('Approvals')" id="TabApprovals" class="action-btn" style="background: var(--admin-blue); color: #fff;">Approvals</button>
           <button onclick="switchTab('Manage')" id="TabManage" class="action-btn" style="background: #eee;">Manage Astrologers</button>
           <button onclick="switchTab('Monitoring')" id="TabMonitoring" class="action-btn" style="background: #eee;">Chat Monitoring</button>
+          <button onclick="switchTab('Wallet')" id="TabWallet" class="action-btn" style="background: #eee;">Wallet Monitoring</button>
           <button onclick="adminLogout()" style="background: none; border: 1px solid #ccc; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Logout</button>
         </div>
       </div>
@@ -268,6 +269,57 @@
               <!-- Dynamically populated -->
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Wallet Tab -->
+      <div id="TabContentWallet" class="admin-card hidden">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+          <div style="background: #f0fdf4; padding: 20px; border-radius: 16px; border: 1px solid #bbf7d0;">
+            <p style="margin:0; font-size: 13px; color: #166534; font-weight: 600;">Total Wallet Liability</p>
+            <h2 id="TotalLiability" style="margin:10px 0 0; color: #166534;">₹0.00</h2>
+          </div>
+          <div style="background: #eff6ff; padding: 20px; border-radius: 16px; border: 1px solid #bfdbfe;">
+            <p style="margin:0; font-size: 13px; color: #1e40af; font-weight: 600;">Recent Recharges (30d)</p>
+            <h2 id="RecentRechargeTotal" style="margin:10px 0 0; color: #1e40af;">₹0.00</h2>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+          <button onclick="switchWalletSubTab('Balances')" id="WalletSubTabBalances" style="background: none; border: none; padding: 10px; font-weight: 700; cursor: pointer; color: var(--admin-blue); border-bottom: 2px solid var(--admin-blue);">User Balances</button>
+          <button onclick="switchWalletSubTab('Recharges')" id="WalletSubTabRecharges" style="background: none; border: none; padding: 10px; font-weight: 700; cursor: pointer; color: #666;">Recharge History</button>
+        </div>
+
+        <div id="WalletBalancesView">
+          <div class="admin-table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>User Name</th>
+                  <th>Customer ID</th>
+                  <th>Balance</th>
+                  <th>Last Updated</th>
+                </tr>
+              </thead>
+              <tbody id="WalletBalanceList"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="WalletRechargesView" class="hidden">
+          <div class="admin-table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>User Name</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Reference</th>
+                </tr>
+              </thead>
+              <tbody id="WalletRechargeList"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -535,9 +587,10 @@
     document.getElementById('TabContentApprovals').classList.add('hidden');
     document.getElementById('TabContentManage').classList.add('hidden');
     document.getElementById('TabContentMonitoring').classList.add('hidden');
+    document.getElementById('TabContentWallet').classList.add('hidden');
     
     // Reset styles
-    const tabs = ['Approvals', 'Manage', 'Monitoring'];
+    const tabs = ['Approvals', 'Manage', 'Monitoring', 'Wallet'];
     tabs.forEach(t => {
       const btn = document.getElementById('Tab' + t);
       if (btn) {
@@ -558,9 +611,12 @@
     } else if (tab === 'Manage') {
       document.getElementById('TabContentManage').classList.remove('hidden');
       fetchMasterList();
-    } else {
+    } else if (tab === 'Monitoring') {
       document.getElementById('TabContentMonitoring').classList.remove('hidden');
       fetchSessions();
+    } else if (tab === 'Wallet') {
+      document.getElementById('TabContentWallet').classList.remove('hidden');
+      fetchWalletAdminData();
     }
   }
 
@@ -723,6 +779,70 @@
       });
       container.scrollTop = container.scrollHeight;
     } catch (e) { console.error('Fetch chat history failed', e); }
+  }
+
+  // --- Wallet Admin Logic ---
+  function switchWalletSubTab(sub) {
+    document.getElementById('WalletBalancesView').classList.add('hidden');
+    document.getElementById('WalletRechargesView').classList.add('hidden');
+    document.getElementById('WalletSubTabBalances').style.color = '#666';
+    document.getElementById('WalletSubTabBalances').style.borderBottom = 'none';
+    document.getElementById('WalletSubTabRecharges').style.color = '#666';
+    document.getElementById('WalletSubTabRecharges').style.borderBottom = 'none';
+
+    document.getElementById(`Wallet${sub}View`).classList.remove('hidden');
+    document.getElementById(`WalletSubTab${sub}`).style.color = 'var(--admin-blue)';
+    document.getElementById(`WalletSubTab${sub}`).style.borderBottom = '2px solid var(--admin-blue)';
+  }
+
+  async function fetchWalletAdminData() {
+    const walletApi = API_BASE.replace('/astrologers', '/wallet');
+    try {
+      // 1. Fetch Balances
+      const resB = await fetch(`${walletApi}/admin/balances`, {
+        headers: { 'Authorization': adminToken }
+      });
+      const balances = await resB.json();
+      
+      let totalLiability = 0;
+      const bList = document.getElementById('WalletBalanceList');
+      bList.innerHTML = '';
+      balances.forEach(w => {
+        totalLiability += Number(w.balance);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div style="font-weight:600;">${w.user_name}</div></td>
+          <td style="font-family:monospace; font-size:12px;">${w.shopify_customer_id}</td>
+          <td style="font-weight:700; color:var(--admin-blue);">₹${Number(w.balance).toFixed(2)}</td>
+          <td style="font-size:12px; color:#888;">${new Date(w.updated_at).toLocaleString()}</td>
+        `;
+        bList.appendChild(tr);
+      });
+      document.getElementById('TotalLiability').innerText = '₹' + totalLiability.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+      // 2. Fetch Recharges
+      const resR = await fetch(`${walletApi}/admin/recharges`, {
+        headers: { 'Authorization': adminToken }
+      });
+      const recharges = await resR.json();
+      
+      let recentTotal = 0;
+      const rList = document.getElementById('WalletRechargeList');
+      rList.innerHTML = '';
+      recharges.forEach(t => {
+        recentTotal += Number(t.amount);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div style="font-weight:600;">${t.user_name}</div></td>
+          <td style="font-weight:700; color:#166534;">+₹${Number(t.amount).toFixed(2)}</td>
+          <td style="font-size:12px;">${new Date(t.created_at).toLocaleDateString()}</td>
+          <td style="font-family:monospace; font-size:11px;">${t.reference_id || 'manual'}</td>
+        `;
+        rList.appendChild(tr);
+      });
+      document.getElementById('RecentRechargeTotal').innerText = '₹' + recentTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+    } catch (e) { console.error('Fetch wallet data failed', e); }
   }
 </script>
 
