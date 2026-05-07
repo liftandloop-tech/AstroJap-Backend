@@ -29,5 +29,6 @@ router.get('/admin/pending',              c.getPendingAstrologers);    // List a
 router.get('/admin/all',                  c.getAllAstrologersAdmin);   // List ALL (including approved)
 router.post('/admin/approve',             c.approveAstrologer);        // Approve application
 router.post('/admin/reject',              c.rejectAstrologer);         // Reject application
+router.post('/admin/update-prices',       c.updatePricesAdmin);        // Update pricing
 
 module.exports = router;

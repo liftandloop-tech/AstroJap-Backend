@@ -651,3 +651,28 @@ exports.uploadProfileImage = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.updatePricesAdmin = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') return res.status(403).json({ error: 'Unauthorized' });
+
+  const { id, price_20_min, price_60_min } = req.body;
+  if (!id) return missingField(res, 'id');
+
+  try {
+    const { data, error } = await supabase
+      .from('astrologers')
+      .update({ 
+        price_20_min: parseFloat(price_20_min), 
+        price_60_min: parseFloat(price_60_min) 
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(200).json({ message: 'Prices updated successfully', data });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
