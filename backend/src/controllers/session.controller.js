@@ -1,5 +1,6 @@
 const axios    = require('axios');
 const supabase = require('../config/supabase');
+const { notifyAstrologer } = require('../services/socket.service');
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -338,6 +339,14 @@ exports.createManualSession = async (req, res) => {
       { onConflict: 'shopify_customer_id' }
     );
 
+    // 7. Notify Astrologer via Socket
+    notifyAstrologer(astrologer_id, 'chat-request', {
+      sessionId: session.id,
+      customerName: customer_name || 'A Customer',
+      duration: durationInt,
+      scheduledAt: session.scheduled_at
+    });
+
     res.status(200).json({
       session_id:      session.id,
       user_balance:    paymentResult.user_balance,
@@ -400,35 +409,78 @@ exports.sendChatMessage = async (req, res) => {
       .single();
 
     if (error) throw error;
+
+    // ─── Real-time broadcast via Socket.io ───
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      io.to(session_id).emit('receive-msg', {
+        id:          data.id,
+        sessionId:   session_id,
+        senderId:    sender_id,
+        senderType:  sender_type,
+        text:        text,
+        is_system:   is_system || false,
+        created_at:  data.created_at
+      });
+    } catch (socketErr) {
+      console.warn('Socket broadcast failed in sendChatMessage:', socketErr.message);
+    }
+
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// ─── GET /api/sessions/admin/all ─────────────────────────────────────────────
-// Admin only: Get ALL sessions with participant details for monitoring
 exports.getAdminSessions = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
   try {
+    // Attempt to get sessions with joined data
     const { data, error } = await supabase
       .from('sessions')
       .select(`
         *,
-        astrologers (name, profile_image),
-        users (name, shopify_customer_id)
+        astrologers (name, profile_image)
       `)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    res.status(200).json(data);
+
+    // Manually enrich with user names from the 'users' table to be more resilient
+    // as the foreign key relationship for 'users' might not be standard.
+    const enrichedData = await Promise.all((data || []).map(async (session) => {
+      if (!session.user_id) return { ...session, users: { name: 'Anonymous' } };
+      
+      const { data: userData } = await supabase
+        .from('users')
+        .select('name')
+        .eq('shopify_customer_id', session.user_id.toString())
+        .maybeSingle();
+        
+      return {
+        ...session,
+        users: { name: userData?.name || `User ${session.user_id.substring(0, 5)}` }
+      };
+    }));
+
+    res.status(200).json(enrichedData);
   } catch (error) {
+    console.error('getAdminSessions error:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
-// ─── GET /api/sessions/admin/messages/:sessionId ──────────────────────────────
-// Admin only: Get all messages for a specific session by ID
 exports.getAdminChatMessages = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
   const { sessionId } = req.params;
   if (!sessionId) return missingField(res, 'sessionId');
 
@@ -439,9 +491,15 @@ exports.getAdminChatMessages = async (req, res) => {
       .eq('session_id', sessionId)
       .order('created_at', { ascending: true });
 
-    if (error) throw error;
-    res.status(200).json(data);
+    if (error) {
+      // Graceful handle if table doesn't exist
+      if (error.code === '42P01') return res.status(200).json([]);
+      throw error;
+    }
+    
+    res.status(200).json(data || []);
   } catch (error) {
+    console.error('getAdminChatMessages error:', error);
     res.status(500).json({ error: error.message });
   }
 };

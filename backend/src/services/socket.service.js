@@ -40,12 +40,29 @@ const initSocket = (server) => {
       socket.join(sessionId);
     });
 
-    socket.on("send-msg", (data) => {
+    socket.on("send-msg", async (data) => {
       // data: { sessionId, senderId, senderType, text, timestamp }
       console.log(`New message in ${data.sessionId}: ${data.text}`);
+      
+      // 1. Broadcast to other participants in the session
       io.to(data.sessionId).emit("receive-msg", data);
       
-      // Optional: Persist to DB (if you have a messages table)
+      // 2. Persist to DB for history and admin review
+      try {
+        const { error } = await supabase
+          .from('messages')
+          .insert({
+            session_id:  data.sessionId,
+            sender_id:   data.senderId,
+            sender_type: data.senderType,
+            text:        data.text,
+            is_system:   false
+          });
+        
+        if (error) console.error("Error persisting socket message:", error);
+      } catch (err) {
+        console.error("Socket persistence exception:", err);
+      }
     });
 
     socket.on("disconnect", () => {
@@ -63,4 +80,13 @@ const getIO = () => {
   return io;
 };
 
-module.exports = { initSocket, getIO };
+const notifyAstrologer = (astrologerId, event, data) => {
+  if (!io) {
+    console.warn("Socket.io not initialized, cannot notify astrologer");
+    return;
+  }
+  console.log(`Notifying astrologer ${astrologerId} with event ${event}`);
+  io.to(`astro-${astrologerId}`).emit(event, data);
+};
+
+module.exports = { initSocket, getIO, notifyAstrologer };

@@ -1,5 +1,5 @@
 const supabase = require('../config/supabase');
-const { getIO } = require('../services/socket.service');
+const { notifyAstrologer } = require('../services/socket.service');
 
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
@@ -298,18 +298,13 @@ exports.bookSlot = async (req, res) => {
       );
 
     // Step 8: Notify astrologer via Socket.io
-    try {
-      const io = getIO();
-      io.to(`astro-${astrologer_id}`).emit('new-booking-alert', {
-        session_id:    session.id,
-        customer_name: customer_name || `Customer ${customer_id}`,
-        duration:      dur,
-        scheduled_at:  slot.start_time,
-        price
-      });
-    } catch (_) {
-      // Socket not critical — don't fail the booking if socket is down
-    }
+    notifyAstrologer(astrologer_id, 'new-booking-alert', {
+      session_id:    session.id,
+      customer_name: customer_name || `Customer ${customer_id}`,
+      duration:      dur,
+      scheduled_at:  slot.start_time,
+      price
+    });
 
     res.status(200).json({
       success:       true,

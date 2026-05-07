@@ -1,5 +1,6 @@
 
 {{ 'api.js' | asset_url | script_tag }}
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 {%- style -%}
   .astro-dashboard {
     display: flex;
@@ -201,6 +202,51 @@
   .chat-messages { flex: 1; padding: 20px; background: #fff; overflow-y: auto; }
   .chat-input { padding: 16px; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; }
   .chat-input input { flex: 1; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; }
+
+  /* ── Chat Request Popup ── */
+  .chat-request-popup {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+  }
+  .cr-content {
+    background: #fff;
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .cr-header { margin-bottom: 20px; }
+  .cr-icon { font-size: 40px; margin-bottom: 12px; }
+  .cr-title { font-size: 20px; font-weight: 800; color: #1e293b; }
+  .cr-body { margin-bottom: 24px; color: #64748b; font-size: 15px; }
+  .cr-body p { margin: 8px 0; }
+  .cr-note { margin-top: 16px; font-weight: 600; color: #f97316; }
+  .cr-actions { display: flex; flex-direction: column; gap: 12px; }
+  .cr-btn-accept {
+    background: #f97316; color: #fff; border: none;
+    padding: 14px; border-radius: 12px; font-weight: 700;
+    cursor: pointer; font-size: 16px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  }
+  .cr-btn-accept:hover { background: #ea580c; transform: translateY(-2px); }
+  .cr-btn-reject {
+    background: #f1f5f9; color: #64748b; border: none;
+    padding: 12px; border-radius: 12px; font-weight: 600;
+    cursor: pointer; font-size: 14px;
+  }
+  .cr-btn-reject:hover { background: #e2e8f0; }
 
 {%- endstyle -%}
 
@@ -454,6 +500,25 @@
     </div>
 
   </main>
+
+  <!-- ── Chat Request Popup ── -->
+  <div id="chatRequestPopup" class="chat-request-popup" style="display:none;">
+    <div class="cr-content">
+      <div class="cr-header">
+        <div class="cr-icon">💬</div>
+        <div class="cr-title">Incoming Chat Request!</div>
+      </div>
+      <div class="cr-body">
+        <p><strong>Customer:</strong> <span id="cr-customer-name">—</span></p>
+        <p><strong>Duration:</strong> <span id="cr-duration">—</span> min</p>
+        <p class="cr-note">A user is waiting for you to start the session.</p>
+      </div>
+      <div class="cr-actions">
+        <button class="cr-btn-accept" id="cr-accept-btn">ACCEPT & JOIN CHAT</button>
+        <button class="cr-btn-reject" onclick="closeChatRequest()">IGNORE</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -531,9 +596,84 @@
       
       console.log('Dashboard data loaded:', stats);
 
+      // ─── Initialize Real-time Notifications ───
+      initSocketNotifications();
+
     } catch (e) {
       console.error('Dashboard stats error:', e);
     }
+  }
+
+  // ─── Real-time Notifications (Socket.io) ──────────────────────────────────────
+  let socket;
+  function initSocketNotifications() {
+    if (socket) return; // Prevent multiple connections
+    
+    const socketServer = API.replace('/api', ''); // Get base URL (e.g. https://astro-jap-backend.vercel.app)
+    console.log('Connecting to socket server:', socketServer);
+    
+    socket = io(socketServer);
+
+    socket.on('connect', () => {
+      console.log('Connected to notification server');
+      if (ASTRO_ID) {
+        socket.emit('astrologer-online', ASTRO_ID);
+      }
+    });
+
+    socket.on('chat-request', (data) => {
+      console.log('Received chat request:', data);
+      showChatRequest(data, true); // true = immediate
+    });
+
+    socket.on('new-booking-alert', (data) => {
+      console.log('Received new booking alert:', data);
+      showChatRequest(data, false); // false = scheduled
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from notification server');
+    });
+  }
+
+  function showChatRequest(data, isImmediate) {
+    const popup = document.getElementById('chatRequestPopup');
+    document.getElementById('cr-customer-name').textContent = data.customerName || data.customer_name;
+    document.getElementById('cr-duration').textContent      = data.duration;
+    
+    const titleEl = document.querySelector('.cr-title');
+    const noteEl  = document.querySelector('.cr-note');
+    const acceptBtn = document.getElementById('cr-accept-btn');
+
+    if (isImmediate) {
+      titleEl.textContent = 'Incoming Chat Request!';
+      noteEl.textContent  = 'A user is waiting for you to start the session.';
+      acceptBtn.textContent = 'ACCEPT & JOIN CHAT';
+      acceptBtn.onclick = () => {
+        window.location.href = `/pages/chat?session_id=${data.sessionId || data.session_id}`;
+      };
+    } else {
+      titleEl.textContent = 'New Scheduled Booking!';
+      const time = new Date(data.scheduled_at).toLocaleString('en-IN', { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      noteEl.textContent  = `You have a new booking for ${time}.`;
+      acceptBtn.textContent = 'VIEW BOOKINGS';
+      acceptBtn.onclick = () => {
+        switchTab('sessions');
+        closeChatRequest();
+      };
+    }
+
+    popup.style.display = 'flex';
+    
+    // Optional: Play a sound
+    try {
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
+      audio.play();
+    } catch(e) { console.warn('Could not play notification sound', e); }
+  }
+
+  function closeChatRequest() {
+    document.getElementById('chatRequestPopup').style.display = 'none';
   }
 
   // ─── Availability toggle ──────────────────────────────────────────────────────
