@@ -187,12 +187,12 @@
 
       <div id="LoginForm">
         <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" id="LoginEmail" class="form-input" placeholder="name@example.com">
+          <label class="form-label">Email Address <span style="color:red;">*</span></label>
+          <input type="email" id="LoginEmail" class="form-input" placeholder="name@example.com" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" id="LoginPass" class="form-input" placeholder="••••••••">
+          <label class="form-label">Password <span style="color:red;">*</span></label>
+          <input type="password" id="LoginPass" class="form-input" placeholder="••••••••" required>
         </div>
         <button id="LoginBtn" class="btn-primary" onclick="handleLogin()">Sign In to Dashboard</button>
 
@@ -200,22 +200,22 @@
 
       <div id="SignupForm" class="hidden">
         <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input type="text" id="RegName" class="form-input" placeholder="Your Name">
+          <label class="form-label">Full Name <span style="color:red;">*</span></label>
+          <input type="text" id="RegName" class="form-input" placeholder="Your Name" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" id="RegEmail" class="form-input" placeholder="name@example.com">
+          <label class="form-label">Email Address <span style="color:red;">*</span></label>
+          <input type="email" id="RegEmail" class="form-input" placeholder="name@example.com" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Mobile Number</label>
+          <label class="form-label">Mobile Number <span style="color:red;">*</span></label>
           <div style="position: relative;">
-            <input type="tel" id="RegPhone" class="form-input" value="+91 " placeholder="+91 99999 99999" onfocus="if(this.value==='') this.value='+91 '" oninput="if(!this.value.startsWith('+91 ')) this.value='+91 '">
+            <input type="tel" id="RegPhone" class="form-input" value="+91 " placeholder="+91 99999 99999" onfocus="if(this.value==='') this.value='+91 '" oninput="if(!this.value.startsWith('+91 ')) this.value='+91 '" required>
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Create Password</label>
-          <input type="password" id="RegPass" class="form-input" placeholder="••••••••">
+          <label class="form-label">Create Password <span style="color:red;">*</span></label>
+          <input type="password" id="RegPass" class="form-input" placeholder="••••••••" required>
         </div>
         <button id="SignupBtn" class="btn-primary" onclick="handleSignup()">Create Account</button>
 
@@ -237,16 +237,16 @@
         <div id="StepSection1">
           <h2 style="margin-top:0;">Professional Profile</h2>
           <div class="form-group">
-            <label class="form-label">Experience (Years)</label>
-            <input type="number" id="ExpYears" class="form-input" placeholder="e.g. 10">
+            <label class="form-label">Experience (Years) <span style="color:red;">*</span></label>
+            <input type="number" id="ExpYears" class="form-input" placeholder="e.g. 10" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Languages Known (Comma separated)</label>
-            <input type="text" id="Langs" class="form-input" placeholder="Hindi, English, etc.">
+            <label class="form-label">Languages Known (Comma separated) <span style="color:red;">*</span></label>
+            <input type="text" id="Langs" class="form-input" placeholder="Hindi, English, etc." required>
           </div>
           <div class="form-group">
-            <label class="form-label">Short Bio</label>
-            <textarea id="Bio" class="form-input" rows="4" placeholder="Tell users about your journey..."></textarea>
+            <label class="form-label">Short Bio <span style="color:red;">*</span></label>
+            <textarea id="Bio" class="form-input" rows="4" placeholder="Tell users about your journey..." required></textarea>
           </div>
           <button class="btn-primary" onclick="saveStep(1)">Next Step: Expertise &raquo;</button>
         </div>
@@ -255,7 +255,7 @@
         <div id="StepSection2" class="hidden">
           <h2 style="margin-top:0;">Expertise & Background</h2>
           <div class="form-group">
-            <label class="form-label">Expertise (Select all that apply)</label>
+            <label class="form-label">Expertise (Select at least one) <span style="color:red;">*</span></label>
             <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;">
               <label><input type="checkbox" name="expertise" value="Love"> Love & Relationship</label>
               <label><input type="checkbox" name="expertise" value="Career"> Career & Job</label>
@@ -264,7 +264,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Specialization</label>
+            <label class="form-label">Specialization (Select at least one) <span style="color:red;">*</span></label>
             <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;">
               <label><input type="checkbox" name="spec" value="Vedic"> Vedic Astrology</label>
               <label><input type="checkbox" name="spec" value="Tarot"> Tarot Reading</label>
@@ -280,11 +280,11 @@
           <h2 style="margin-top:0;">Identity Verification</h2>
           <p style="font-size:14px; color:#666; margin-bottom:25px;">Please upload your Aadhar Card or PAN Card for verification.</p>
           <div class="form-group">
-            <label class="form-label">Govt ID Proof (Photo)</label>
+            <label class="form-label">Govt ID Proof (Photo) <span style="color:red;">*</span></label>
             <input type="file" id="GovtId" class="form-input">
           </div>
           <div class="form-group">
-            <label class="form-label">Selfie with ID Card</label>
+            <label class="form-label">Selfie with ID Card <span style="color:red;">*</span></label>
             <input type="file" id="Selfie" class="form-input">
           </div>
           <button class="btn-primary" onclick="saveStep(3)">Next Step: Bank Details &raquo;</button>
@@ -294,20 +294,20 @@
         <div id="StepSection4" class="hidden">
           <h2 style="margin-top:0;">Payout Settings</h2>
           <div class="form-group">
-            <label class="form-label">Account Holder Name</label>
-            <input type="text" id="BankName" class="form-input" placeholder="As per Bank Records">
+            <label class="form-label">Account Holder Name <span style="color:red;">*</span></label>
+            <input type="text" id="BankName" class="form-input" placeholder="As per Bank Records" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Bank Account Number</label>
-            <input type="text" id="BankAcc" class="form-input" placeholder="000000000000">
+            <label class="form-label">Bank Account Number <span style="color:red;">*</span></label>
+            <input type="text" id="BankAcc" class="form-input" placeholder="000000000000" required>
           </div>
           <div class="form-group">
-            <label class="form-label">IFSC Code</label>
-            <input type="text" id="BankIfsc" class="form-input" placeholder="SBIN0001234">
+            <label class="form-label">IFSC Code <span style="color:red;">*</span></label>
+            <input type="text" id="BankIfsc" class="form-input" placeholder="SBIN0001234" required>
           </div>
           <div class="form-group">
-            <label class="form-label">UPI ID (Optional)</label>
-            <input type="text" id="UpiId" class="form-input" placeholder="username@upi">
+            <label class="form-label">UPI ID <span style="color:red;">*</span></label>
+            <input type="text" id="UpiId" class="form-input" placeholder="username@upi" required>
           </div>
           <button class="btn-primary" onclick="saveStep(4)">Submit for Approval &raquo;</button>
         </div>
@@ -766,13 +766,28 @@
     const payload = { id: currentUser.id };
     
     if(step === 1) {
-      payload.experience_years = document.getElementById('ExpYears').value;
-      payload.languages = document.getElementById('Langs').value.split(',').map(l => l.trim());
-      payload.bio = document.getElementById('Bio').value;
+      const exp = document.getElementById('ExpYears').value;
+      const langs = document.getElementById('Langs').value;
+      const bio = document.getElementById('Bio').value;
+
+      if (!exp || !langs || !bio) {
+        showAlert('Please fill all fields to continue.', 'error');
+        return;
+      }
+
+      payload.experience_years = exp;
+      payload.languages = langs.split(',').map(l => l.trim());
+      payload.bio = bio;
       payload.onboarding_step = 2;
     } else if(step === 2) {
       const expertise = Array.from(document.querySelectorAll('input[name="expertise"]:checked')).map(el => el.value);
       const spec = Array.from(document.querySelectorAll('input[name="spec"]:checked')).map(el => el.value);
+      
+      if (expertise.length === 0 || spec.length === 0) {
+        showAlert('Please select at least one expertise and one specialization.', 'error');
+        return;
+      }
+
       payload.expertise = expertise;
       payload.specialization = spec;
       payload.onboarding_step = 3;
@@ -821,10 +836,20 @@
         btn.textContent = originalText;
       }
     } else if(step === 4) {
-      payload.bank_account_name = document.getElementById('BankName').value;
-      payload.bank_account_number = document.getElementById('BankAcc').value;
-      payload.ifsc_code = document.getElementById('BankIfsc').value;
-      payload.upi_id = document.getElementById('UpiId').value;
+      const bName = document.getElementById('BankName').value;
+      const bAcc = document.getElementById('BankAcc').value;
+      const bIfsc = document.getElementById('BankIfsc').value;
+      const upi = document.getElementById('UpiId').value;
+
+      if (!bName || !bAcc || !bIfsc || !upi) {
+        showAlert('Please fill all bank and UPI details.', 'error');
+        return;
+      }
+
+      payload.bank_account_name = bName;
+      payload.bank_account_number = bAcc;
+      payload.ifsc_code = bIfsc;
+      payload.upi_id = upi;
       payload.onboarding_step = 5;
     }
 
