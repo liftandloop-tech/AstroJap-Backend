@@ -193,3 +193,54 @@ async function provisionCometChatUser(astrologer) {
     console.error('CometChat provisioning failed:', err.response?.data || err.message);
   }
 }
+
+// ─── POST /api/webhooks/shopify/order-fulfilled ──────────────────────────────
+// Triggered when an order is marked as fulfilled in Shopify.
+// Action: Credit 50% of the order value to the user's cashback balance.
+
+exports.handleOrderFulfilled = async (req, res) => {
+  // 1. HMAC verification
+  const hmacHeader = req.headers['x-shopify-hmac-sha256'];
+  if (!hmacHeader || !verifyShopifyHmac(req.body, hmacHeader)) {
+    console.warn('Fulfilled webhook rejected: invalid HMAC');
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  let order;
+  try {
+    order = JSON.parse(req.body.toString('utf8'));
+  } catch {
+    return res.status(400).json({ error: 'Invalid JSON payload' });
+  }
+
+  try {
+    const customerId = order.customer ? order.customer.id.toString() : null;
+    const orderId    = order.id.toString();
+
+    if (!customerId) {
+      console.warn(`Order ${orderId} has no customer — skipping cashback.`);
+      return res.status(200).send('No customer found');
+    }
+
+    // Skip cashback if it's a wallet recharge (they already paid for balance)
+    const isRecharge = order.line_items.some(item => item.sku === 'WALLET_RECHARGE');
+    if (isRecharge) {
+      return res.status(200).send('Recharge order — no cashback');
+    }
+
+    // 2. Calculate Cashback (50% of total_price)
+    const totalOrderValue = parseFloat(order.total_price);
+    const cashbackAmount  = totalOrderValue * 0.5;
+
+    console.log(`Order Fulfilled: ${orderId}. Calculating cashback for customer ${customerId}: ₹${cashbackAmount}`);
+
+    // 3. Credit the Wallet
+    const walletController = require('./wallet.controller');
+    await walletController.creditCashback(customerId, cashbackAmount, orderId);
+
+    res.status(200).send('Cashback processed');
+  } catch (error) {
+    console.error('Order Fulfilled Webhook Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};

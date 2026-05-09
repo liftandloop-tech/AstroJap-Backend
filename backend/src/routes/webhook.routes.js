@@ -4,6 +4,7 @@ const webhookController = require('../controllers/webhook.controller');
 
 router.post('/shopify/order-created',    webhookController.handleOrderCreated);
 router.post('/shopify/customer-updated', webhookController.handleCustomerUpdated);
+router.post('/shopify/order-fulfilled',  webhookController.handleOrderFulfilled);
 
 
 module.exports = router;
