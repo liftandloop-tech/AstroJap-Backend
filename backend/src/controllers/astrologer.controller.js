@@ -742,19 +742,40 @@ exports.sendOTP = async (req, res) => {
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
 
     if (type === "signup") {
-      const { error: upsertError } = await supabase
+      const { data: existingProfile } = await supabase
         .from("astrologers")
-        .upsert([{
-          mobile: cleanMobile,
-          email: email,
-          name: name,
-          otp_code: otp,
-          otp_expires_at: expiresAt,
-          approval_status: "onboarding",
-          onboarding_step: 1
-        }], { onConflict: "mobile" });
+        .select("id")
+        .eq("mobile", cleanMobile)
+        .maybeSingle();
 
-      if (upsertError) throw upsertError;
+      let writeError;
+      if (existingProfile) {
+        const { error: updateError } = await supabase
+          .from("astrologers")
+          .update({
+            email: email,
+            name: name,
+            otp_code: otp,
+            otp_expires_at: expiresAt
+          })
+          .eq("mobile", cleanMobile);
+        writeError = updateError;
+      } else {
+        const { error: insertError } = await supabase
+          .from("astrologers")
+          .insert([{
+            mobile: cleanMobile,
+            email: email,
+            name: name,
+            otp_code: otp,
+            otp_expires_at: expiresAt,
+            approval_status: "onboarding",
+            onboarding_step: 1
+          }]);
+        writeError = insertError;
+      }
+
+      if (writeError) throw writeError;
     } else {
       const { error: updateError } = await supabase
         .from("astrologers")
