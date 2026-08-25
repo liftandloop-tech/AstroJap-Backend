@@ -8,6 +8,8 @@ const upload  = multer({ storage: multer.memoryStorage() });
 router.get('/',                           c.getAllAstrologers);        // List approved+available
 router.post('/signup',                    c.signup);                   // Register new astrologer
 router.post('/login',                     c.login);                    // Login (gated by status)
+router.post('/send-otp',                  c.sendOTP);                  // Send OTP to mobile
+router.post('/verify-otp',                c.verifyOTP);                // Verify mobile OTP
 router.get('/profile/:id',               c.getProfile);               // Public profile
 router.get('/:id/pricing',               c.getPricing);               // Live pricing for booking
 

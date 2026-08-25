@@ -685,3 +685,164 @@ exports.updatePricesAdmin = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+// ─── OTP AUTHENTICATION FLOW (NEXG) ──────────────────────────────────────────
+
+const smsService = require("../services/sms.service");
+
+exports.sendOTP = async (req, res) => {
+  const { mobile, type, name, email } = req.body;
+  if (!mobile) return res.status(400).json({ error: "Missing required field: mobile" });
+  if (!type) return res.status(400).json({ error: "Missing required field: type" });
+
+  try {
+    let cleanMobile = mobile.replace(/\s+/g, "");
+    if (!cleanMobile.startsWith("+")) {
+      if (cleanMobile.length === 10) cleanMobile = "+91" + cleanMobile;
+    }
+
+    if (type === "login") {
+      const { data: profile, error } = await supabase
+        .from("astrologers")
+        .select("*")
+        .eq("mobile", cleanMobile)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!profile) {
+        return res.status(404).json({ error: "This mobile number is not registered. Please sign up first." });
+      }
+    } else if (type === "signup") {
+      if (!email) return res.status(400).json({ error: "Missing required field: email" });
+      if (!name) return res.status(400).json({ error: "Missing required field: name" });
+
+      const { data: existingMobile } = await supabase
+        .from("astrologers")
+        .select("*")
+        .eq("mobile", cleanMobile)
+        .maybeSingle();
+
+      if (existingMobile && existingMobile.approval_status === "approved") {
+        return res.status(400).json({ error: "An approved astrologer account already exists with this mobile number." });
+      }
+
+      const { data: existingEmail } = await supabase
+        .from("astrologers")
+        .select("*")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (existingEmail && existingEmail.approval_status === "approved") {
+        return res.status(400).json({ error: "An approved astrologer account already exists with this email address." });
+      }
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+
+    if (type === "signup") {
+      const { error: upsertError } = await supabase
+        .from("astrologers")
+        .upsert([{
+          mobile: cleanMobile,
+          email: email,
+          name: name,
+          otp_code: otp,
+          otp_expires_at: expiresAt,
+          approval_status: "onboarding",
+          onboarding_step: 1
+        }], { onConflict: "mobile" });
+
+      if (upsertError) throw upsertError;
+    } else {
+      const { error: updateError } = await supabase
+        .from("astrologers")
+        .update({ otp_code: otp, otp_expires_at: expiresAt })
+        .eq("mobile", cleanMobile);
+
+      if (updateError) throw updateError;
+    }
+
+    const smsResult = await smsService.sendOTP(cleanMobile, otp);
+
+    res.status(200).json({
+      message: "OTP sent successfully",
+      mode: smsResult.mode
+    });
+  } catch (error) {
+    console.error("Send OTP error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.verifyOTP = async (req, res) => {
+  const { mobile, otp } = req.body;
+  if (!mobile) return res.status(400).json({ error: "Missing required field: mobile" });
+  if (!otp) return res.status(400).json({ error: "Missing required field: otp" });
+
+  try {
+    let cleanMobile = mobile.replace(/\s+/g, "");
+    if (!cleanMobile.startsWith("+")) {
+      if (cleanMobile.length === 10) cleanMobile = "+91" + cleanMobile;
+    }
+
+    const { data: profile, error } = await supabase
+      .from("astrologers")
+      .select("*")
+      .eq("mobile", cleanMobile)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!profile) {
+      return res.status(404).json({ error: "Astrologer profile not found." });
+    }
+
+    const now = new Date();
+    const expiry = new Date(profile.otp_expires_at);
+
+    if (profile.otp_code !== otp || now > expiry) {
+      return res.status(400).json({ error: "Invalid or expired OTP. Please try again." });
+    }
+
+    await supabase
+      .from("astrologers")
+      .update({ otp_code: null, otp_expires_at: null })
+      .eq("mobile", cleanMobile);
+
+    if (profile.approval_status === "approved") {
+      const mockToken = "mock_session_token_" + profile.id + "_" + Date.now();
+      res.status(200).json({
+        message: "Login successful",
+        token: mockToken,
+        user: {
+          id: profile.id,
+          name: profile.name,
+          approval_status: profile.approval_status,
+          onboarding_step: profile.onboarding_step,
+          is_accepting_bookings: profile.is_accepting_bookings,
+          price_20_min: profile.price_20_min,
+          price_60_min: profile.price_60_min
+        }
+      });
+    } else {
+      if (profile.onboarding_step === 1) {
+        await createShopifyCustomer({ id: profile.id, name: profile.name, email: profile.email, mobile: cleanMobile });
+      }
+
+      res.status(200).json({
+        message: "Mobile verification successful",
+        user: {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email,
+          approval_status: profile.approval_status,
+          onboarding_step: profile.onboarding_step || 1
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Verify OTP error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};

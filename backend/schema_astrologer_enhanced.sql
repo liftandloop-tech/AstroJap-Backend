@@ -75,4 +75,14 @@ BEGIN
         ALTER TABLE astrologers ADD COLUMN cometchat_uid TEXT UNIQUE;
     END IF;
 
+
+    -- OTP Verification Columns
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='astrologers' AND column_name='otp_code') THEN
+        ALTER TABLE astrologers ADD COLUMN otp_code TEXT;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='astrologers' AND column_name='otp_expires_at') THEN
+        ALTER TABLE astrologers ADD COLUMN otp_expires_at TIMESTAMP WITH TIME ZONE;
+    END IF;
+
 END $$;
