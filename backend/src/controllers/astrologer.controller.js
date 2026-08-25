@@ -769,7 +769,7 @@ exports.sendOTP = async (req, res) => {
             name: name,
             otp_code: otp,
             otp_expires_at: expiresAt,
-            approval_status: "onboarding",
+            approval_status: "pending",
             onboarding_step: 1
           }]);
         writeError = insertError;
