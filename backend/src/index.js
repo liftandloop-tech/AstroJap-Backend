@@ -64,7 +64,7 @@ app.use('/api/reviews',     reviewRoutes);
 
 
 app.get('/', (req, res) => {
-  res.send('AstroJap Backend API is running');
+  res.send('AstroJap Backend API is running v2');
 });
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
