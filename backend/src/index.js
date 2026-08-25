@@ -64,7 +64,11 @@ app.use('/api/reviews',     reviewRoutes);
 
 
 app.get('/', (req, res) => {
-  res.send('AstroJap Backend API is running v2');
+  const envKeys = Object.keys(process.env).filter(k => k.startsWith('NEXG') || k.startsWith('SUPABASE'));
+  res.json({
+    status: 'running',
+    keys: envKeys
+  });
 });
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
