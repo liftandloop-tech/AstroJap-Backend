@@ -17,7 +17,7 @@ exports.sendOTP = async (mobile, otp) => {
   }
 
   // Construct message matching DLT template
-  const message = `Your OTP for registration on ASTROJP is ${otp} This OTP is valid for 10 minutes. Please do not share this OTP with anyone. - ASTOJP`;
+  const message = `Your OTP for registration on ASTROJP is ${otp} This OTP is valid for 10 minutes. Please do not share this OTP with anyone. - ASTROJP`;
   const messageId = crypto.randomUUID();
 
   console.log(`[SMS Service] Sending OTP ${otp} to ${mobile} (Cleaned: ${cleanMobile})...`);
