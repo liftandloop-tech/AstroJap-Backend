@@ -6,7 +6,7 @@ exports.sendOTP = async (mobile, otp) => {
   const baseUrl = process.env.NEXG_API_BASE_URL || 'https://automate.nexgplatforms.com';
   
   // DLT template parameters
-  const header = process.env.NEXG_HEADER || 'ASTROJP';
+  const header = process.env.NEXG_HEADER || 'ASTOJP';
   const templateId = process.env.NEXG_TEMPLATE_ID || '1277178695958111044';
   const entityId = process.env.NEXG_ENTITY_ID || '1201178653359151677';
 
@@ -17,7 +17,7 @@ exports.sendOTP = async (mobile, otp) => {
   }
 
   // Construct message matching DLT template
-  const message = `Your OTP for registration on ASTROJP is ${otp} This OTP is valid for 10 minutes. Please do not share this OTP with anyone. - ASTROJP`;
+  const message = `Your OTP for registration on ASTROJP is ${otp} This OTP is valid for 10 minutes. Please do not share this OTP with anyone. - ASTOJP`;
   const messageId = crypto.randomUUID();
 
   console.log(`[SMS Service] Sending OTP ${otp} to ${mobile} (Cleaned: ${cleanMobile})...`);
