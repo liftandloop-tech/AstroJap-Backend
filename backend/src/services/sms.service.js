@@ -7,8 +7,8 @@ exports.sendOTP = async (mobile, otp) => {
   
   // DLT template parameters
   const header = process.env.NEXG_HEADER || 'ASTROJP';
-  const templateId = process.env.NEXG_TEMPLATE_ID || '1207161822938173627';
-  const entityId = process.env.NEXG_ENTITY_ID || '1201161822938173627';
+  const templateId = process.env.NEXG_TEMPLATE_ID || '1277178695958111044';
+  const entityId = process.env.NEXG_ENTITY_ID || '1201178653359151677';
 
   // Sanitize phone number to keep only digits
   let cleanMobile = mobile.replace(/\D/g, '');
