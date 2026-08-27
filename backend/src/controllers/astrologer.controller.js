@@ -560,6 +560,14 @@ exports.approveAstrologer = async (req, res) => {
     // Send Approval Email
     sendStatusNotification(data.email, data.name, 'approved');
 
+    // Send Approval SMS
+    const { sendAstrologerStatusSMS } = require('../services/notification.service');
+    sendAstrologerStatusSMS({
+      mobile: data.mobile,
+      name: data.name,
+      status: 'approved'
+    }).catch(err => console.error('[SMS Status Alert] Failed:', err.message));
+
     // Update Shopify Customer Tag if exists
     if (data.shopify_customer_id) {
        updateShopifyCustomerStatus(data.shopify_customer_id, 'astrologer_approved');
@@ -590,6 +598,15 @@ exports.rejectAstrologer = async (req, res) => {
 
     // Send Rejection Email
     sendStatusNotification(data.email, data.name, 'rejected', reason);
+
+    // Send Rejection SMS
+    const { sendAstrologerStatusSMS } = require('../services/notification.service');
+    sendAstrologerStatusSMS({
+      mobile: data.mobile,
+      name: data.name,
+      status: 'rejected',
+      reason: reason || 'Application does not meet our requirements.'
+    }).catch(err => console.error('[SMS Status Alert] Failed:', err.message));
 
     // Update Shopify Customer Tag if exists
     if (data.shopify_customer_id) {

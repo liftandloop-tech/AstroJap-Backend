@@ -241,3 +241,17 @@ exports.sendChatStartedSMS = async ({ session }) => {
     });
   }
 };
+
+exports.sendAstrologerStatusSMS = async ({ mobile, name, status, reason }) => {
+  if (!mobile) return;
+
+  const templateId = process.env.NEXG_STATUS_TEMPLATE_ID || '1277178720219094004';
+
+  if (status === 'approved') {
+    const message = `Dear ${name}, Thank you for shopping with AstroJap. Your order application is approved. You are live on AstroJap. has been confirmed. Order Amount: Rs. 1 Team AstroJap`;
+    await sendSMSViaNexG({ mobile, message, templateId });
+  } else if (status === 'rejected') {
+    const message = `Dear ${name}, Thank you for shopping with AstroJap. Your order application is rejected. Reason: ${reason || 'requirements not met'} has been confirmed. Order Amount: Rs. 0 Team AstroJap`;
+    await sendSMSViaNexG({ mobile, message, templateId });
+  }
+};
