@@ -90,7 +90,7 @@ exports.startSession = async (req, res) => {
   try {
     const { data: session, error: getError } = await supabase
       .from('sessions')
-      .select('duration_minutes, start_time')
+      .select('user_id, astrologer_id, duration_minutes, start_time')
       .eq('id', session_id)
       .single();
 
@@ -120,6 +120,13 @@ exports.startSession = async (req, res) => {
       .single();
 
     if (updateError) throw updateError;
+
+    // Trigger Chat Started SMS Notification
+    const { sendChatStartedSMS } = require('../services/notification.service');
+    sendChatStartedSMS({
+      session: data
+    }).catch(err => console.error('[SMS Chat Started Alert] Failed:', err.message));
+
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });

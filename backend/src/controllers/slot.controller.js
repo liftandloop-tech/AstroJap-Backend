@@ -220,7 +220,7 @@ exports.bookSlot = async (req, res) => {
     // Step 2: Get astrologer pricing
     const { data: astrologer, error: astroError } = await supabase
       .from('astrologers')
-      .select('name, email, price_20_min, price_60_min, is_accepting_bookings, approval_status')
+      .select('name, email, mobile, price_20_min, price_60_min, is_accepting_bookings, approval_status')
       .eq('id', astrologer_id)
       .single();
 
@@ -317,6 +317,17 @@ exports.bookSlot = async (req, res) => {
         slot.start_time
       );
     }
+
+    // Step 10: Notify customer and astrologer via SMS
+    const { sendBookingSMS } = require('../services/notification.service');
+    sendBookingSMS({
+      customerId: customer_id.toString(),
+      customerName: customer_name || 'Customer',
+      astrologerName: astrologer.name,
+      astrologerMobile: astrologer.mobile,
+      scheduledAt: slot.start_time,
+      price: price
+    }).catch(err => console.error('[SMS Booking Alert] Failed:', err.message));
 
     res.status(200).json({
       success:       true,

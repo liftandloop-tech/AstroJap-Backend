@@ -1,4 +1,10 @@
 const nodemailer = require('nodemailer');
+const axios = require('axios');
+const { createClient } = require('@supabase/supabase-js');
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -97,5 +103,141 @@ exports.notifyAstrologerChatRequest = async (astroEmail, astroName, customerName
     console.log(`[Notification] Chat request email sent to ${astroEmail}`);
   } catch (error) {
     console.error('[Notification] Chat request email failed:', error);
+  }
+};
+
+// ─── AUTOMATED SMS NOTIFICATIONS (DLT COMPLIANT) ─────────────────────────────
+
+async function getShopifyCustomerPhone(customerId) {
+  const shopName = process.env.SHOPIFY_STORE_DOMAIN;
+  const adminKey = process.env.SHOPIFY_ADMIN_API_KEY;
+  if (!shopName || !adminKey || !customerId) return null;
+
+  try {
+    const res = await axios.get(
+      `https://${shopName}/admin/api/2024-04/customers/${customerId}.json`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': adminKey,
+          'Accept': 'application/json'
+        }
+      }
+    );
+    return res.data?.customer?.phone || null;
+  } catch (err) {
+    console.error(`[Shopify] Failed to fetch customer phone for ID ${customerId}:`, err.message);
+    return null;
+  }
+}
+
+async function sendSMSViaNexG({ mobile, message, templateId }) {
+  const apiKey = process.env.NEXG_API_KEY;
+  const baseUrl = process.env.NEXG_API_BASE_URL || 'https://automate.nexgplatforms.com';
+  const header = process.env.NEXG_HEADER || 'ASTOJP';
+  const entityId = process.env.NEXG_ENTITY_ID || '1201178653359151677';
+
+  if (!apiKey) {
+    console.warn(`[SMS Service] NEXG_API_KEY not configured. Message to ${mobile}: "${message}"`);
+    return;
+  }
+
+  let cleanMobile = mobile.replace(/\D/g, '');
+  if (cleanMobile.length === 10) {
+    cleanMobile = '91' + cleanMobile;
+  }
+
+  const messageId = require('crypto').randomUUID();
+
+  try {
+    const response = await axios.get(`${baseUrl}/api/v1/sms`, {
+      params: {
+        contactnumber: cleanMobile,
+        header: header,
+        message: message,
+        messageType: 'normal',
+        messageid: messageId,
+        serviceType: 'transactional',
+        templateid: templateId,
+        entityid: entityId
+      },
+      headers: {
+        'Authorization': apiKey,
+        'Accept': 'application/json'
+      }
+    });
+    console.log(`[SMS Service] NexG Response:`, response.data);
+  } catch (err) {
+    console.error(`[SMS Service] NexG request failed for ${mobile}:`, err.message);
+  }
+}
+
+exports.sendBookingSMS = async ({ customerId, customerName, astrologerName, astrologerMobile, scheduledAt, price }) => {
+  const customerMobile = await getShopifyCustomerPhone(customerId);
+
+  const dateStr = new Date(scheduledAt).toLocaleString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+
+  const templateId = process.env.NEXG_BOOKING_TEMPLATE_ID || '1277178720219094004';
+
+  if (customerMobile) {
+    const customerMsg = `Dear ${customerName}, Thank you for shopping with AstroJap. Your order with Astrologer ${astrologerName} on ${dateStr} has been confirmed. Order Amount: Rs. ${price} Team AstroJap`;
+    await sendSMSViaNexG({
+      mobile: customerMobile,
+      message: customerMsg,
+      templateId
+    });
+  }
+
+  if (astrologerMobile) {
+    const astrologerMsg = `Dear ${astrologerName}, Thank you for shopping with AstroJap. Your order booked by ${customerName} on ${dateStr} has been confirmed. Order Amount: Rs. ${price} Team AstroJap`;
+    await sendSMSViaNexG({
+      mobile: astrologerMobile,
+      message: astrologerMsg,
+      templateId
+    });
+  }
+};
+
+exports.sendChatStartedSMS = async ({ session }) => {
+  const { user_id: customerId, astrologer_id: astrologerId, duration_minutes: duration } = session;
+
+  const customerMobile = await getShopifyCustomerPhone(customerId);
+
+  const { data: userData } = await supabaseClient
+    .from('users')
+    .select('name')
+    .eq('shopify_customer_id', customerId.toString())
+    .maybeSingle();
+  const customerName = userData?.name || 'Customer';
+
+  const { data: astrologer } = await supabaseClient
+    .from('astrologers')
+    .select('name, mobile')
+    .eq('id', astrologerId)
+    .single();
+
+  const templateId = process.env.NEXG_CHAT_TEMPLATE_ID || '1277178720219094004';
+
+  if (customerMobile && astrologer) {
+    const customerMsg = `Dear ${customerName}, Thank you for shopping with AstroJap. Your order chat with Astrologer ${astrologer.name} is now active. Join: astrojap.com/pages/astrologer-portal has been confirmed. Order Amount: Rs. ${duration} Team AstroJap`;
+    await sendSMSViaNexG({
+      mobile: customerMobile,
+      message: customerMsg,
+      templateId
+    });
+  }
+
+  if (astrologer && astrologer.mobile) {
+    const astrologerMsg = `Dear ${astrologer.name}, Thank you for shopping with AstroJap. Your order chat with customer ${customerName} is active. Join: astrojap.com/pages/astrologer-portal has been confirmed. Order Amount: Rs. ${duration} Team AstroJap`;
+    await sendSMSViaNexG({
+      mobile: astrologer.mobile,
+      message: astrologerMsg,
+      templateId
+    });
   }
 };
