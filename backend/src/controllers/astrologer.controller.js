@@ -893,33 +893,41 @@ exports.deleteAstrologerAdmin = async (req, res) => {
   if (!id) return res.status(400).json({ error: 'Astrologer ID is required' });
 
   try {
-    // 1. Delete reviews
-    await supabase.from('reviews').delete().eq('astrologer_id', id);
+    // 1. Get all sessions for this astrologer
+    const { data: sessions, error: sessionErr } = await supabase
+      .from('sessions')
+      .select('id')
+      .eq('astrologer_id', id);
+    if (sessionErr) throw sessionErr;
 
-    // 2. Delete slots
-    await supabase.from('slots').delete().eq('astrologer_id', id);
+    const sessionIds = sessions && sessions.length > 0 ? sessions.map(s => s.id) : [];
 
-    // 3. Delete messages belonging to sessions of this astrologer
-    const { data: sessions } = await supabase.from('sessions').select('id').eq('astrologer_id', id);
-    if (sessions && sessions.length > 0) {
-      const sessionIds = sessions.map(s => s.id);
+    // 2. Delete all records referencing session_id
+    if (sessionIds.length > 0) {
       await supabase.from('messages').delete().in('session_id', sessionIds);
+      await supabase.from('payments').delete().in('session_id', sessionIds);
+      await supabase.from('astrologer_transactions').delete().in('session_id', sessionIds);
+      await supabase.from('reviews').delete().in('session_id', sessionIds);
     }
+
+    // 3. Delete slots (which might reference session_id)
+    await supabase.from('slots').delete().eq('astrologer_id', id);
 
     // 4. Delete sessions
     await supabase.from('sessions').delete().eq('astrologer_id', id);
 
-    // 5. Delete earnings & payouts if they exist
+    // 5. Delete other astrologer-dependent tables
+    await supabase.from('reviews').delete().eq('astrologer_id', id);
+    await supabase.from('astrologer_transactions').delete().eq('astrologer_id', id);
     await supabase.from('astrologer_earnings').delete().eq('astrologer_id', id);
     await supabase.from('payouts').delete().eq('astrologer_id', id);
 
-    // 6. Delete from astrologers table
-    const { error } = await supabase
+    // 6. Finally, delete the astrologer
+    const { error: deleteErr } = await supabase
       .from('astrologers')
       .delete()
       .eq('id', id);
-
-    if (error) throw error;
+    if (deleteErr) throw deleteErr;
 
     res.status(200).json({ success: true, message: 'Astrologer and all associated records deleted successfully.' });
   } catch (error) {
