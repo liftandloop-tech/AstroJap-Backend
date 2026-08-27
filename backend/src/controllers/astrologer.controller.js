@@ -884,3 +884,46 @@ exports.verifyOTP = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.deleteAstrologerAdmin = async (req, res) => {
+  const token = req.headers['authorization'];
+  if (token !== 'admin_secret_session_token_2026') return res.status(403).json({ error: 'Unauthorized' });
+
+  const { id } = req.body;
+  if (!id) return res.status(400).json({ error: 'Astrologer ID is required' });
+
+  try {
+    // 1. Delete reviews
+    await supabase.from('reviews').delete().eq('astrologer_id', id);
+
+    // 2. Delete slots
+    await supabase.from('slots').delete().eq('astrologer_id', id);
+
+    // 3. Delete messages belonging to sessions of this astrologer
+    const { data: sessions } = await supabase.from('sessions').select('id').eq('astrologer_id', id);
+    if (sessions && sessions.length > 0) {
+      const sessionIds = sessions.map(s => s.id);
+      await supabase.from('messages').delete().in('session_id', sessionIds);
+    }
+
+    // 4. Delete sessions
+    await supabase.from('sessions').delete().eq('astrologer_id', id);
+
+    // 5. Delete earnings & payouts if they exist
+    await supabase.from('astrologer_earnings').delete().eq('astrologer_id', id);
+    await supabase.from('payouts').delete().eq('astrologer_id', id);
+
+    // 6. Delete from astrologers table
+    const { error } = await supabase
+      .from('astrologers')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    res.status(200).json({ success: true, message: 'Astrologer and all associated records deleted successfully.' });
+  } catch (error) {
+    console.error('Delete astrologer error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};

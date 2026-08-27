@@ -32,5 +32,6 @@ router.get('/admin/all',                  c.getAllAstrologersAdmin);   // List A
 router.post('/admin/approve',             c.approveAstrologer);        // Approve application
 router.post('/admin/reject',              c.rejectAstrologer);         // Reject application
 router.post('/admin/update-prices',       c.updatePricesAdmin);        // Update pricing
+router.post('/admin/delete',              c.deleteAstrologerAdmin);    // Delete astrologer
 
 module.exports = router;
