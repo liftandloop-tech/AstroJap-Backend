@@ -119,43 +119,45 @@ exports.getCoupons = async (req, res) => {
       } catch (e) {}
     }
 
+    const defaultCoupons = [
+      {
+        code: 'ASTRO100',
+        title: '₹100 OFF on Special Rakhi',
+        description: 'Get ₹100.00 off on Special Rakhi products',
+        discount_type: 'fixed',
+        discount_value: 100,
+        min_order: 0,
+        collections: ['Special Rakhi', 'Rakhi'],
+        badge: 'SPECIAL RAKHI'
+      },
+      {
+        code: 'ASTRO50',
+        title: 'Flat ₹50 OFF',
+        description: 'Get flat ₹50 discount on orders above ₹499',
+        discount_type: 'fixed',
+        discount_value: 50,
+        min_order: 499,
+        badge: 'POPULAR'
+      },
+      {
+        code: 'WELCOME10',
+        title: '10% Instant OFF',
+        description: 'Special 10% discount for all customers',
+        discount_type: 'percentage',
+        discount_value: 10,
+        min_order: 299,
+        max_discount: 150,
+        badge: 'NEW USER'
+      }
+    ];
+
     if (!token) {
-      return res.json([
-        {
-          code: 'ASTRO100',
-          title: '₹100 OFF on Special Rakhi',
-          description: 'Get ₹100.00 off on Special Rakhi products',
-          discount_type: 'fixed',
-          discount_value: 100,
-          min_order: 0,
-          collections: ['Special Rakhi', 'Rakhi'],
-          badge: 'SPECIAL RAKHI'
-        },
-        {
-          code: 'ASTRO50',
-          title: 'Flat ₹50 OFF',
-          description: 'Get flat ₹50 discount on orders above ₹499',
-          discount_type: 'fixed',
-          discount_value: 50,
-          min_order: 499,
-          badge: 'POPULAR'
-        },
-        {
-          code: 'WELCOME10',
-          title: '10% Instant OFF',
-          description: 'Special 10% discount for all customers',
-          discount_type: 'percentage',
-          discount_value: 10,
-          min_order: 299,
-          max_discount: 150,
-          badge: 'NEW USER'
-        }
-      ]);
+      return res.json(defaultCoupons);
     }
 
     const query = `
-      query GetActiveDiscounts {
-        codeDiscountNodes(first: 50, query: "status:active") {
+      query GetDiscounts {
+        codeDiscountNodes(first: 50) {
           nodes {
             id
             codeDiscount {
@@ -211,6 +213,26 @@ exports.getCoupons = async (req, res) => {
                   }
                 }
               }
+              ... on DiscountCodeBxgy {
+                title
+                summary
+                status
+                codes(first: 5) {
+                  nodes {
+                    code
+                  }
+                }
+              }
+              ... on DiscountCodeFreeShipping {
+                title
+                summary
+                status
+                codes(first: 5) {
+                  nodes {
+                    code
+                  }
+                }
+              }
             }
           }
         }
@@ -234,6 +256,7 @@ exports.getCoupons = async (req, res) => {
     nodes.forEach(node => {
       const discount = node.codeDiscount;
       if (!discount) return;
+      if (discount.status && discount.status !== 'ACTIVE') return;
 
       const codeNodes = discount.codes?.nodes || [];
       const isPercentage = !!discount.customerGets?.value?.percentage;
@@ -259,7 +282,7 @@ exports.getCoupons = async (req, res) => {
         if (!cNode.code) return;
         coupons.push({
           code: cNode.code.toUpperCase(),
-          title: isPercentage ? `${discountValue}% OFF` : `Flat ₹${discountValue} OFF`,
+          title: discountValue > 0 ? (isPercentage ? `${discountValue}% OFF` : `Flat ₹${discountValue} OFF`) : discount.title,
           description: categoryInfo || discount.summary || discount.title || 'Store Discount',
           discount_type: isPercentage ? 'percentage' : 'fixed',
           discount_value: discountValue,
@@ -268,14 +291,48 @@ exports.getCoupons = async (req, res) => {
           collection_handles: collectionHandles,
           products: products,
           product_handles: productHandles,
-          badge: collections[0] ? collections[0].toUpperCase() : (isPercentage ? 'PERCENTAGE OFF' : 'FLAT OFF')
+          badge: collections[0] ? collections[0].toUpperCase() : (discountValue > 0 ? (isPercentage ? 'PERCENTAGE OFF' : 'FLAT OFF') : 'SPECIAL OFFER')
         });
       });
     });
 
+    if (coupons.length === 0) {
+      return res.json(defaultCoupons);
+    }
+
     res.json(coupons);
   } catch (error) {
     console.error('[Coupons Controller Error]', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to fetch coupons from Shopify', details: error.message });
+    res.json([
+      {
+        code: 'ASTRO100',
+        title: '₹100 OFF on Special Rakhi',
+        description: 'Get ₹100.00 off on Special Rakhi products',
+        discount_type: 'fixed',
+        discount_value: 100,
+        min_order: 0,
+        collections: ['Special Rakhi', 'Rakhi'],
+        badge: 'SPECIAL RAKHI'
+      },
+      {
+        code: 'ASTRO50',
+        title: 'Flat ₹50 OFF',
+        description: 'Get flat ₹50 discount on orders above ₹499',
+        discount_type: 'fixed',
+        discount_value: 50,
+        min_order: 499,
+        badge: 'POPULAR'
+      },
+      {
+        code: 'WELCOME10',
+        title: '10% Instant OFF',
+        description: 'Special 10% discount for all customers',
+        discount_type: 'percentage',
+        discount_value: 10,
+        min_order: 299,
+        max_discount: 150,
+        badge: 'NEW USER'
+      }
+    ]);
   }
 };
