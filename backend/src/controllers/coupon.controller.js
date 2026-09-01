@@ -1,38 +1,52 @@
 const axios = require('axios');
 const supabase = require('../config/supabase');
 
-const SHOPIFY_DOMAIN = process.env.SHOPIFY_DOMAIN || '0umnii-xp.myshopify.com';
-const SHOPIFY_CLIENT_ID = process.env.SHOPIFY_CLIENT_ID || '';
-const SHOPIFY_CLIENT_SECRET = process.env.SHOPIFY_CLIENT_SECRET || '';
+function getShopifyConfig() {
+  const domain = process.env.SHOPIFY_STORE_DOMAIN || process.env.SHOPIFY_DOMAIN || '0umnii-xp.myshopify.com';
+  const clientId = process.env.SHOPIFY_CLIENT_ID || process.env.SHOPIFY_API_KEY || '';
+  const clientSecret = process.env.SHOPIFY_CLIENT_SECRET || process.env.SHOPIFY_API_SECRET || '';
+  const adminToken = process.env.SHOPIFY_ADMIN_API_KEY || process.env.SHOPIFY_ADMIN_TOKEN || process.env.SHOPIFY_ACCESS_TOKEN || '';
 
-// In-memory token cache fallback
-let cachedAccessToken = process.env.SHOPIFY_ADMIN_TOKEN || '';
+  return { domain, clientId, clientSecret, adminToken };
+}
+
+let cachedAccessToken = '';
 
 /**
- * Handle Shopify OAuth Callback and Installation
+ * Handle Shopify OAuth Installation & Callback
  */
 exports.handleOAuthCallback = async (req, res) => {
   const { code, shop } = req.query;
-  const targetShop = shop || SHOPIFY_DOMAIN;
+  const config = getShopifyConfig();
+  const targetShop = shop || config.domain;
 
+  // 1. If no code, start Shopify OAuth flow by redirecting to Shopify authorize screen
   if (!code) {
+    if (shop && config.clientId) {
+      const redirectUri = `https://${req.headers.host || 'astro-jap-backend.vercel.app'}`;
+      const authUrl = `https://${targetShop}/admin/oauth/authorize?client_id=${config.clientId}&scope=read_discounts,read_price_rules,read_products&redirect_uri=${encodeURIComponent(redirectUri)}`;
+      console.log(`[Shopify OAuth] Redirecting to authorize URL: ${authUrl}`);
+      return res.redirect(authUrl);
+    }
+
     const envKeys = Object.keys(process.env).filter(k => k.startsWith('NEXG') || k.startsWith('SUPABASE') || k.startsWith('SHOPIFY'));
     return res.json({
       status: 'running',
       keys: envKeys,
       shopify: {
-        configured: !!cachedAccessToken,
+        configured: !!(cachedAccessToken || config.adminToken),
         shop: targetShop
       }
     });
   }
 
+  // 2. Exchange code for permanent access token
   try {
-    const clientId = SHOPIFY_CLIENT_ID || process.env.SHOPIFY_CLIENT_ID;
-    const clientSecret = SHOPIFY_CLIENT_SECRET || process.env.SHOPIFY_CLIENT_SECRET;
+    const clientId = config.clientId;
+    const clientSecret = config.clientSecret;
 
     if (!clientId || !clientSecret) {
-      return res.status(400).json({ error: 'SHOPIFY_CLIENT_ID and SHOPIFY_CLIENT_SECRET environment variables are required' });
+      return res.status(400).json({ error: 'SHOPIFY_CLIENT_ID and SHOPIFY_CLIENT_SECRET are required' });
     }
 
     console.log(`[Shopify OAuth] Exchanging code for access token for ${targetShop}...`);
@@ -44,9 +58,8 @@ exports.handleOAuthCallback = async (req, res) => {
 
     if (tokenRes.data && tokenRes.data.access_token) {
       cachedAccessToken = tokenRes.data.access_token;
-      console.log(`[Shopify OAuth] Successfully obtained access token! Scope: ${tokenRes.data.scope}`);
+      console.log(`[Shopify OAuth] Successfully obtained access token!`);
 
-      // Try saving token to Supabase app_settings or credentials table if available
       try {
         await supabase.from('app_settings').upsert({
           key: 'shopify_admin_token',
@@ -54,14 +67,14 @@ exports.handleOAuthCallback = async (req, res) => {
           updated_at: new Date().toISOString()
         }, { onConflict: 'key' });
       } catch (dbErr) {
-        console.warn('Could not persist token to DB, using in-memory cache:', dbErr.message);
+        console.warn('Could not persist token to DB:', dbErr.message);
       }
 
       return res.send(`
         <!DOCTYPE html>
         <html>
         <head>
-          <title>AstroJap Discounts App Installed</title>
+          <title>AstroJap Discounts Connected</title>
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #0f172a; color: #fff; text-align: center; }
             .card { background: #1e293b; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-width: 450px; }
@@ -73,14 +86,14 @@ exports.handleOAuthCallback = async (req, res) => {
         <body>
           <div class="card">
             <h1>✓ AstroJap Discounts Connected!</h1>
-            <p>Your Shopify Admin discounts are now linked and will automatically sync with the storefront cart in real time.</p>
-            <div class="badge">Status: Active & Syncing</div>
+            <p>Your Shopify Admin discounts are now active and will automatically sync with the storefront cart in real time.</p>
+            <div class="badge">Status: Live & Connected</div>
           </div>
         </body>
         </html>
       `);
     }
-    
+
     return res.status(400).json({ error: 'Failed to obtain access token from Shopify' });
   } catch (err) {
     console.error('[Shopify OAuth Error]', err.response?.data || err.message);
@@ -93,8 +106,9 @@ exports.handleOAuthCallback = async (req, res) => {
  */
 exports.getCoupons = async (req, res) => {
   try {
-    // If no token in memory, check Supabase
-    let token = cachedAccessToken || process.env.SHOPIFY_ADMIN_TOKEN;
+    const config = getShopifyConfig();
+    let token = cachedAccessToken || config.adminToken;
+
     if (!token) {
       try {
         const { data } = await supabase.from('app_settings').select('value').eq('key', 'shopify_admin_token').single();
@@ -106,7 +120,6 @@ exports.getCoupons = async (req, res) => {
     }
 
     if (!token) {
-      console.warn('[Coupons] No Shopify Admin Token configured yet. Returning fallback coupons.');
       return res.json([
         {
           code: 'ASTRO100',
@@ -205,7 +218,7 @@ exports.getCoupons = async (req, res) => {
     `;
 
     const shopifyRes = await axios.post(
-      `https://${SHOPIFY_DOMAIN}/admin/api/2024-01/graphql.json`,
+      `https://${config.domain}/admin/api/2024-01/graphql.json`,
       { query },
       {
         headers: {
