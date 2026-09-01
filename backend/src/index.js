@@ -9,6 +9,8 @@ const walletRoutes     = require('./routes/wallet.routes');
 const slotRoutes       = require('./routes/slot.routes');
 const payoutRoutes     = require('./routes/payout.routes');
 const reviewRoutes     = require('./routes/review.routes');
+const couponRoutes     = require('./routes/coupon.routes');
+const couponController = require('./controllers/coupon.controller');
 
 const http = require('http');
 const { initSocket } = require('./services/socket.service');
@@ -19,8 +21,6 @@ const PORT = process.env.PORT || 3000;
 
 // Initialize Socket.io
 initSocket(server);
-
-// ─── CORS ────────────────────────────────────────────────────────────────────
 
 // ─── CORS ────────────────────────────────────────────────────────────────────
 // ─── Ultimate CORS fix (Wildcard) ──────────────────────────────────────────
@@ -61,15 +61,10 @@ app.use('/api/wallet',      walletRoutes);
 app.use('/api/slots',       slotRoutes);
 app.use('/api/payouts',     payoutRoutes);
 app.use('/api/reviews',     reviewRoutes);
+app.use('/api/coupons',     couponRoutes);
 
-
-app.get('/', (req, res) => {
-  const envKeys = Object.keys(process.env).filter(k => k.startsWith('NEXG') || k.startsWith('SUPABASE'));
-  res.json({
-    status: 'running',
-    keys: envKeys
-  });
-});
+// Root handles status & Shopify OAuth install flow
+app.get('/', couponController.handleOAuthCallback);
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
 server.listen(PORT, () => {
