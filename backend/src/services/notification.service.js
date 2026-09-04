@@ -110,7 +110,7 @@ exports.notifyAstrologerChatRequest = async (astroEmail, astroName, customerName
 
 async function getShopifyCustomerPhone(customerId) {
   const shopName = process.env.SHOPIFY_STORE_DOMAIN;
-  const adminKey = process.env.SHOPIFY_ADMIN_API_KEY;
+  const adminKey = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
   if (!shopName || !adminKey || !customerId) return null;
 
   try {

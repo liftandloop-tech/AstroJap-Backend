@@ -438,10 +438,10 @@ exports.getSessionHistory = async (req, res) => {
 
 async function createShopifyCustomer({ id, name, email, mobile }) {
   const shopName = process.env.SHOPIFY_STORE_DOMAIN;  // e.g. 'your-store.myshopify.com'
-  const adminKey = process.env.SHOPIFY_ADMIN_API_KEY;
+  const adminKey = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
 
   if (!shopName || !adminKey) {
-    console.warn('[Shopify] SHOPIFY_STORE_DOMAIN or SHOPIFY_ADMIN_API_KEY not set — skipping customer creation.');
+    console.warn('[Shopify] SHOPIFY_STORE_DOMAIN or SHOPIFY_ADMIN_ACCESS_TOKEN not set — skipping customer creation.');
     return;
   }
 
@@ -621,7 +621,7 @@ exports.rejectAstrologer = async (req, res) => {
 
 async function updateShopifyCustomerStatus(shopifyId, newTag) {
   const shopName = process.env.SHOPIFY_STORE_DOMAIN;
-  const adminKey = process.env.SHOPIFY_ADMIN_API_KEY;
+  const adminKey = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
   if (!shopName || !adminKey) return;
 
   try {

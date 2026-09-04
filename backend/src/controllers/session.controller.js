@@ -13,6 +13,7 @@ function missingField(res, field) {
 
 exports.getAllAstrologers = async (req, res) => {
   try {
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
     const { data, error } = await supabase
       .from('astrologers')
       .select('*');
@@ -52,6 +53,31 @@ exports.getActiveSession = async (req, res) => {
         .update({ status: 'completed' })
         .eq('id', session.id);
       return res.status(200).json(null);
+    }
+
+    // If session has start_time but end_time is null, calculate expected end
+    if (session.start_time && !endTime) {
+      const durationMs = (session.duration_minutes || 20) * 60000;
+      const expectedEnd = new Date(new Date(session.start_time).getTime() + durationMs);
+      if (now > expectedEnd) {
+        await supabase
+          .from('sessions')
+          .update({ status: 'completed' })
+          .eq('id', session.id);
+        return res.status(200).json(null);
+      }
+    }
+
+    // If never started and older than duration + 15 mins, expire it
+    if (!session.start_time && !endTime) {
+      const createdAt = session.created_at ? new Date(session.created_at) : (session.scheduled_at ? new Date(session.scheduled_at) : null);
+      if (createdAt && (now - createdAt) > ((session.duration_minutes || 20) + 15) * 60 * 1000) {
+        await supabase
+          .from('sessions')
+          .update({ status: 'expired' })
+          .eq('id', session.id);
+        return res.status(200).json(null);
+      }
     }
 
     res.status(200).json(session);
@@ -173,19 +199,94 @@ exports.validateSession = async (req, res) => {
 };
 
 exports.endSession = async (req, res) => {
-  const { session_id } = req.body;
+  const { session_id, user_type } = req.body;
   if (!session_id) return missingField(res, 'session_id');
 
   try {
-    const { data, error } = await supabase
-      .from('sessions')
-      .update({ status: 'completed' })
-      .eq('id', session_id)
+    // 1. Fetch all messages for this session to calculate exit/rejoin counts
+    const { data: messages, error: msgError } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('session_id', session_id);
+
+    if (msgError) throw msgError;
+
+    let customerExits = 0;
+    let customerRejoins = 0;
+    let astrologerExits = 0;
+    let astrologerRejoins = 0;
+
+    (messages || []).forEach(m => {
+      if (m.is_system) {
+        if (m.text === 'SYSTEM_CUSTOMER_EXIT') customerExits++;
+        if (m.text === 'SYSTEM_CUSTOMER_REJOIN') customerRejoins++;
+        if (m.text === 'SYSTEM_ASTROLOGER_EXIT') astrologerExits++;
+        if (m.text === 'SYSTEM_ASTROLOGER_REJOIN') astrologerRejoins++;
+      }
+    });
+
+    let isCustomerExited = customerExits > customerRejoins;
+    let isAstrologerExited = astrologerExits > astrologerRejoins;
+
+    // 2. Insert the new exit message
+    const senderType = user_type || 'system';
+    const exitText = senderType === 'customer' ? 'SYSTEM_CUSTOMER_EXIT' : 'SYSTEM_ASTROLOGER_EXIT';
+    
+    const { data: newMsg, error: insertError } = await supabase
+      .from('messages')
+      .insert({
+        session_id,
+        sender_id: senderType,
+        sender_type: 'system',
+        text: exitText,
+        is_system: true
+      })
       .select()
       .single();
 
-    if (error) throw error;
-    res.status(200).json({ success: true, message: 'Session ended' });
+    if (insertError) throw insertError;
+
+    // Broadcast via socket
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      io.to(session_id).emit('receive-msg', {
+        id:          newMsg.id,
+        sessionId:   session_id,
+        senderId:    senderType,
+        senderType:  'system',
+        text:        exitText,
+        is_system:   true,
+        created_at:  newMsg.created_at
+      });
+    } catch(err) {}
+
+    if (senderType === 'customer') isCustomerExited = true;
+    if (senderType === 'astrologer') isAstrologerExited = true;
+
+    // 3. If both have exited, mark session as completed
+    if (isCustomerExited && isAstrologerExited) {
+      await supabase.from('messages').insert({
+        session_id,
+        sender_id: 'system',
+        sender_type: 'system',
+        text: 'SYSTEM_SESSION_MUTUAL_END',
+        is_system: true
+      });
+
+      const { data: updatedSession, error: updateError } = await supabase
+        .from('sessions')
+        .update({ status: 'completed' })
+        .eq('id', session_id)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      return res.status(200).json({ success: true, message: 'Session ended mutually and completed', completed: true });
+    }
+
+    res.status(200).json({ success: true, message: `${senderType} left session`, completed: false });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -550,6 +651,67 @@ exports.getAdminChatMessages = async (req, res) => {
     res.status(200).json(data || []);
   } catch (error) {
     console.error('getAdminChatMessages error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.rejoinSession = async (req, res) => {
+  const { session_id, user_type } = req.body;
+  if (!session_id) return missingField(res, 'session_id');
+  if (!user_type) return missingField(res, 'user_type');
+
+  try {
+    const { data: messages, error: msgError } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('session_id', session_id);
+
+    if (msgError) throw msgError;
+
+    let exits = 0;
+    let rejoins = 0;
+    const exitText = user_type === 'customer' ? 'SYSTEM_CUSTOMER_EXIT' : 'SYSTEM_ASTROLOGER_EXIT';
+    const rejoinText = user_type === 'customer' ? 'SYSTEM_CUSTOMER_REJOIN' : 'SYSTEM_ASTROLOGER_REJOIN';
+
+    (messages || []).forEach(m => {
+      if (m.is_system) {
+        if (m.text === exitText) exits++;
+        if (m.text === rejoinText) rejoins++;
+      }
+    });
+
+    if (exits > rejoins) {
+      const { data: newMsg, error: insertError } = await supabase
+        .from('messages')
+        .insert({
+          session_id,
+          sender_id: user_type,
+          sender_type: 'system',
+          text: rejoinText,
+          is_system: true
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      try {
+        const { getIO } = require('../services/socket.service');
+        const io = getIO();
+        io.to(session_id).emit('receive-msg', {
+          id:          newMsg.id,
+          sessionId:   session_id,
+          senderId:    user_type,
+          senderType:  'system',
+          text:        rejoinText,
+          is_system:   true,
+          created_at:  newMsg.created_at
+        });
+      } catch(err) {}
+    }
+
+    res.status(200).json({ success: true });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
